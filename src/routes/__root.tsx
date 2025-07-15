@@ -14,10 +14,14 @@ export const Route = createRootRouteWithContext<{
   queryClient: QueryClient
 }>()({
   beforeLoad: async () => {
-    // Redirect to sign-in by default
+    // Redirect to sign-in by default, preserving query parameters
     if (window.location.pathname === '/') {
+      const searchParams = new URLSearchParams(window.location.search)
+      const tenantParam = searchParams.get('tenant')
+      
       throw redirect({
         to: '/sign-in',
+        search: tenantParam ? { tenant: tenantParam } : undefined,
       })
     }
   },

@@ -34,12 +34,22 @@ export const useTenantStore = create<TenantStore>()(
 
       // Actions
       initializeTenant: async () => {
+        console.log('🏪 [TenantStore] initializeTenant called')
         set({ isLoading: true, error: null })
         
         try {
+          console.log('🏪 [TenantStore] Calling TenantDetectionService.initializeTenant()')
           const result: TenantDetectionResult = await TenantDetectionService.initializeTenant()
           
+          console.log('🏪 [TenantStore] TenantDetectionService result:', result)
+          
           if (result.isValid && result.tenant) {
+            console.log('🏪 [TenantStore] Setting valid tenant in store:', {
+              tenantName: result.tenant.name,
+              tenantId: result.tenant.id,
+              detectionMethod: result.detectionMethod
+            })
+            
             set({
               currentTenant: result.tenant,
               detectionMethod: result.detectionMethod,
@@ -49,8 +59,10 @@ export const useTenantStore = create<TenantStore>()(
             })
             
             // Apply branding
+            console.log('🏪 [TenantStore] Applying tenant branding')
             TenantDetectionService.applyTenantBranding(result.tenant)
           } else {
+            console.error('🏪 [TenantStore] Invalid tenant result:', result)
             set({
               currentTenant: null,
               detectionMethod: result.detectionMethod,
@@ -60,6 +72,7 @@ export const useTenantStore = create<TenantStore>()(
             })
           }
         } catch (error: any) {
+          console.error('🏪 [TenantStore] Error during tenant initialization:', error)
           set({
             currentTenant: null,
             detectionMethod: null,

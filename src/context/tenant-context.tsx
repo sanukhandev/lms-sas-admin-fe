@@ -19,9 +19,19 @@ export function TenantProvider({ children }: { children: ReactNode }) {
   const tenantStore = useTenant()
 
   useEffect(() => {
+    console.log('🏠 [TenantProvider] useEffect triggered', {
+      isInitialized: tenantStore.isInitialized,
+      tenant: tenantStore.tenant?.name || 'No tenant',
+      error: tenantStore.error,
+      isLoading: tenantStore.isLoading
+    })
+    
     // Initialize tenant detection when the provider mounts
     if (!tenantStore.isInitialized) {
+      console.log('🏠 [TenantProvider] Tenant not initialized, calling initializeTenant()')
       tenantStore.initializeTenant()
+    } else {
+      console.log('🏠 [TenantProvider] Tenant already initialized, skipping')
     }
   }, [tenantStore.isInitialized])
 

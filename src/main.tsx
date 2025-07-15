@@ -13,13 +13,13 @@ import { handleServerError } from '@/utils/handle-server-error'
 import { FontProvider } from './context/font-context'
 import { ThemeProvider } from './context/theme-context'
 import { TenantThemeProvider } from './context/tenant-theme-context'
-import { TenantThemeService } from './services/tenant-theme-service'
+import { TenantDetectionService } from './services/tenant-detection'
 import './index.css'
 // Generated Routes
 import { routeTree } from './routeTree.gen'
 
 // Detect tenant from URL
-const detectedTenant = TenantThemeService.detectTenantFromUrl()
+const detectedTenant = TenantDetectionService.getTenantDomainFromUrl()
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -94,13 +94,11 @@ if (!rootElement.innerHTML) {
   root.render(
     <StrictMode>
       <QueryClientProvider client={queryClient}>
-        <TenantThemeProvider tenantId={detectedTenant || 'default'}>
-          <ThemeProvider defaultTheme='light' storageKey='vite-ui-theme'>
-            <FontProvider>
-              <RouterProvider router={router} />
-            </FontProvider>
-          </ThemeProvider>
-        </TenantThemeProvider>
+        <ThemeProvider defaultTheme='light' storageKey='vite-ui-theme'>
+          <FontProvider>
+            <RouterProvider router={router} />
+          </FontProvider>
+        </ThemeProvider>
       </QueryClientProvider>
     </StrictMode>
   )

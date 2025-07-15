@@ -122,7 +122,7 @@ export interface TenantDetectionResult {
 }
 
 export class TenantDetectionService {
-  private static readonly DEFAULT_TENANT_DOMAIN = 'demo'
+  private static readonly DEFAULT_TENANT_DOMAIN = 'acme-university'
   private static readonly API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api'
 
   /**
@@ -131,9 +131,19 @@ export class TenantDetectionService {
   static detectTenantFromUrl(): TenantDetectionResult {
     const hostname = window.location.hostname
     const pathname = window.location.pathname
+    const search = window.location.search
+    
+    console.log('🔍 [TenantDetection] Starting tenant detection', {
+      hostname,
+      pathname,
+      search,
+      fullUrl: window.location.href
+    })
     
     // Method 1: Subdomain detection (e.g., acme-university.localhost:5173)
     if (hostname.includes('.') && !hostname.startsWith('localhost') && !hostname.startsWith('127.0.0.1')) {
+      const subdomain = hostname.split('.')[0]
+      console.log('✅ [TenantDetection] Subdomain detection successful', { subdomain })
       return {
         tenant: null, // Will be resolved later
         detectionMethod: 'subdomain',
@@ -144,6 +154,7 @@ export class TenantDetectionService {
     // Method 2: Path-based detection (e.g., localhost:5173/tenant/acme-university)
     const pathMatch = pathname.match(/^\/tenant\/([^\/]+)/)
     if (pathMatch) {
+      console.log('✅ [TenantDetection] Path-based detection successful', { tenant: pathMatch[1] })
       return {
         tenant: null, // Will be resolved later
         detectionMethod: 'path',
@@ -155,6 +166,7 @@ export class TenantDetectionService {
     const urlParams = new URLSearchParams(window.location.search)
     const tenantParam = urlParams.get('tenant')
     if (tenantParam) {
+      console.log('✅ [TenantDetection] Query parameter detection successful', { tenant: tenantParam })
       return {
         tenant: null, // Will be resolved later
         detectionMethod: 'header',
@@ -167,18 +179,20 @@ export class TenantDetectionService {
     if (storedTenant) {
       try {
         const tenant = JSON.parse(storedTenant)
+        console.log('✅ [TenantDetection] localStorage fallback successful', { tenant: tenant.name })
         return {
           tenant,
           detectionMethod: 'localStorage',
           isValid: true
         }
       } catch (error) {
-        console.warn('Invalid tenant data in localStorage:', error)
+        console.warn('⚠️ [TenantDetection] Invalid tenant data in localStorage:', error)
         localStorage.removeItem('current_tenant')
       }
     }
 
     // Default fallback
+    console.log('❌ [TenantDetection] No tenant detected, using default fallback')
     return {
       tenant: null,
       detectionMethod: 'default',
@@ -193,15 +207,25 @@ export class TenantDetectionService {
   static getTenantDomainFromUrl(): string {
     const hostname = window.location.hostname
     const pathname = window.location.pathname
+    const search = window.location.search
+    
+    console.log('🔍 [TenantDetection] Getting tenant domain from URL', {
+      hostname,
+      pathname,
+      search
+    })
     
     // Subdomain detection
     if (hostname.includes('.') && !hostname.startsWith('localhost') && !hostname.startsWith('127.0.0.1')) {
-      return hostname.split('.')[0]
+      const subdomain = hostname.split('.')[0]
+      console.log('✅ [TenantDetection] Subdomain domain detected:', subdomain)
+      return subdomain
     }
 
     // Path-based detection
     const pathMatch = pathname.match(/^\/tenant\/([^\/]+)/)
     if (pathMatch) {
+      console.log('✅ [TenantDetection] Path-based domain detected:', pathMatch[1])
       return pathMatch[1]
     }
 
@@ -209,9 +233,11 @@ export class TenantDetectionService {
     const urlParams = new URLSearchParams(window.location.search)
     const tenantParam = urlParams.get('tenant')
     if (tenantParam) {
+      console.log('✅ [TenantDetection] Query parameter domain detected:', tenantParam)
       return tenantParam
     }
 
+    console.log('⚠️ [TenantDetection] No domain detected, using default:', this.DEFAULT_TENANT_DOMAIN)
     return this.DEFAULT_TENANT_DOMAIN
   }
 
@@ -219,8 +245,18 @@ export class TenantDetectionService {
    * Fetch tenant configuration from API
    */
   static async fetchTenantConfig(domain: string): Promise<TenantConfig | null> {
+    const apiUrl = `${this.API_BASE_URL}/v1/tenants/domain/${domain}`
+    
+    console.log('🌐 [TenantDetection] Starting API call', {
+      domain,
+      apiUrl,
+      baseUrl: this.API_BASE_URL
+    })
+    
     try {
-      const response = await fetch(`${this.API_BASE_URL}/v1/tenants/domain/${domain}`, {
+      console.log('📡 [TenantDetection] Making fetch request to:', apiUrl)
+      
+      const response = await fetch(apiUrl, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -228,14 +264,35 @@ export class TenantDetectionService {
         }
       })
 
+      console.log('📡 [TenantDetection] API Response received', {
+        status: response.status,
+        statusText: response.statusText,
+        ok: response.ok,
+        url: response.url
+      })
+
       if (!response.ok) {
+        console.error('❌ [TenantDetection] API request failed', {
+          status: response.status,
+          statusText: response.statusText
+        })
         throw new Error(`Failed to fetch tenant config: ${response.status}`)
       }
 
       const data = await response.json()
+      console.log('✅ [TenantDetection] API Response data:', data)
+      
+      if (data.tenant) {
+        console.log('✅ [TenantDetection] Tenant config loaded successfully', {
+          tenantName: data.tenant.name,
+          tenantId: data.tenant.id,
+          domain: data.tenant.domain
+        })
+      }
+      
       return data.tenant
     } catch (error) {
-      console.error('Error fetching tenant config:', error)
+      console.error('❌ [TenantDetection] Error fetching tenant config:', error)
       return null
     }
   }
@@ -244,10 +301,20 @@ export class TenantDetectionService {
    * Initialize tenant detection and configuration
    */
   static async initializeTenant(): Promise<TenantDetectionResult> {
+    console.log('🚀 [TenantDetection] Starting tenant initialization')
+    
     const detection = this.detectTenantFromUrl()
     const domain = this.getTenantDomainFromUrl()
 
+    console.log('🔍 [TenantDetection] Initial detection results', {
+      detection,
+      domain,
+      detectionMethod: detection.detectionMethod,
+      isValid: detection.isValid
+    })
+
     if (!domain) {
+      console.error('❌ [TenantDetection] No domain found')
       return {
         ...detection,
         isValid: false,
@@ -255,10 +322,13 @@ export class TenantDetectionService {
       }
     }
 
+    console.log('🌐 [TenantDetection] Fetching tenant config for domain:', domain)
+    
     // Fetch tenant configuration from API
     const tenantConfig = await this.fetchTenantConfig(domain)
     
     if (!tenantConfig) {
+      console.error('❌ [TenantDetection] Failed to fetch tenant config for domain:', domain)
       return {
         ...detection,
         isValid: false,
@@ -266,8 +336,17 @@ export class TenantDetectionService {
       }
     }
 
+    console.log('✅ [TenantDetection] Tenant config loaded successfully')
+    console.log('💾 [TenantDetection] Storing tenant in localStorage')
+    
     // Store in localStorage for future use
     localStorage.setItem('current_tenant', JSON.stringify(tenantConfig))
+
+    console.log('🎉 [TenantDetection] Tenant initialization completed successfully', {
+      tenantName: tenantConfig.name,
+      tenantId: tenantConfig.id,
+      domain: tenantConfig.domain
+    })
 
     return {
       ...detection,
@@ -280,6 +359,13 @@ export class TenantDetectionService {
    * Apply tenant branding to the page
    */
   static applyTenantBranding(tenant: TenantConfig): void {
+    console.log('🎨 [TenantDetection] Applying tenant branding', {
+      tenantName: tenant.name,
+      tenantId: tenant.id,
+      theme: tenant.settings.theme,
+      primaryColor: tenant.settings.branding.primary_color
+    })
+    
     const { branding, theme_config } = tenant.settings
 
     // Apply CSS custom properties for theming
@@ -291,6 +377,12 @@ export class TenantDetectionService {
 
     // Apply comprehensive theme configuration
     if (theme_config) {
+      console.log('🎨 [TenantDetection] Applying theme configuration', {
+        mode: theme_config.mode,
+        primaryColor: theme_config.colors.primary,
+        fontFamily: theme_config.typography.font_family
+      })
+      
       // Theme mode
       root.setAttribute('data-theme', theme_config.mode)
 
@@ -332,8 +424,10 @@ export class TenantDetectionService {
     // Update page title
     if (branding.company_name) {
       document.title = `${branding.company_name} - LMS`
+      console.log('📝 [TenantDetection] Updated page title to:', document.title)
     } else {
       document.title = `${tenant.name} - LMS`
+      console.log('📝 [TenantDetection] Updated page title to:', document.title)
     }
 
     // Update favicon if provided
@@ -341,16 +435,22 @@ export class TenantDetectionService {
       const favicon = document.querySelector('link[rel="icon"]') as HTMLLinkElement
       if (favicon) {
         favicon.href = branding.favicon
+        console.log('🎯 [TenantDetection] Updated favicon to:', branding.favicon)
       } else {
         const newFavicon = document.createElement('link')
         newFavicon.rel = 'icon'
         newFavicon.href = branding.favicon
         document.head.appendChild(newFavicon)
+        console.log('🎯 [TenantDetection] Added new favicon:', branding.favicon)
       }
     }
 
     // Apply theme class to body
-    document.body.className = `theme-${tenant.settings.theme} ${theme_config?.mode || 'light'}-mode`
+    const bodyClass = `theme-${tenant.settings.theme} ${theme_config?.mode || 'light'}-mode`
+    document.body.className = bodyClass
+    console.log('🎨 [TenantDetection] Applied body classes:', bodyClass)
+    
+    console.log('✅ [TenantDetection] Tenant branding applied successfully')
   }
 
   /**
