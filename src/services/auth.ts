@@ -19,9 +19,14 @@ api.interceptors.request.use(
     }
     
     // Add tenant ID header if available
-    const user = JSON.parse(localStorage.getItem('user') || '{}')
-    if (user.tenant_id) {
-      config.headers['X-Tenant-ID'] = user.tenant_id
+    const tenantData = JSON.parse(localStorage.getItem('tenant') || '{}')
+    if (tenantData.id) {
+      config.headers['X-Tenant-ID'] = tenantData.id
+    }
+    
+    // Add tenant domain header if available
+    if (tenantData.domain) {
+      config.headers['X-Tenant-Domain'] = tenantData.domain
     }
     
     return config

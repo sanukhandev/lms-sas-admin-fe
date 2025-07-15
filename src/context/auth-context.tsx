@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, ReactNode } from 'react'
 import { useAuthStore, initializeAuth } from '@/stores/auth-store'
+import { useTenantContext } from '@/context/tenant-context'
 import { User } from '@/services/auth'
 
 interface AuthContextType {
@@ -17,10 +18,14 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const authStore = useAuthStore()
+  const { tenant } = useTenantContext()
 
   useEffect(() => {
-    initializeAuth()
-  }, [])
+    // Only initialize auth after tenant is loaded
+    if (tenant) {
+      initializeAuth()
+    }
+  }, [tenant])
 
   return (
     <AuthContext.Provider value={authStore}>

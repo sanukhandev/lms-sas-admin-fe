@@ -67,7 +67,14 @@ export const useAuthStore = create<AuthStore>()(
       register: async (userData: RegisterRequest) => {
         set({ isLoading: true, error: null })
         try {
-          const response = await AuthService.register(userData)
+          // Get current tenant ID if available
+          const tenantData = JSON.parse(localStorage.getItem('tenant') || '{}')
+          const registerData = {
+            ...userData,
+            tenant_id: tenantData.id || userData.tenant_id,
+          }
+          
+          const response = await AuthService.register(registerData)
           const { user, token } = response
           
           // Store token and user in localStorage
@@ -102,10 +109,11 @@ export const useAuthStore = create<AuthStore>()(
           // Even if logout fails on server, clear local state
           console.error('Logout error:', error)
         } finally {
-          // Clear localStorage
+          // Clear localStorage including tenant-specific data
           localStorage.removeItem('auth_token')
           localStorage.removeItem('refresh_token')
           localStorage.removeItem('user')
+          // Keep tenant data as user might want to login again for same tenant
           
           set({
             user: null,

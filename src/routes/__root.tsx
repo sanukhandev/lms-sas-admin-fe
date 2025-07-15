@@ -7,6 +7,8 @@ import { NavigationProgress } from '@/components/navigation-progress'
 import GeneralError from '@/features/errors/general-error'
 import NotFoundError from '@/features/errors/not-found-error'
 import { AuthProvider } from '@/context/auth-context'
+import { TenantProvider } from '@/context/tenant-context'
+import { TenantLoader } from '@/components/tenant-loader'
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient
@@ -21,17 +23,21 @@ export const Route = createRootRouteWithContext<{
   },
   component: () => {
     return (
-      <AuthProvider>
-        <NavigationProgress />
-        <Outlet />
-        <Toaster duration={50000} />
-        {import.meta.env.MODE === 'development' && (
-          <>
-            <ReactQueryDevtools buttonPosition='bottom-left' />
-            <TanStackRouterDevtools position='bottom-right' />
-          </>
-        )}
-      </AuthProvider>
+      <TenantProvider>
+        <TenantLoader>
+          <AuthProvider>
+            <NavigationProgress />
+            <Outlet />
+            <Toaster duration={50000} />
+            {import.meta.env.MODE === 'development' && (
+              <>
+                <ReactQueryDevtools buttonPosition='bottom-left' />
+                <TanStackRouterDevtools position='bottom-right' />
+              </>
+            )}
+          </AuthProvider>
+        </TenantLoader>
+      </TenantProvider>
     )
   },
   notFoundComponent: NotFoundError,

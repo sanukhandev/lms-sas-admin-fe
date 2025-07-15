@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as ClerkRouteRouteImport } from './routes/clerk/route'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
+import { Route as AuthenticatedThemeDemoNewRouteImport } from './routes/_authenticated/theme-demo-new'
 import { Route as AuthenticatedThemeDemoRouteImport } from './routes/_authenticated/theme-demo'
 import { Route as AuthenticatedHomeRouteImport } from './routes/_authenticated/home'
 import { Route as AuthenticatedColorEditorRouteImport } from './routes/_authenticated/color-editor'
@@ -55,6 +56,12 @@ const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedThemeDemoNewRoute =
+  AuthenticatedThemeDemoNewRouteImport.update({
+    id: '/theme-demo-new',
+    path: '/theme-demo-new',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedThemeDemoRoute = AuthenticatedThemeDemoRouteImport.update({
   id: '/theme-demo',
   path: '/theme-demo',
@@ -219,6 +226,7 @@ export interface FileRoutesByFullPath {
   '/color-editor': typeof AuthenticatedColorEditorRoute
   '/home': typeof AuthenticatedHomeRoute
   '/theme-demo': typeof AuthenticatedThemeDemoRoute
+  '/theme-demo-new': typeof AuthenticatedThemeDemoNewRoute
   '/': typeof AuthenticatedIndexRoute
   '/settings/account': typeof AuthenticatedSettingsAccountRoute
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
@@ -248,6 +256,7 @@ export interface FileRoutesByTo {
   '/color-editor': typeof AuthenticatedColorEditorRoute
   '/home': typeof AuthenticatedHomeRoute
   '/theme-demo': typeof AuthenticatedThemeDemoRoute
+  '/theme-demo-new': typeof AuthenticatedThemeDemoNewRoute
   '/': typeof AuthenticatedIndexRoute
   '/settings/account': typeof AuthenticatedSettingsAccountRoute
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
@@ -282,6 +291,7 @@ export interface FileRoutesById {
   '/_authenticated/color-editor': typeof AuthenticatedColorEditorRoute
   '/_authenticated/home': typeof AuthenticatedHomeRoute
   '/_authenticated/theme-demo': typeof AuthenticatedThemeDemoRoute
+  '/_authenticated/theme-demo-new': typeof AuthenticatedThemeDemoNewRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
   '/_authenticated/settings/account': typeof AuthenticatedSettingsAccountRoute
   '/_authenticated/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
@@ -315,6 +325,7 @@ export interface FileRouteTypes {
     | '/color-editor'
     | '/home'
     | '/theme-demo'
+    | '/theme-demo-new'
     | '/'
     | '/settings/account'
     | '/settings/appearance'
@@ -344,6 +355,7 @@ export interface FileRouteTypes {
     | '/color-editor'
     | '/home'
     | '/theme-demo'
+    | '/theme-demo-new'
     | '/'
     | '/settings/account'
     | '/settings/appearance'
@@ -377,6 +389,7 @@ export interface FileRouteTypes {
     | '/_authenticated/color-editor'
     | '/_authenticated/home'
     | '/_authenticated/theme-demo'
+    | '/_authenticated/theme-demo-new'
     | '/_authenticated/'
     | '/_authenticated/settings/account'
     | '/_authenticated/settings/appearance'
@@ -428,6 +441,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof AuthenticatedIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/theme-demo-new': {
+      id: '/_authenticated/theme-demo-new'
+      path: '/theme-demo-new'
+      fullPath: '/theme-demo-new'
+      preLoaderRoute: typeof AuthenticatedThemeDemoNewRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/theme-demo': {
@@ -657,6 +677,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedColorEditorRoute: typeof AuthenticatedColorEditorRoute
   AuthenticatedHomeRoute: typeof AuthenticatedHomeRoute
   AuthenticatedThemeDemoRoute: typeof AuthenticatedThemeDemoRoute
+  AuthenticatedThemeDemoNewRoute: typeof AuthenticatedThemeDemoNewRoute
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
   AuthenticatedAppsIndexRoute: typeof AuthenticatedAppsIndexRoute
   AuthenticatedChatsIndexRoute: typeof AuthenticatedChatsIndexRoute
@@ -670,6 +691,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedColorEditorRoute: AuthenticatedColorEditorRoute,
   AuthenticatedHomeRoute: AuthenticatedHomeRoute,
   AuthenticatedThemeDemoRoute: AuthenticatedThemeDemoRoute,
+  AuthenticatedThemeDemoNewRoute: AuthenticatedThemeDemoNewRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
   AuthenticatedAppsIndexRoute: AuthenticatedAppsIndexRoute,
   AuthenticatedChatsIndexRoute: AuthenticatedChatsIndexRoute,
