@@ -1,4 +1,18 @@
 import { useQuery } from '@tanstack/react-query'
+import {
+  IconUsers,
+  IconBook,
+  IconClipboardList,
+  IconCurrencyDollar,
+  IconClock,
+  IconCheck,
+} from '@tabler/icons-react'
+import DashboardService from '@/services/dashboard'
+import type { RecentActivity } from '@/services/dashboard'
+import { toast } from 'sonner'
+import { useTenantStore } from '@/stores/tenant-store'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -7,6 +21,8 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import { Progress } from '@/components/ui/progress'
+import { Skeleton } from '@/components/ui/skeleton'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
@@ -14,22 +30,6 @@ import { TopNav } from '@/components/layout/top-nav'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
-import { Skeleton } from '@/components/ui/skeleton'
-import { Badge } from '@/components/ui/badge'
-import { Progress } from '@/components/ui/progress'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { 
-  IconUsers, 
-  IconBook, 
-  IconClipboardList, 
-  IconCurrencyDollar,
-  IconClock,
-  IconCheck
-} from '@tabler/icons-react'
-import { toast } from 'sonner'
-import DashboardService from '@/services/dashboard'
-import { useTenantStore } from '@/stores/tenant-store'
-import type { RecentActivity } from '@/services/dashboard'
 
 const topNav = [
   { title: 'Dashboard', href: '/home', isActive: true },
@@ -40,7 +40,7 @@ const topNav = [
 
 export default function Dashboard() {
   const { tenant } = useTenantStore()
-  
+
   // Query for dashboard stats
   const { data: dashboardStats, isLoading: statsLoading } = useQuery({
     queryKey: ['dashboard-stats'],
@@ -76,7 +76,14 @@ export default function Dashboard() {
     refetchInterval: 120000, // Refresh every 2 minutes
   })
 
-  const StatCard = ({ title, value, description, icon: Icon, trend, isLoading }: {
+  const StatCard = ({
+    title,
+    value,
+    description,
+    icon: Icon,
+    trend,
+    isLoading,
+  }: {
     title: string
     value: string | number
     description: string
@@ -85,21 +92,24 @@ export default function Dashboard() {
     isLoading?: boolean
   }) => (
     <Card>
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium">{title}</CardTitle>
-        <Icon className="h-4 w-4 text-muted-foreground" />
+      <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+        <CardTitle className='text-sm font-medium'>{title}</CardTitle>
+        <Icon className='text-muted-foreground h-4 w-4' />
       </CardHeader>
       <CardContent>
         {isLoading ? (
-          <Skeleton className="h-8 w-24 mb-2" />
+          <Skeleton className='mb-2 h-8 w-24' />
         ) : (
-          <div className="text-2xl font-bold">{value}</div>
+          <div className='text-2xl font-bold'>{value}</div>
         )}
-        <p className="text-xs text-muted-foreground">
+        <p className='text-muted-foreground text-xs'>
           {description}
           {trend && (
-            <span className={`ml-2 ${trend.isPositive ? 'text-green-600' : 'text-red-600'}`}>
-              {trend.isPositive ? '+' : ''}{trend.value}%
+            <span
+              className={`ml-2 ${trend.isPositive ? 'text-green-600' : 'text-red-600'}`}
+            >
+              {trend.isPositive ? '+' : ''}
+              {trend.value}%
             </span>
           )}
         </p>
@@ -108,14 +118,19 @@ export default function Dashboard() {
   )
 
   const ActivityItem = ({ activity }: { activity: RecentActivity }) => (
-    <div className="flex items-center space-x-4">
-      <Avatar className="h-8 w-8">
+    <div className='flex items-center space-x-4'>
+      <Avatar className='h-8 w-8'>
         <AvatarImage src={activity.user.avatar} />
-        <AvatarFallback>{activity.user.name.split(' ').map((n: string) => n[0]).join('')}</AvatarFallback>
+        <AvatarFallback>
+          {activity.user.name
+            .split(' ')
+            .map((n: string) => n[0])
+            .join('')}
+        </AvatarFallback>
       </Avatar>
-      <div className="flex-1 space-y-1">
-        <p className="text-sm font-medium leading-none">{activity.message}</p>
-        <p className="text-xs text-muted-foreground">{activity.timestamp}</p>
+      <div className='flex-1 space-y-1'>
+        <p className='text-sm leading-none font-medium'>{activity.message}</p>
+        <p className='text-muted-foreground text-xs'>{activity.timestamp}</p>
       </div>
       <Badge variant={activity.type === 'completion' ? 'default' : 'secondary'}>
         {activity.type}
@@ -147,10 +162,17 @@ export default function Dashboard() {
             </p>
           </div>
           <div className='flex items-center space-x-2'>
-            <Button variant='outline' onClick={() => toast.success('Export feature coming soon!')}>
+            <Button
+              variant='outline'
+              onClick={() => toast.success('Export feature coming soon!')}
+            >
               Export Report
             </Button>
-            <Button onClick={() => toast.success('Create course feature coming soon!')}>
+            <Button
+              onClick={() =>
+                toast.success('Create course feature coming soon!')
+              }
+            >
               Create Course
             </Button>
           </div>
@@ -168,31 +190,38 @@ export default function Dashboard() {
             {/* Stats Cards */}
             <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-4'>
               <StatCard
-                title="Total Users"
+                title='Total Users'
                 value={dashboardStats?.totalUsers || 0}
-                description="Active learners"
+                description='Active learners'
                 icon={IconUsers}
-                trend={{ value: dashboardStats?.userGrowthRate || 0, isPositive: true }}
+                trend={{
+                  value: dashboardStats?.userGrowthRate || 0,
+                  isPositive: true,
+                }}
                 isLoading={statsLoading}
               />
               <StatCard
-                title="Total Courses"
+                title='Total Courses'
                 value={dashboardStats?.totalCourses || 0}
-                description="Available courses"
+                description='Available courses'
                 icon={IconBook}
                 isLoading={statsLoading}
               />
               <StatCard
-                title="Total Enrollments"
+                title='Total Enrollments'
                 value={dashboardStats?.totalEnrollments || 0}
-                description="Course enrollments"
+                description='Course enrollments'
                 icon={IconClipboardList}
                 isLoading={statsLoading}
               />
               <StatCard
-                title="Revenue"
-                value={dashboardStats ? `$${dashboardStats.totalRevenue.toLocaleString()}` : '$0'}
-                description="Total revenue"
+                title='Revenue'
+                value={
+                  dashboardStats
+                    ? `$${dashboardStats.totalRevenue.toLocaleString()}`
+                    : '$0'
+                }
+                description='Total revenue'
                 icon={IconCurrencyDollar}
                 isLoading={statsLoading}
               />
@@ -234,38 +263,53 @@ export default function Dashboard() {
               <Card className='col-span-3'>
                 <CardHeader>
                   <CardTitle>Quick Stats</CardTitle>
-                  <CardDescription>
-                    Key metrics at a glance
-                  </CardDescription>
+                  <CardDescription>Key metrics at a glance</CardDescription>
                 </CardHeader>
                 <CardContent className='space-y-4'>
                   <div className='space-y-2'>
                     <div className='flex items-center justify-between'>
-                      <span className='text-sm font-medium'>Course Completion Rate</span>
-                      <span className='text-sm'>{dashboardStats?.courseCompletionRate || 0}%</span>
+                      <span className='text-sm font-medium'>
+                        Course Completion Rate
+                      </span>
+                      <span className='text-sm'>
+                        {dashboardStats?.courseCompletionRate || 0}%
+                      </span>
                     </div>
-                    <Progress value={dashboardStats?.courseCompletionRate || 0} className='w-full' />
+                    <Progress
+                      value={dashboardStats?.courseCompletionRate || 0}
+                      className='w-full'
+                    />
                   </div>
-                  
+
                   <div className='space-y-2'>
                     <div className='flex items-center justify-between'>
                       <span className='text-sm font-medium'>Active Users</span>
-                      <span className='text-sm'>{dashboardStats?.activeUsers || 0}</span>
+                      <span className='text-sm'>
+                        {dashboardStats?.activeUsers || 0}
+                      </span>
                     </div>
                     <div className='flex items-center space-x-2'>
                       <IconUsers className='h-4 w-4 text-green-500' />
-                      <span className='text-xs text-muted-foreground'>Currently online</span>
+                      <span className='text-muted-foreground text-xs'>
+                        Currently online
+                      </span>
                     </div>
                   </div>
 
                   <div className='space-y-2'>
                     <div className='flex items-center justify-between'>
-                      <span className='text-sm font-medium'>Pending Enrollments</span>
-                      <span className='text-sm'>{dashboardStats?.pendingEnrollments || 0}</span>
+                      <span className='text-sm font-medium'>
+                        Pending Enrollments
+                      </span>
+                      <span className='text-sm'>
+                        {dashboardStats?.pendingEnrollments || 0}
+                      </span>
                     </div>
                     <div className='flex items-center space-x-2'>
                       <IconClock className='h-4 w-4 text-yellow-500' />
-                      <span className='text-xs text-muted-foreground'>Awaiting approval</span>
+                      <span className='text-muted-foreground text-xs'>
+                        Awaiting approval
+                      </span>
                     </div>
                   </div>
                 </CardContent>
@@ -297,23 +341,37 @@ export default function Dashboard() {
                 ) : (
                   <div className='space-y-6'>
                     {courseProgress?.map((course) => (
-                      <div key={course.id} className='flex items-center justify-between p-4 border rounded-lg'>
+                      <div
+                        key={course.id}
+                        className='flex items-center justify-between rounded-lg border p-4'
+                      >
                         <div className='space-y-1'>
                           <h4 className='font-medium'>{course.title}</h4>
-                          <p className='text-sm text-muted-foreground'>
+                          <p className='text-muted-foreground text-sm'>
                             Instructor: {course.instructor}
                           </p>
                           <div className='flex items-center space-x-4 text-sm'>
                             <span>{course.enrollments} enrollments</span>
                             <span>{course.completions} completions</span>
-                            <Badge variant={course.status === 'active' ? 'default' : 'secondary'}>
+                            <Badge
+                              variant={
+                                course.status === 'active'
+                                  ? 'default'
+                                  : 'secondary'
+                              }
+                            >
                               {course.status}
                             </Badge>
                           </div>
                         </div>
-                        <div className='text-right space-y-2'>
-                          <div className='text-2xl font-bold'>{course.completionRate}%</div>
-                          <Progress value={course.completionRate} className='w-24' />
+                        <div className='space-y-2 text-right'>
+                          <div className='text-2xl font-bold'>
+                            {course.completionRate}%
+                          </div>
+                          <Progress
+                            value={course.completionRate}
+                            className='w-24'
+                          />
                         </div>
                       </div>
                     ))}
@@ -347,28 +405,49 @@ export default function Dashboard() {
                 ) : (
                   <div className='space-y-4'>
                     {userProgress?.map((user) => (
-                      <div key={user.id} className='flex items-center justify-between p-4 border rounded-lg'>
+                      <div
+                        key={user.id}
+                        className='flex items-center justify-between rounded-lg border p-4'
+                      >
                         <div className='flex items-center space-x-4'>
                           <Avatar>
                             <AvatarImage src={user.avatar} />
-                            <AvatarFallback>{user.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                            <AvatarFallback>
+                              {user.name
+                                .split(' ')
+                                .map((n) => n[0])
+                                .join('')}
+                            </AvatarFallback>
                           </Avatar>
                           <div className='space-y-1'>
                             <h4 className='font-medium'>{user.name}</h4>
-                            <p className='text-sm text-muted-foreground'>{user.email}</p>
+                            <p className='text-muted-foreground text-sm'>
+                              {user.email}
+                            </p>
                             <div className='flex items-center space-x-4 text-sm'>
                               <span>{user.enrolledCourses} enrolled</span>
                               <span>{user.completedCourses} completed</span>
-                              <Badge variant={user.role === 'admin' ? 'default' : 'secondary'}>
+                              <Badge
+                                variant={
+                                  user.role === 'admin'
+                                    ? 'default'
+                                    : 'secondary'
+                                }
+                              >
                                 {user.role}
                               </Badge>
                             </div>
                           </div>
                         </div>
-                        <div className='text-right space-y-2'>
-                          <div className='text-lg font-semibold'>{user.totalProgress}%</div>
-                          <Progress value={user.totalProgress} className='w-24' />
-                          <p className='text-xs text-muted-foreground'>
+                        <div className='space-y-2 text-right'>
+                          <div className='text-lg font-semibold'>
+                            {user.totalProgress}%
+                          </div>
+                          <Progress
+                            value={user.totalProgress}
+                            className='w-24'
+                          />
+                          <p className='text-muted-foreground text-xs'>
                             Last active: {user.lastActivity}
                           </p>
                         </div>
@@ -399,23 +478,34 @@ export default function Dashboard() {
                   ) : (
                     <div className='space-y-4'>
                       <div className='flex items-center justify-between'>
-                        <span className='text-sm font-medium'>Monthly Revenue</span>
+                        <span className='text-sm font-medium'>
+                          Monthly Revenue
+                        </span>
                         <span className='text-lg font-semibold'>
                           ${paymentStats?.monthlyRevenue.toLocaleString()}
                         </span>
                       </div>
                       <div className='flex items-center justify-between'>
-                        <span className='text-sm font-medium'>Average Order Value</span>
+                        <span className='text-sm font-medium'>
+                          Average Order Value
+                        </span>
                         <span className='text-lg font-semibold'>
                           ${paymentStats?.averageOrderValue.toFixed(2)}
                         </span>
                       </div>
                       <div className='flex items-center justify-between'>
-                        <span className='text-sm font-medium'>Revenue Growth</span>
-                        <span className={`text-lg font-semibold ${
-                          (paymentStats?.revenueGrowth || 0) > 0 ? 'text-green-600' : 'text-red-600'
-                        }`}>
-                          {paymentStats?.revenueGrowth > 0 ? '+' : ''}{paymentStats?.revenueGrowth}%
+                        <span className='text-sm font-medium'>
+                          Revenue Growth
+                        </span>
+                        <span
+                          className={`text-lg font-semibold ${
+                            (paymentStats?.revenueGrowth || 0) > 0
+                              ? 'text-green-600'
+                              : 'text-red-600'
+                          }`}
+                        >
+                          {paymentStats?.revenueGrowth > 0 ? '+' : ''}
+                          {paymentStats?.revenueGrowth}%
                         </span>
                       </div>
                     </div>
@@ -433,14 +523,18 @@ export default function Dashboard() {
                 <CardContent>
                   <div className='space-y-4'>
                     <div className='flex items-center justify-between'>
-                      <span className='text-sm font-medium'>API Response Time</span>
+                      <span className='text-sm font-medium'>
+                        API Response Time
+                      </span>
                       <div className='flex items-center space-x-2'>
                         <IconCheck className='h-4 w-4 text-green-500' />
                         <span className='text-sm'>125ms</span>
                       </div>
                     </div>
                     <div className='flex items-center justify-between'>
-                      <span className='text-sm font-medium'>Database Status</span>
+                      <span className='text-sm font-medium'>
+                        Database Status
+                      </span>
                       <div className='flex items-center space-x-2'>
                         <IconCheck className='h-4 w-4 text-green-500' />
                         <span className='text-sm'>Healthy</span>

@@ -20,7 +20,9 @@ api.interceptors.request.use(
     }
 
     // Add tenant information
-    const tenantData = JSON.parse(localStorage.getItem('current_tenant') || '{}')
+    const tenantData = JSON.parse(
+      localStorage.getItem('current_tenant') || '{}'
+    )
     if (tenantData.id) {
       config.headers['X-Tenant-ID'] = tenantData.id
     }
@@ -44,7 +46,7 @@ api.interceptors.response.use(
       // Clear auth data
       localStorage.removeItem('auth_token')
       localStorage.removeItem('user')
-      
+
       // Redirect to login if not already there
       if (!window.location.pathname.includes('sign-in')) {
         window.location.href = '/sign-in'

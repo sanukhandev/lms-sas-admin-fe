@@ -101,7 +101,7 @@ export class DashboardService {
         userGrowthRate: 12.5,
         courseCompletionRate: 78.3,
         activeUsers: 324,
-        pendingEnrollments: 45
+        pendingEnrollments: 45,
       }
     }
   }
@@ -125,8 +125,8 @@ export class DashboardService {
           user: {
             name: 'Sarah Johnson',
             email: 'sarah.johnson@email.com',
-            avatar: '/avatars/01.png'
-          }
+            avatar: '/avatars/01.png',
+          },
         },
         {
           id: 2,
@@ -136,8 +136,8 @@ export class DashboardService {
           user: {
             name: 'Michael Chen',
             email: 'michael.chen@email.com',
-            avatar: '/avatars/02.png'
-          }
+            avatar: '/avatars/02.png',
+          },
         },
         {
           id: 3,
@@ -147,9 +147,9 @@ export class DashboardService {
           user: {
             name: 'Emma Rodriguez',
             email: 'emma.rodriguez@email.com',
-            avatar: '/avatars/03.png'
-          }
-        }
+            avatar: '/avatars/03.png',
+          },
+        },
       ]
     }
   }
@@ -173,7 +173,7 @@ export class DashboardService {
           completionRate: 57,
           averageProgress: 73,
           instructor: 'Dr. Sarah Wilson',
-          status: 'active'
+          status: 'active',
         },
         {
           id: 2,
@@ -183,7 +183,7 @@ export class DashboardService {
           completionRate: 82,
           averageProgress: 85,
           instructor: 'Prof. Michael Chen',
-          status: 'active'
+          status: 'active',
         },
         {
           id: 3,
@@ -193,8 +193,8 @@ export class DashboardService {
           completionRate: 73,
           averageProgress: 68,
           instructor: 'Emma Rodriguez',
-          status: 'active'
-        }
+          status: 'active',
+        },
       ]
     }
   }
@@ -219,7 +219,7 @@ export class DashboardService {
           completedCourses: 1,
           totalProgress: 65,
           lastActivity: '2 hours ago',
-          role: 'student'
+          role: 'student',
         },
         {
           id: 2,
@@ -230,7 +230,7 @@ export class DashboardService {
           completedCourses: 2,
           totalProgress: 100,
           lastActivity: '4 hours ago',
-          role: 'student'
+          role: 'student',
         },
         {
           id: 3,
@@ -241,8 +241,8 @@ export class DashboardService {
           completedCourses: 3,
           totalProgress: 85,
           lastActivity: '1 day ago',
-          role: 'tutor'
-        }
+          role: 'tutor',
+        },
       ]
     }
   }
@@ -263,8 +263,8 @@ export class DashboardService {
         pendingPayments: 8,
         successfulPayments: 1247,
         failedPayments: 23,
-        averageOrderValue: 189.50,
-        revenueGrowth: 15.3
+        averageOrderValue: 189.5,
+        revenueGrowth: 15.3,
       }
     }
   }
@@ -289,19 +289,19 @@ export class DashboardService {
           certificates: true,
           payments: true,
           notifications: true,
-          analytics: true
+          analytics: true,
         },
         branding: {
           logo: '/logos/acme-logo.png',
           primaryColor: '#3b82f6',
           secondaryColor: '#64748b',
-          companyName: 'Acme University'
+          companyName: 'Acme University',
         },
         subscription: {
           plan: 'pro',
           status: 'active',
-          expiresAt: '2025-12-31'
-        }
+          expiresAt: '2025-12-31',
+        },
       }
     }
   }
