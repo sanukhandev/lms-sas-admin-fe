@@ -59,7 +59,7 @@ export interface SecuritySettings {
 }
 
 export interface ThemeSettings {
-  mode: 'light' | 'dark' | 'auto'
+  mode: 'light' | 'dark' | 'system'
   colors: Record<string, string>
   typography: {
     font_family: string

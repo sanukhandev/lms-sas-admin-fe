@@ -13,23 +13,29 @@ const TenantThemeContext = createContext<{
   setThemeMode: (mode: 'light' | 'dark' | 'system') => void
 } | null>(null)
 
-export function TenantThemeProvider({ children, tenantId }: TenantThemeProviderProps) {
+export function TenantThemeProvider({
+  children,
+  tenantId,
+}: TenantThemeProviderProps) {
   const {
     currentTenant,
     themeMode,
     setTenant,
     setThemeMode,
     initializeTenantThemes,
-    applyTenantTheme
+    applyTenantTheme,
   } = useTenantThemeStore()
 
   useEffect(() => {
     // Initialize tenant themes on mount
     initializeTenantThemes()
-    
+
     // If tenantId is provided, set it as current
     if (tenantId && tenantId !== currentTenant) {
       setTenant(tenantId)
+    } else if (!tenantId && !currentTenant) {
+      // If no tenant ID provided, use default
+      setTenant('default')
     }
   }, [tenantId, currentTenant, initializeTenantThemes, setTenant])
 
@@ -37,6 +43,11 @@ export function TenantThemeProvider({ children, tenantId }: TenantThemeProviderP
     // Apply theme when current tenant or theme mode changes
     if (currentTenant) {
       applyTenantTheme(currentTenant, themeMode)
+    }
+
+    // Cleanup function to remove tenant theme marker when component unmounts
+    return () => {
+      document.documentElement.removeAttribute('data-tenant-theme')
     }
   }, [currentTenant, themeMode, applyTenantTheme])
 
@@ -61,7 +72,7 @@ export function TenantThemeProvider({ children, tenantId }: TenantThemeProviderP
     tenantId: currentTenant,
     switchTenant,
     themeMode,
-    setThemeMode
+    setThemeMode,
   }
 
   return (

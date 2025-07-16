@@ -35,10 +35,16 @@ export function ThemeProvider({
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
 
     const applyTheme = (theme: Theme) => {
-      root.classList.remove('light', 'dark') // Remove existing theme classes
+      // Check if tenant theme is active - if so, don't override it
+      const hasTenantTheme = root.hasAttribute('data-tenant-theme')
+      if (hasTenantTheme) {
+        return
+      }
+
+      root.classList.remove('light', 'dark')
       const systemTheme = mediaQuery.matches ? 'dark' : 'light'
       const effectiveTheme = theme === 'system' ? systemTheme : theme
-      root.classList.add(effectiveTheme) // Add the new theme class
+      root.classList.add(effectiveTheme)
     }
 
     const handleChange = () => {
@@ -47,7 +53,10 @@ export function ThemeProvider({
       }
     }
 
-    applyTheme(theme)
+    // Only apply theme if there's no tenant theme active
+    if (!root.hasAttribute('data-tenant-theme')) {
+      applyTheme(theme)
+    }
 
     mediaQuery.addEventListener('change', handleChange)
 

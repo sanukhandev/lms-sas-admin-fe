@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { IconCheck, IconMoon, IconSun } from '@tabler/icons-react'
 import { cn } from '@/lib/utils'
+import { useTenantTheme } from '@/context/tenant-theme-context'
 import { useTheme } from '@/context/theme-context'
 import { Button } from '@/components/ui/button'
 import {
@@ -13,13 +14,27 @@ import {
 export function ThemeSwitch() {
   const { theme, setTheme } = useTheme()
 
+  // Try to use tenant theme if available, fallback to global theme
+  let currentTheme = theme
+  let setCurrentTheme = setTheme
+
+  try {
+    const tenantTheme = useTenantTheme()
+    if (tenantTheme) {
+      currentTheme = tenantTheme.themeMode
+      setCurrentTheme = tenantTheme.setThemeMode
+    }
+  } catch {
+    // If tenant theme context is not available, use global theme
+  }
+
   /* Update theme-color meta tag
    * when theme is updated */
   useEffect(() => {
-    const themeColor = theme === 'dark' ? '#020817' : '#fff'
+    const themeColor = currentTheme === 'dark' ? '#020817' : '#fff'
     const metaThemeColor = document.querySelector("meta[name='theme-color']")
     if (metaThemeColor) metaThemeColor.setAttribute('content', themeColor)
-  }, [theme])
+  }, [currentTheme])
 
   return (
     <DropdownMenu modal={false}>
@@ -31,25 +46,25 @@ export function ThemeSwitch() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align='end'>
-        <DropdownMenuItem onClick={() => setTheme('light')}>
+        <DropdownMenuItem onClick={() => setCurrentTheme('light')}>
           Light{' '}
           <IconCheck
             size={14}
-            className={cn('ml-auto', theme !== 'light' && 'hidden')}
+            className={cn('ml-auto', currentTheme !== 'light' && 'hidden')}
           />
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme('dark')}>
+        <DropdownMenuItem onClick={() => setCurrentTheme('dark')}>
           Dark
           <IconCheck
             size={14}
-            className={cn('ml-auto', theme !== 'dark' && 'hidden')}
+            className={cn('ml-auto', currentTheme !== 'dark' && 'hidden')}
           />
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme('system')}>
+        <DropdownMenuItem onClick={() => setCurrentTheme('system')}>
           System
           <IconCheck
             size={14}
-            className={cn('ml-auto', theme !== 'system' && 'hidden')}
+            className={cn('ml-auto', currentTheme !== 'system' && 'hidden')}
           />
         </DropdownMenuItem>
       </DropdownMenuContent>

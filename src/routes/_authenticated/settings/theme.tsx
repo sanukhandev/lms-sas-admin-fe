@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -9,6 +9,7 @@ import {
 } from '@/services/tenant-settings'
 import type { ThemeSettings } from '@/services/tenant-settings'
 import { toast } from 'sonner'
+import { useTenantTheme } from '@/context/tenant-theme-context'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -27,9 +28,10 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { TestThemeSwitch } from '@/components/test-theme-switch'
 
 const themeSettingsSchema = z.object({
-  mode: z.enum(['light', 'dark', 'auto']),
+  mode: z.enum(['light', 'dark', 'system']),
   colors: z.object({
     primary: z.string(),
     secondary: z.string(),
@@ -127,6 +129,18 @@ function ThemeSettings() {
   const [isLoading, setIsLoading] = useState(false)
   const [isLoadingData, setIsLoadingData] = useState(true)
 
+  // Try to use tenant theme with fallback
+  let themeMode = 'light'
+  let setThemeMode = useCallback((_mode: 'light' | 'dark' | 'system') => {}, [])
+
+  try {
+    const tenantTheme = useTenantTheme()
+    themeMode = tenantTheme.themeMode
+    setThemeMode = tenantTheme.setThemeMode
+  } catch {
+    // If tenant theme context is not available, use default
+  }
+
   const {
     handleSubmit,
     formState: { errors },
@@ -135,7 +149,7 @@ function ThemeSettings() {
   } = useForm<ThemeSettingsForm>({
     resolver: zodResolver(themeSettingsSchema),
     defaultValues: {
-      mode: 'light',
+      mode: (themeMode as 'light' | 'dark' | 'system') || 'light',
       colors: {
         primary: '#3b82f6',
         secondary: '#64748b',
@@ -287,7 +301,10 @@ function ThemeSettings() {
         const themeData = response.data
 
         // Set form values from API response
-        if (themeData.mode) setValue('mode', themeData.mode)
+        if (themeData.mode) {
+          setValue('mode', themeData.mode)
+          setThemeMode(themeData.mode) // Apply theme immediately
+        }
         if (themeData.colors) {
           Object.entries(themeData.colors).forEach(([key, value]) => {
             if (typeof value === 'string') {
@@ -362,9 +379,8 @@ function ThemeSettings() {
         setIsLoadingData(false)
       }
     }
-
     loadSettings()
-  }, [setValue])
+  }, [setValue, setThemeMode])
 
   const onSubmit = async (data: ThemeSettingsForm) => {
     setIsLoading(true)
@@ -380,6 +396,7 @@ function ThemeSettings() {
       }
 
       await updateThemeSettings(transformedData)
+      setThemeMode(data.mode) // Apply theme after successful save
       toast.success('Theme settings updated successfully!')
     } catch (_error) {
       toast.error('Failed to update theme settings')
@@ -390,6 +407,7 @@ function ThemeSettings() {
 
   const resetToDefaults = () => {
     setValue('mode', 'light')
+    setThemeMode('light') // Apply theme immediately
     // Reset colors, typography, etc. to defaults
     toast.success('Theme reset to defaults')
   }
@@ -437,10 +455,15 @@ function ThemeSettings() {
               Customize the visual appearance of your tenant
             </p>
           </div>
-          <Button variant='outline' onClick={resetToDefaults}>
-            Reset to Defaults
-          </Button>
+          <div className='flex gap-2'>
+            <Button variant='outline' onClick={resetToDefaults}>
+              Reset to Defaults
+            </Button>
+          </div>
         </div>
+
+        {/* Test Theme Switch Component */}
+        <TestThemeSwitch />
 
         <form onSubmit={handleSubmit(onSubmit)} className='space-y-6'>
           <Card>
@@ -455,9 +478,10 @@ function ThemeSettings() {
                 <Label htmlFor='mode'>Theme Mode</Label>
                 <Select
                   value={watch('mode')}
-                  onValueChange={(value: 'light' | 'dark' | 'auto') =>
+                  onValueChange={(value: 'light' | 'dark' | 'system') => {
                     setValue('mode', value)
-                  }
+                    setThemeMode(value) // Apply theme immediately
+                  }}
                 >
                   <SelectTrigger>
                     <SelectValue />
@@ -465,7 +489,7 @@ function ThemeSettings() {
                   <SelectContent>
                     <SelectItem value='light'>Light</SelectItem>
                     <SelectItem value='dark'>Dark</SelectItem>
-                    <SelectItem value='auto'>Auto (System)</SelectItem>
+                    <SelectItem value='system'>System</SelectItem>
                   </SelectContent>
                 </Select>
                 {errors.mode && (
