@@ -315,19 +315,23 @@ export const sidebarData: SidebarData = {
           items: [
             {
               title: 'General',
-              url: '/settings',
+              url: '/settings/general',
             },
             {
               title: 'Branding',
-              url: '/settings',
+              url: '/settings/branding',
             },
             {
               title: 'Features',
-              url: '/settings',
+              url: '/settings/features',
             },
             {
               title: 'Security',
-              url: '/settings',
+              url: '/settings/security',
+            },
+            {
+              title: 'Theme',
+              url: '/settings/theme',
             },
           ],
         },
