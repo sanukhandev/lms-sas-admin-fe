@@ -13,8 +13,10 @@ import { TopNav } from '@/components/layout/top-nav'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
+import { CoursePerformanceTable } from './components/course-performance-table'
 import { Overview } from './components/overview'
 import { RecentSales } from './components/recent-sales'
+import { StudentActivityFeed } from './components/student-activity-feed'
 
 export default function Dashboard() {
   return (
@@ -32,9 +34,10 @@ export default function Dashboard() {
       {/* ===== Main ===== */}
       <Main>
         <div className='mb-2 flex items-center justify-between space-y-2'>
-          <h1 className='text-2xl font-bold tracking-tight'>Dashboard</h1>
+          <h1 className='text-2xl font-bold tracking-tight'>LMS Dashboard</h1>
           <div className='flex items-center space-x-2'>
-            <Button>Download</Button>
+            <Button variant='outline'>Export Report</Button>
+            <Button>Create Course</Button>
           </div>
         </div>
         <Tabs
@@ -61,32 +64,7 @@ export default function Dashboard() {
               <Card>
                 <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
                   <CardTitle className='text-sm font-medium'>
-                    Total Revenue
-                  </CardTitle>
-                  <svg
-                    xmlns='http://www.w3.org/2000/svg'
-                    viewBox='0 0 24 24'
-                    fill='none'
-                    stroke='currentColor'
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                    strokeWidth='2'
-                    className='text-muted-foreground h-4 w-4'
-                  >
-                    <path d='M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6' />
-                  </svg>
-                </CardHeader>
-                <CardContent>
-                  <div className='text-2xl font-bold'>$45,231.89</div>
-                  <p className='text-muted-foreground text-xs'>
-                    +20.1% from last month
-                  </p>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-                  <CardTitle className='text-sm font-medium'>
-                    Subscriptions
+                    Total Students
                   </CardTitle>
                   <svg
                     xmlns='http://www.w3.org/2000/svg'
@@ -104,40 +82,16 @@ export default function Dashboard() {
                   </svg>
                 </CardHeader>
                 <CardContent>
-                  <div className='text-2xl font-bold'>+2350</div>
+                  <div className='text-2xl font-bold'>2,847</div>
                   <p className='text-muted-foreground text-xs'>
-                    +180.1% from last month
-                  </p>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-                  <CardTitle className='text-sm font-medium'>Sales</CardTitle>
-                  <svg
-                    xmlns='http://www.w3.org/2000/svg'
-                    viewBox='0 0 24 24'
-                    fill='none'
-                    stroke='currentColor'
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                    strokeWidth='2'
-                    className='text-muted-foreground h-4 w-4'
-                  >
-                    <rect width='20' height='14' x='2' y='5' rx='2' />
-                    <path d='M2 10h20' />
-                  </svg>
-                </CardHeader>
-                <CardContent>
-                  <div className='text-2xl font-bold'>+12,234</div>
-                  <p className='text-muted-foreground text-xs'>
-                    +19% from last month
+                    +12.5% from last month
                   </p>
                 </CardContent>
               </Card>
               <Card>
                 <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
                   <CardTitle className='text-sm font-medium'>
-                    Active Now
+                    Active Courses
                   </CardTitle>
                   <svg
                     xmlns='http://www.w3.org/2000/svg'
@@ -149,13 +103,71 @@ export default function Dashboard() {
                     strokeWidth='2'
                     className='text-muted-foreground h-4 w-4'
                   >
-                    <path d='M22 12h-4l-3 9L9 3l-3 9H2' />
+                    <rect width='20' height='14' x='2' y='3' rx='2' ry='2' />
+                    <line x1='8' y1='21' x2='16' y2='21' />
+                    <line x1='12' y1='17' x2='12' y2='21' />
                   </svg>
                 </CardHeader>
                 <CardContent>
-                  <div className='text-2xl font-bold'>+573</div>
+                  <div className='text-2xl font-bold'>156</div>
                   <p className='text-muted-foreground text-xs'>
-                    +201 since last hour
+                    +8 new this month
+                  </p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+                  <CardTitle className='text-sm font-medium'>
+                    Course Completions
+                  </CardTitle>
+                  <svg
+                    xmlns='http://www.w3.org/2000/svg'
+                    viewBox='0 0 24 24'
+                    fill='none'
+                    stroke='currentColor'
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
+                    strokeWidth='2'
+                    className='text-muted-foreground h-4 w-4'
+                  >
+                    <path d='M9 11l3 3L22 4' />
+                    <path d='M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9c1.73 0 3.35.49 4.72 1.34' />
+                  </svg>
+                </CardHeader>
+                <CardContent>
+                  <div className='text-2xl font-bold'>1,234</div>
+                  <p className='text-muted-foreground text-xs'>
+                    +23% from last month
+                  </p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+                  <CardTitle className='text-sm font-medium'>
+                    Instructors Online
+                  </CardTitle>
+                  <svg
+                    xmlns='http://www.w3.org/2000/svg'
+                    viewBox='0 0 24 24'
+                    fill='none'
+                    stroke='currentColor'
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
+                    strokeWidth='2'
+                    className='text-muted-foreground h-4 w-4'
+                  >
+                    <circle cx='12' cy='12' r='10' />
+                    <circle cx='12' cy='12' r='4' />
+                    <path d='M4.93 4.93l4.24 4.24' />
+                    <path d='M14.83 14.83l4.24 4.24' />
+                    <path d='M14.83 9.17l4.24-4.24' />
+                    <path d='M4.93 19.07l4.24-4.24' />
+                  </svg>
+                </CardHeader>
+                <CardContent>
+                  <div className='text-2xl font-bold'>47</div>
+                  <p className='text-muted-foreground text-xs'>
+                    +3 since last hour
                   </p>
                 </CardContent>
               </Card>
@@ -163,7 +175,11 @@ export default function Dashboard() {
             <div className='grid grid-cols-1 gap-4 lg:grid-cols-7'>
               <Card className='col-span-1 lg:col-span-4'>
                 <CardHeader>
-                  <CardTitle>Overview</CardTitle>
+                  <CardTitle>Course Enrollments & Completions</CardTitle>
+                  <CardDescription>
+                    Monthly overview of student enrollments and course
+                    completions
+                  </CardDescription>
                 </CardHeader>
                 <CardContent className='pl-2'>
                   <Overview />
@@ -171,13 +187,39 @@ export default function Dashboard() {
               </Card>
               <Card className='col-span-1 lg:col-span-3'>
                 <CardHeader>
-                  <CardTitle>Recent Sales</CardTitle>
+                  <CardTitle>Recent Enrollments</CardTitle>
                   <CardDescription>
-                    You made 265 sales this month.
+                    Latest students who joined courses today
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <RecentSales />
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Second Row - Course Performance and Student Activity */}
+            <div className='grid grid-cols-1 gap-4 lg:grid-cols-7'>
+              <Card className='col-span-1 lg:col-span-4'>
+                <CardHeader>
+                  <CardTitle>Course Performance</CardTitle>
+                  <CardDescription>
+                    Overview of all courses and their performance metrics
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <CoursePerformanceTable />
+                </CardContent>
+              </Card>
+              <Card className='col-span-1 lg:col-span-3'>
+                <CardHeader>
+                  <CardTitle>Student Activity</CardTitle>
+                  <CardDescription>
+                    Recent student activities and engagement
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <StudentActivityFeed />
                 </CardContent>
               </Card>
             </div>
@@ -196,20 +238,20 @@ const topNav = [
     disabled: false,
   },
   {
-    title: 'Customers',
-    href: 'dashboard/customers',
+    title: 'Students',
+    href: 'dashboard/students',
     isActive: false,
     disabled: true,
   },
   {
-    title: 'Products',
-    href: 'dashboard/products',
+    title: 'Courses',
+    href: 'dashboard/courses',
     isActive: false,
     disabled: true,
   },
   {
-    title: 'Settings',
-    href: 'dashboard/settings',
+    title: 'Analytics',
+    href: 'dashboard/analytics',
     isActive: false,
     disabled: true,
   },

@@ -1,60 +1,80 @@
-import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from 'recharts'
+import {
+  Bar,
+  BarChart,
+  ResponsiveContainer,
+  XAxis,
+  YAxis,
+  Tooltip,
+} from 'recharts'
 
-const data = [
+// LMS-specific data for student enrollments over time
+const enrollmentData = [
   {
     name: 'Jan',
-    total: Math.floor(Math.random() * 5000) + 1000,
+    enrollments: 245,
+    completions: 189,
   },
   {
     name: 'Feb',
-    total: Math.floor(Math.random() * 5000) + 1000,
+    enrollments: 312,
+    completions: 267,
   },
   {
     name: 'Mar',
-    total: Math.floor(Math.random() * 5000) + 1000,
+    enrollments: 378,
+    completions: 298,
   },
   {
     name: 'Apr',
-    total: Math.floor(Math.random() * 5000) + 1000,
+    enrollments: 456,
+    completions: 345,
   },
   {
     name: 'May',
-    total: Math.floor(Math.random() * 5000) + 1000,
+    enrollments: 523,
+    completions: 412,
   },
   {
     name: 'Jun',
-    total: Math.floor(Math.random() * 5000) + 1000,
+    enrollments: 634,
+    completions: 498,
   },
   {
     name: 'Jul',
-    total: Math.floor(Math.random() * 5000) + 1000,
+    enrollments: 712,
+    completions: 578,
   },
   {
     name: 'Aug',
-    total: Math.floor(Math.random() * 5000) + 1000,
+    enrollments: 789,
+    completions: 634,
   },
   {
     name: 'Sep',
-    total: Math.floor(Math.random() * 5000) + 1000,
+    enrollments: 856,
+    completions: 712,
   },
   {
     name: 'Oct',
-    total: Math.floor(Math.random() * 5000) + 1000,
+    enrollments: 923,
+    completions: 789,
   },
   {
     name: 'Nov',
-    total: Math.floor(Math.random() * 5000) + 1000,
+    enrollments: 1045,
+    completions: 856,
   },
   {
     name: 'Dec',
-    total: Math.floor(Math.random() * 5000) + 1000,
+    enrollments: 1156,
+    completions: 923,
   },
 ]
 
 export function Overview() {
   return (
     <ResponsiveContainer width='100%' height={350}>
-      <BarChart data={data}>
+      <BarChart data={enrollmentData}>
         <XAxis
           dataKey='name'
           stroke='#888888'
@@ -67,13 +87,37 @@ export function Overview() {
           fontSize={12}
           tickLine={false}
           axisLine={false}
-          tickFormatter={(value) => `$${value}`}
+          tickFormatter={(value) => `${value}`}
+        />
+        <Tooltip
+          content={({ active, payload, label }) => {
+            if (active && payload && payload.length) {
+              return (
+                <div className='bg-background rounded-lg border p-2 shadow-sm'>
+                  <p className='font-medium'>{label}</p>
+                  <p className='text-sm text-blue-600'>
+                    Enrollments: {payload[0]?.value}
+                  </p>
+                  <p className='text-sm text-green-600'>
+                    Completions: {payload[1]?.value}
+                  </p>
+                </div>
+              )
+            }
+            return null
+          }}
         />
         <Bar
-          dataKey='total'
+          dataKey='enrollments'
           fill='currentColor'
           radius={[4, 4, 0, 0]}
           className='fill-primary'
+        />
+        <Bar
+          dataKey='completions'
+          fill='currentColor'
+          radius={[4, 4, 0, 0]}
+          className='fill-green-500'
         />
       </BarChart>
     </ResponsiveContainer>
