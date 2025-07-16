@@ -1,6 +1,10 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import { TenantConfig, TenantDetectionService, TenantDetectionResult } from '../services/tenant-detection'
+import {
+  TenantConfig,
+  TenantDetectionService,
+  TenantDetectionResult,
+} from '../services/tenant-detection'
 
 interface TenantState {
   currentTenant: TenantConfig | null
@@ -36,28 +40,31 @@ export const useTenantStore = create<TenantStore>()(
       initializeTenant: async () => {
         console.log('🏪 [TenantStore] initializeTenant called')
         set({ isLoading: true, error: null })
-        
+
         try {
-          console.log('🏪 [TenantStore] Calling TenantDetectionService.initializeTenant()')
-          const result: TenantDetectionResult = await TenantDetectionService.initializeTenant()
-          
+          console.log(
+            '🏪 [TenantStore] Calling TenantDetectionService.initializeTenant()'
+          )
+          const result: TenantDetectionResult =
+            await TenantDetectionService.initializeTenant()
+
           console.log('🏪 [TenantStore] TenantDetectionService result:', result)
-          
+
           if (result.isValid && result.tenant) {
             console.log('🏪 [TenantStore] Setting valid tenant in store:', {
               tenantName: result.tenant.name,
               tenantId: result.tenant.id,
-              detectionMethod: result.detectionMethod
+              detectionMethod: result.detectionMethod,
             })
-            
+
             set({
               currentTenant: result.tenant,
               detectionMethod: result.detectionMethod,
               isLoading: false,
               error: null,
-              isInitialized: true
+              isInitialized: true,
             })
-            
+
             // Apply branding
             console.log('🏪 [TenantStore] Applying tenant branding')
             TenantDetectionService.applyTenantBranding(result.tenant)
@@ -68,31 +75,34 @@ export const useTenantStore = create<TenantStore>()(
               detectionMethod: result.detectionMethod,
               isLoading: false,
               error: result.error || 'Failed to initialize tenant',
-              isInitialized: true
+              isInitialized: true,
             })
           }
         } catch (error: any) {
-          console.error('🏪 [TenantStore] Error during tenant initialization:', error)
+          console.error(
+            '🏪 [TenantStore] Error during tenant initialization:',
+            error
+          )
           set({
             currentTenant: null,
             detectionMethod: null,
             isLoading: false,
             error: error.message || 'Failed to initialize tenant',
-            isInitialized: true
+            isInitialized: true,
           })
         }
       },
 
       setTenant: (tenant: TenantConfig) => {
-        set({ 
+        set({
           currentTenant: tenant,
           error: null,
-          isInitialized: true
+          isInitialized: true,
         })
-        
+
         // Store in localStorage
         localStorage.setItem('current_tenant', JSON.stringify(tenant))
-        
+
         // Apply branding
         TenantDetectionService.applyTenantBranding(tenant)
       },
@@ -102,9 +112,9 @@ export const useTenantStore = create<TenantStore>()(
           currentTenant: null,
           error: null,
           detectionMethod: null,
-          isInitialized: false
+          isInitialized: false,
         })
-        
+
         // Clear localStorage
         TenantDetectionService.clearTenantData()
       },
@@ -120,29 +130,32 @@ export const useTenantStore = create<TenantStore>()(
         const { currentTenant } = get()
         if (currentTenant) {
           set({ isLoading: true, error: null })
-          
+
           try {
-            const updatedTenant = await TenantDetectionService.fetchTenantConfig(currentTenant.domain)
-            
+            const updatedTenant =
+              await TenantDetectionService.fetchTenantConfig(
+                currentTenant.domain
+              )
+
             if (updatedTenant) {
               set({
                 currentTenant: updatedTenant,
                 isLoading: false,
-                error: null
+                error: null,
               })
-              
+
               // Apply updated branding
               TenantDetectionService.applyTenantBranding(updatedTenant)
             } else {
               set({
                 isLoading: false,
-                error: 'Failed to refresh tenant configuration'
+                error: 'Failed to refresh tenant configuration',
               })
             }
           } catch (error: any) {
             set({
               isLoading: false,
-              error: error.message || 'Failed to refresh tenant'
+              error: error.message || 'Failed to refresh tenant',
             })
           }
         }
@@ -156,8 +169,28 @@ export const useTenantStore = create<TenantStore>()(
       partialize: (state) => ({
         currentTenant: state.currentTenant,
         detectionMethod: state.detectionMethod,
-        isInitialized: state.isInitialized
+        isInitialized: state.isInitialized,
       }),
+      onRehydrateStorage: () => {
+        return (state, error) => {
+          if (error) {
+            console.error(
+              '🏪 [TenantStore] Error rehydrating tenant store:',
+              error
+            )
+            return
+          }
+
+          // Reapply theme immediately after hydration
+          if (state?.currentTenant) {
+            console.log(
+              '🏪 [TenantStore] Reapplying theme after hydration for tenant:',
+              state.currentTenant.name
+            )
+            TenantDetectionService.applyTenantBranding(state.currentTenant)
+          }
+        }
+      },
     }
   )
 )
@@ -175,6 +208,6 @@ export const useTenant = () => {
     setTenant: store.setTenant,
     clearTenant: store.clearTenant,
     applyBranding: store.applyBranding,
-    refreshTenant: store.refreshTenant
+    refreshTenant: store.refreshTenant,
   }
 }

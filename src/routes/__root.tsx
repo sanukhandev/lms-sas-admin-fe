@@ -1,28 +1,45 @@
 import { QueryClient } from '@tanstack/react-query'
-import { createRootRouteWithContext, Outlet, redirect } from '@tanstack/react-router'
+import {
+  createRootRouteWithContext,
+  Outlet,
+  redirect,
+} from '@tanstack/react-router'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
-import { Toaster } from '@/components/ui/sonner'
-import { NavigationProgress } from '@/components/navigation-progress'
-import GeneralError from '@/features/errors/general-error'
-import NotFoundError from '@/features/errors/not-found-error'
 import { AuthProvider } from '@/context/auth-context'
 import { TenantProvider } from '@/context/tenant-context'
+import { Toaster } from '@/components/ui/sonner'
+import { NavigationProgress } from '@/components/navigation-progress'
 import { TenantLoader } from '@/components/tenant-loader'
+import GeneralError from '@/features/errors/general-error'
+import NotFoundError from '@/features/errors/not-found-error'
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient
 }>()({
   beforeLoad: async () => {
-    // Redirect to sign-in by default, preserving query parameters
+    // Redirect to appropriate page based on auth state
     if (window.location.pathname === '/') {
       const searchParams = new URLSearchParams(window.location.search)
       const tenantParam = searchParams.get('tenant')
-      
-      throw redirect({
-        to: '/sign-in',
-        search: tenantParam ? { tenant: tenantParam } : undefined,
-      })
+
+      // Check if user is authenticated
+      const token = localStorage.getItem('auth_token')
+      const user = localStorage.getItem('user')
+
+      if (token && user) {
+        // User is authenticated, redirect to dashboard
+        throw redirect({
+          to: '/home',
+          search: tenantParam ? { tenant: tenantParam } : undefined,
+        })
+      } else {
+        // User is not authenticated, redirect to sign-in
+        throw redirect({
+          to: '/sign-in',
+          search: tenantParam ? { tenant: tenantParam } : undefined,
+        })
+      }
     }
   },
   component: () => {

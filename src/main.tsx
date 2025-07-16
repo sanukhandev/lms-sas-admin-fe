@@ -11,12 +11,15 @@ import { toast } from 'sonner'
 import { useAuthStore } from '@/stores/authStore'
 import { handleServerError } from '@/utils/handle-server-error'
 import { FontProvider } from './context/font-context'
-import { ThemeProvider } from './context/theme-context'
 import { TenantThemeProvider } from './context/tenant-theme-context'
-import { TenantDetectionService } from './services/tenant-detection'
+import { ThemeProvider } from './context/theme-context'
 import './index.css'
 // Generated Routes
 import { routeTree } from './routeTree.gen'
+import { TenantDetectionService } from './services/tenant-detection'
+
+// Apply stored theme immediately to prevent flickering
+TenantDetectionService.applyStoredTheme()
 
 // Detect tenant from URL
 const detectedTenant = TenantDetectionService.getTenantDomainFromUrl()

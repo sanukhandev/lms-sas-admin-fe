@@ -511,6 +511,23 @@ export class TenantDetectionService {
   }
 
   /**
+   * Apply tenant theme immediately from localStorage if available
+   * This prevents theme flickering on page reload
+   */
+  static applyStoredTheme(): void {
+    const storedTenant = this.getCurrentTenant()
+    if (storedTenant) {
+      console.log('🎨 [TenantDetection] Applying stored theme on page load', {
+        tenantName: storedTenant.name,
+        theme: storedTenant.settings.theme,
+      })
+      this.applyTenantBranding(storedTenant)
+    } else {
+      console.log('🎨 [TenantDetection] No stored tenant theme found')
+    }
+  }
+
+  /**
    * Get current tenant from localStorage
    */
   static getCurrentTenant(): TenantConfig | null {
