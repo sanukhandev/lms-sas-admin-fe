@@ -1,7 +1,14 @@
-import { useAuthStore } from '@/stores/auth-store'
-import { BadgeCheck, Bell, ChevronsUpDown, CreditCard, LogOut, Sparkles } from 'lucide-react'
 import { Link, useNavigate } from '@tanstack/react-router'
-
+import {
+  BadgeCheck,
+  Bell,
+  ChevronsUpDown,
+  CreditCard,
+  LogOut,
+  Sparkles,
+} from 'lucide-react'
+import { useAuthStore } from '@/stores/auth-store'
+import { useTenantStore } from '@/stores/tenant-store'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import {
   DropdownMenu,
@@ -22,6 +29,7 @@ import {
 export function NavUser() {
   const { isMobile } = useSidebar()
   const { user, logout } = useAuthStore()
+  const { currentTenant } = useTenantStore()
   const navigate = useNavigate()
 
   const handleLogout = async () => {
@@ -33,7 +41,13 @@ export function NavUser() {
   const displayUser = user || {
     name: 'shadcn',
     email: 'm@example.com',
+    role: 'Guest',
   }
+
+  const displayRole = user?.role
+    ? user.role.charAt(0).toUpperCase() + user.role.slice(1)
+    : 'Guest'
+  const tenantName = currentTenant?.name || 'Default'
 
   return (
     <SidebarMenu>
@@ -54,8 +68,12 @@ export function NavUser() {
                 </AvatarFallback>
               </Avatar>
               <div className='grid flex-1 text-left text-sm leading-tight'>
-                <span className='truncate font-semibold'>{displayUser.name}</span>
-                <span className='truncate text-xs'>{displayUser.email}</span>
+                <span className='truncate font-semibold'>
+                  {displayUser.name}
+                </span>
+                <span className='truncate text-xs'>
+                  {displayRole} • {tenantName}
+                </span>
               </div>
               <ChevronsUpDown className='ml-auto size-4' />
             </SidebarMenuButton>
@@ -78,7 +96,9 @@ export function NavUser() {
                   </AvatarFallback>
                 </Avatar>
                 <div className='grid flex-1 text-left text-sm leading-tight'>
-                  <span className='truncate font-semibold'>{displayUser.name}</span>
+                  <span className='truncate font-semibold'>
+                    {displayUser.name}
+                  </span>
                   <span className='truncate text-xs'>{displayUser.email}</span>
                 </div>
               </div>
