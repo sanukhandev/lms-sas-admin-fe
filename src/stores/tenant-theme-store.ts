@@ -103,12 +103,11 @@ export const useTenantThemeStore = create<TenantThemeStore>()(
       // Load tenant theme from API
       loadTenantThemeFromAPI: async (tenantId: string) => {
         set({ isLoading: true })
-        try {
-          // Use mock service for development
-          const isDev = import.meta.env.DEV
-          const theme = isDev
-            ? get().tenantThemes[tenantId] || defaultTenantTheme
-            : await TenantThemeAPIService.getTenantTheme(tenantId)
+        try {        // Use real API if configured or in production
+        const useRealApi = import.meta.env.VITE_USE_REAL_API === 'true' || !import.meta.env.DEV
+        const theme = useRealApi
+          ? await TenantThemeAPIService.getTenantTheme(tenantId)
+          : get().tenantThemes[tenantId] || defaultTenantTheme
 
           set((state) => ({
             tenantThemes: {
@@ -134,14 +133,13 @@ export const useTenantThemeStore = create<TenantThemeStore>()(
       // Update color palette via API
       updateColorPaletteAPI: async (request: ColorPaletteUpdateRequest) => {
         set({ isSaving: true })
-        try {
-          // Use mock service for development
-          const isDev = process.env.NODE_ENV === 'development'
-          if (isDev) {
-            await MockTenantThemeAPIService.updateColorPalette(request)
-          } else {
-            await TenantThemeAPIService.updateColorPalette(request)
-          }
+        try {        // Use real API if configured or in production
+        const useRealApi = import.meta.env.VITE_USE_REAL_API === 'true' || !import.meta.env.DEV
+        if (useRealApi) {
+          await TenantThemeAPIService.updateColorPalette(request)
+        } else {
+          await MockTenantThemeAPIService.updateColorPalette(request)
+        }
 
           // Update local state
           const currentTheme = get().tenantThemes[request.tenantId]
@@ -174,12 +172,11 @@ export const useTenantThemeStore = create<TenantThemeStore>()(
       // Load available color palettes
       loadColorPalettes: async () => {
         set({ isLoading: true })
-        try {
-          // Use mock service for development
-          const isDev = process.env.NODE_ENV === 'development'
-          const palettes = isDev
-            ? await MockTenantThemeAPIService.getColorPalettes()
-            : await TenantThemeAPIService.getColorPalettes()
+        try {        // Use real API if configured or in production
+        const useRealApi = import.meta.env.VITE_USE_REAL_API === 'true' || !import.meta.env.DEV
+        const palettes = useRealApi
+          ? await TenantThemeAPIService.getColorPalettes()
+          : await MockTenantThemeAPIService.getColorPalettes()
 
           set({ colorPalettes: palettes, isLoading: false })
         } catch (error) {
@@ -191,12 +188,11 @@ export const useTenantThemeStore = create<TenantThemeStore>()(
       // Generate color palette from primary color
       generateColorPalette: async (primaryColor: string) => {
         set({ isLoading: true })
-        try {
-          // Use mock service for development
-          const isDev = process.env.NODE_ENV === 'development'
-          const palette = isDev
-            ? await MockTenantThemeAPIService.generateColorPalette(primaryColor)
-            : await TenantThemeAPIService.generateColorPalette(primaryColor)
+        try {        // Use real API if configured or in production
+        const useRealApi = import.meta.env.VITE_USE_REAL_API === 'true' || !import.meta.env.DEV
+        const palette = useRealApi
+          ? await TenantThemeAPIService.generateColorPalette(primaryColor)
+          : await MockTenantThemeAPIService.generateColorPalette(primaryColor)
 
           set({ isLoading: false })
           return palette
@@ -210,12 +206,11 @@ export const useTenantThemeStore = create<TenantThemeStore>()(
       // Save theme to API
       saveThemeToAPI: async (tenantId: string, theme: TenantThemeConfig) => {
         set({ isSaving: true })
-        try {
-          // Use mock service for development
-          const isDev = process.env.NODE_ENV === 'development'
-          if (!isDev) {
-            await TenantThemeAPIService.updateTenantTheme(tenantId, theme)
-          }
+        try {        // Use real API if configured or in production
+        const useRealApi = import.meta.env.VITE_USE_REAL_API === 'true' || !import.meta.env.DEV
+        if (useRealApi) {
+          await TenantThemeAPIService.updateTenantTheme(tenantId, theme)
+        }
 
           // Update local state
           get().updateTenantTheme(tenantId, theme)
