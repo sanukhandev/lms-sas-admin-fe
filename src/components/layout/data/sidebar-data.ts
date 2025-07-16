@@ -1,27 +1,47 @@
 import {
-  IconBarrierBlock,
   IconBrowserCheck,
-  IconBug,
-  IconChecklist,
-  IconError404,
-  IconHelp,
   IconLayoutDashboard,
-  IconLock,
-  IconLockAccess,
   IconMessages,
-  IconNotification,
-  IconPackages,
-  IconPalette,
-  IconServerOff,
   IconSettings,
-  IconTool,
-  IconUserCog,
-  IconUserOff,
   IconUsers,
+  IconBook,
+  IconBookmark,
+  IconSchool,
+  IconCertificate,
+  IconUserPlus,
+  IconCreditCard,
+  IconProgress,
+  IconClipboardList,
+  IconChartBar,
+  IconReport,
+  IconFileText,
+  IconCalendar,
+  IconMail,
+  IconBell,
+  IconShield,
+  IconDatabase,
+  IconWorld,
+  IconPackages,
 } from '@tabler/icons-react'
 import { AudioWaveform, Command, GalleryVerticalEnd } from 'lucide-react'
-import { ClerkLogo } from '@/assets/clerk-logo'
 import { type SidebarData } from '../types'
+
+/**
+ * LMS Tenant Admin Sidebar Configuration
+ *
+ * NOTE: URLs are currently set to placeholder values ('/home', '/users', '/settings')
+ * Update these URLs when creating the actual routes:
+ *
+ * Dashboard: /dashboard
+ * Analytics: /analytics
+ * Reports: /reports
+ * Courses: /courses, /courses/categories, /courses/builder, etc.
+ * Users: /users, /users/students, /users/tutors, /users/administrators
+ * Enrollments: /enrollments, /enrollments/onboarding, etc.
+ * Progress: /progress/students, /progress/completion, etc.
+ * Payments: /payments, /payments/subscriptions, etc.
+ * And so on...
+ */
 
 export const sidebarData: SidebarData = {
   user: {
@@ -48,154 +68,278 @@ export const sidebarData: SidebarData = {
   ],
   navGroups: [
     {
-      title: 'General',
+      title: 'Overview',
       items: [
         {
           title: 'Dashboard',
-          url: '/',
+          url: '/home',
           icon: IconLayoutDashboard,
         },
         {
-          title: 'Tasks',
-          url: '/tasks',
-          icon: IconChecklist,
+          title: 'Analytics',
+          url: '/home',
+          icon: IconChartBar,
         },
         {
-          title: 'Apps',
-          url: '/apps',
-          icon: IconPackages,
+          title: 'Reports',
+          url: '/home',
+          icon: IconReport,
+        },
+      ],
+    },
+    {
+      title: 'Course Management',
+      items: [
+        {
+          title: 'Courses',
+          icon: IconBook,
+          items: [
+            {
+              title: 'All Courses',
+              url: '/home',
+            },
+            {
+              title: 'Categories',
+              url: '/home',
+            },
+            {
+              title: 'Course Builder',
+              url: '/home',
+            },
+            {
+              title: 'Curriculum',
+              url: '/home',
+            },
+            {
+              title: 'Assignments',
+              url: '/home',
+            },
+            {
+              title: 'Quizzes',
+              url: '/home',
+            },
+          ],
         },
         {
-          title: 'Chats',
-          url: '/chats',
-          badge: '3',
-          icon: IconMessages,
+          title: 'Content Library',
+          url: '/home',
+          icon: IconBookmark,
         },
+        {
+          title: 'Certificates',
+          url: '/home',
+          icon: IconCertificate,
+        },
+      ],
+    },
+    {
+      title: 'User Management',
+      items: [
         {
           title: 'Users',
-          url: '/users',
+          icon: IconUsers,
+          items: [
+            {
+              title: 'All Users',
+              url: '/users',
+            },
+            {
+              title: 'Students',
+              url: '/users',
+            },
+            {
+              title: 'Tutors',
+              url: '/users',
+            },
+            {
+              title: 'Administrators',
+              url: '/users',
+            },
+          ],
+        },
+        {
+          title: 'Roles & Permissions',
+          url: '/home',
+          icon: IconShield,
+        },
+        {
+          title: 'Bulk Operations',
+          url: '/home',
+          icon: IconUserPlus,
+        },
+      ],
+    },
+    {
+      title: 'Enrollment & Progress',
+      items: [
+        {
+          title: 'Enrollments',
+          icon: IconSchool,
+          items: [
+            {
+              title: 'All Enrollments',
+              url: '/home',
+            },
+            {
+              title: 'Onboarding',
+              url: '/home',
+            },
+            {
+              title: 'Bulk Enrollment',
+              url: '/home',
+            },
+            {
+              title: 'Enrollment Reports',
+              url: '/home',
+            },
+          ],
+        },
+        {
+          title: 'Progress Tracking',
+          icon: IconProgress,
+          items: [
+            {
+              title: 'Student Progress',
+              url: '/home',
+            },
+            {
+              title: 'Course Completion',
+              url: '/home',
+            },
+            {
+              title: 'Learning Paths',
+              url: '/home',
+            },
+            {
+              title: 'Grades & Scores',
+              url: '/home',
+            },
+          ],
+        },
+        {
+          title: 'Assessments',
+          url: '/home',
+          icon: IconClipboardList,
+        },
+      ],
+    },
+    {
+      title: 'Financial Management',
+      items: [
+        {
+          title: 'Payments',
+          icon: IconCreditCard,
+          items: [
+            {
+              title: 'All Payments',
+              url: '/home',
+            },
+            {
+              title: 'Subscriptions',
+              url: '/home',
+            },
+            {
+              title: 'Refunds',
+              url: '/home',
+            },
+            {
+              title: 'Payment Plans',
+              url: '/home',
+            },
+          ],
+        },
+        {
+          title: 'Billing',
+          url: '/home',
+          icon: IconFileText,
+        },
+        {
+          title: 'Discounts & Coupons',
+          url: '/home',
+          icon: IconPackages,
+        },
+      ],
+    },
+    {
+      title: 'Communication',
+      items: [
+        {
+          title: 'Messages',
+          url: '/home',
+          icon: IconMessages,
+          badge: '3',
+        },
+        {
+          title: 'Notifications',
+          url: '/home',
+          icon: IconBell,
+        },
+        {
+          title: 'Announcements',
+          url: '/home',
+          icon: IconMail,
+        },
+        {
+          title: 'Discussion Forums',
+          url: '/home',
           icon: IconUsers,
         },
+      ],
+    },
+    {
+      title: 'Tools & Resources',
+      items: [
         {
-          title: 'Secured by Clerk',
-          icon: ClerkLogo,
-          items: [
-            {
-              title: 'Sign In',
-              url: '/clerk/sign-in',
-            },
-            {
-              title: 'Sign Up',
-              url: '/clerk/sign-up',
-            },
-            {
-              title: 'User Management',
-              url: '/clerk/user-management',
-            },
-          ],
+          title: 'Calendar',
+          url: '/home',
+          icon: IconCalendar,
+        },
+        {
+          title: 'File Manager',
+          url: '/home',
+          icon: IconDatabase,
+        },
+        {
+          title: 'Integrations',
+          url: '/home',
+          icon: IconWorld,
         },
       ],
     },
     {
-      title: 'Pages',
+      title: 'Administration',
       items: [
         {
-          title: 'Auth',
-          icon: IconLockAccess,
-          items: [
-            {
-              title: 'Sign In',
-              url: '/sign-in',
-            },
-            {
-              title: 'Sign In (2 Col)',
-              url: '/sign-in-2',
-            },
-            {
-              title: 'Sign Up',
-              url: '/sign-up',
-            },
-            {
-              title: 'Forgot Password',
-              url: '/forgot-password',
-            },
-            {
-              title: 'OTP',
-              url: '/otp',
-            },
-          ],
-        },
-        {
-          title: 'Errors',
-          icon: IconBug,
-          items: [
-            {
-              title: 'Unauthorized',
-              url: '/401',
-              icon: IconLock,
-            },
-            {
-              title: 'Forbidden',
-              url: '/403',
-              icon: IconUserOff,
-            },
-            {
-              title: 'Not Found',
-              url: '/404',
-              icon: IconError404,
-            },
-            {
-              title: 'Internal Server Error',
-              url: '/500',
-              icon: IconServerOff,
-            },
-            {
-              title: 'Maintenance Error',
-              url: '/503',
-              icon: IconBarrierBlock,
-            },
-          ],
-        },
-      ],
-    },
-    {
-      title: 'Other',
-      items: [
-        {
-          title: 'Settings',
+          title: 'Tenant Settings',
           icon: IconSettings,
           items: [
             {
-              title: 'Profile',
+              title: 'General',
               url: '/settings',
-              icon: IconUserCog,
             },
             {
-              title: 'Account',
-              url: '/settings/account',
-              icon: IconTool,
+              title: 'Branding',
+              url: '/settings',
             },
             {
-              title: 'Appearance',
-              url: '/settings/appearance',
-              icon: IconPalette,
+              title: 'Features',
+              url: '/settings',
             },
             {
-              title: 'Notifications',
-              url: '/settings/notifications',
-              icon: IconNotification,
-            },
-            {
-              title: 'Display',
-              url: '/settings/display',
-              icon: IconBrowserCheck,
+              title: 'Security',
+              url: '/settings',
             },
           ],
         },
         {
-          title: 'Help Center',
-          url: '/help-center',
-          icon: IconHelp,
+          title: 'System Health',
+          url: '/home',
+          icon: IconBrowserCheck,
+        },
+        {
+          title: 'Backup & Restore',
+          url: '/home',
+          icon: IconDatabase,
         },
       ],
     },
