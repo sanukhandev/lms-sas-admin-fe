@@ -6,7 +6,7 @@ const api = axios.create({
   withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
-    'Accept': 'application/json',
+    Accept: 'application/json',
   },
 })
 
@@ -17,18 +17,18 @@ api.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
     }
-    
+
     // Add tenant ID header if available
     const tenantData = JSON.parse(localStorage.getItem('tenant') || '{}')
     if (tenantData.id) {
       config.headers['X-Tenant-ID'] = tenantData.id
     }
-    
+
     // Add tenant domain header if available
     if (tenantData.domain) {
       config.headers['X-Tenant-Domain'] = tenantData.domain
     }
-    
+
     return config
   },
   (error) => {
@@ -51,14 +51,14 @@ api.interceptors.response.use(
           const response = await api.post('/v1/auth/refresh', {
             refresh_token: refreshToken,
           })
-          
+
           const { token } = response.data
           localStorage.setItem('auth_token', token)
-          
+
           originalRequest.headers.Authorization = `Bearer ${token}`
           return api(originalRequest)
         }
-      } catch (refreshError) {
+      } catch (_refreshError) {
         // Refresh failed, redirect to login
         localStorage.removeItem('auth_token')
         localStorage.removeItem('refresh_token')
@@ -85,6 +85,7 @@ export interface User {
 export interface LoginRequest {
   email: string
   password: string
+  tenant_domain: string
 }
 
 export interface RegisterRequest {
@@ -92,15 +93,21 @@ export interface RegisterRequest {
   email: string
   password: string
   password_confirmation: string
+  tenant_domain: string
   tenant_id?: number
   role?: string
 }
 
 export interface AuthResponse {
+  status: string
   message: string
-  user: User
-  token: string
-  token_type: string
+  data: {
+    user: User
+    token: string
+    token_type: string
+    message: string
+  }
+  meta: unknown[]
 }
 
 export interface ChangePasswordRequest {
@@ -124,12 +131,18 @@ export class AuthService {
     await api.post('/v1/auth/logout')
   }
 
-  static async getUser(): Promise<{ user: User }> {
+  static async getUser(): Promise<{
+    status: string
+    data: { user: User }
+    message: string
+  }> {
     const response = await api.get('/v1/user')
     return response.data
   }
 
-  static async changePassword(passwords: ChangePasswordRequest): Promise<{ message: string }> {
+  static async changePassword(
+    passwords: ChangePasswordRequest
+  ): Promise<{ status: string; message: string }> {
     const response = await api.post('/v1/auth/change-password', passwords)
     return response.data
   }

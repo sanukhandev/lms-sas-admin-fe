@@ -3,6 +3,9 @@ import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Link, useNavigate } from '@tanstack/react-router'
+import { TenantDetectionService } from '@/services/tenant-detection'
+import { toast } from 'sonner'
+import { useAuthStore } from '@/stores/auth-store'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
@@ -15,33 +18,44 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { PasswordInput } from '@/components/password-input'
-import { useAuthStore } from '@/stores/auth-store'
-import { toast } from 'sonner'
+
+interface ApiError {
+  response?: {
+    data?: {
+      message?: string
+    }
+  }
+}
 
 type UserRegisterFormProps = HTMLAttributes<HTMLFormElement>
 
-const formSchema = z.object({
-  name: z
-    .string()
-    .min(1, { message: 'Please enter your name' })
-    .min(2, { message: 'Name must be at least 2 characters long' }),
-  email: z
-    .string()
-    .min(1, { message: 'Please enter your email' })
-    .email({ message: 'Invalid email address' }),
-  password: z
-    .string()
-    .min(1, { message: 'Please enter your password' })
-    .min(8, { message: 'Password must be at least 8 characters long' }),
-  password_confirmation: z
-    .string()
-    .min(1, { message: 'Please confirm your password' }),
-}).refine((data) => data.password === data.password_confirmation, {
-  message: 'Passwords do not match',
-  path: ['password_confirmation'],
-})
+const formSchema = z
+  .object({
+    name: z
+      .string()
+      .min(1, { message: 'Please enter your name' })
+      .min(2, { message: 'Name must be at least 2 characters long' }),
+    email: z
+      .string()
+      .min(1, { message: 'Please enter your email' })
+      .email({ message: 'Invalid email address' }),
+    password: z
+      .string()
+      .min(1, { message: 'Please enter your password' })
+      .min(8, { message: 'Password must be at least 8 characters long' }),
+    password_confirmation: z
+      .string()
+      .min(1, { message: 'Please confirm your password' }),
+  })
+  .refine((data) => data.password === data.password_confirmation, {
+    message: 'Passwords do not match',
+    path: ['password_confirmation'],
+  })
 
-export function UserRegisterForm({ className, ...props }: UserRegisterFormProps) {
+export function UserRegisterForm({
+  className,
+  ...props
+}: UserRegisterFormProps) {
   const { register, isLoading, error, clearError } = useAuthStore()
   const navigate = useNavigate()
 
@@ -58,12 +72,21 @@ export function UserRegisterForm({ className, ...props }: UserRegisterFormProps)
   async function onSubmit(data: z.infer<typeof formSchema>) {
     try {
       clearError()
-      await register(data)
+
+      // Get tenant domain from current URL
+      const tenantDomain = TenantDetectionService.getTenantDomainFromUrl()
+
+      await register({
+        ...data,
+        tenant_domain: tenantDomain,
+      })
+
       toast.success('Registration successful!')
       navigate({ to: '/home' })
-    } catch (error: any) {
-      console.error('Registration error:', error)
-      toast.error(error.response?.data?.message || 'Registration failed')
+    } catch (error: unknown) {
+      const errorMessage =
+        (error as ApiError).response?.data?.message || 'Registration failed'
+      toast.error(errorMessage)
     }
   }
 
@@ -126,12 +149,8 @@ export function UserRegisterForm({ className, ...props }: UserRegisterFormProps)
             </FormItem>
           )}
         />
-        
-        {error && (
-          <div className='text-sm text-red-500 mt-2'>
-            {error}
-          </div>
-        )}
+
+        {error && <div className='mt-2 text-sm text-red-500'>{error}</div>}
 
         <Button className='mt-2' disabled={isLoading}>
           {isLoading ? 'Creating account...' : 'Create account'}
@@ -139,10 +158,7 @@ export function UserRegisterForm({ className, ...props }: UserRegisterFormProps)
 
         <div className='text-center text-sm'>
           Already have an account?{' '}
-          <Link
-            to='/sign-in'
-            className='text-primary hover:underline'
-          >
+          <Link to='/sign-in' className='text-primary hover:underline'>
             Sign in
           </Link>
         </div>

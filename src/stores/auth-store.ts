@@ -1,6 +1,20 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import { AuthService, User, LoginRequest, RegisterRequest, ChangePasswordRequest } from '../services/auth'
+import {
+  AuthService,
+  User,
+  LoginRequest,
+  RegisterRequest,
+  ChangePasswordRequest,
+} from '../services/auth'
+
+interface ApiError {
+  response?: {
+    data?: {
+      message?: string
+    }
+  }
+}
 
 interface AuthState {
   user: User | null
@@ -38,12 +52,12 @@ export const useAuthStore = create<AuthStore>()(
         set({ isLoading: true, error: null })
         try {
           const response = await AuthService.login(credentials)
-          const { user, token } = response
-          
+          const { user, token } = response.data
+
           // Store token and user in localStorage
           localStorage.setItem('auth_token', token)
           localStorage.setItem('user', JSON.stringify(user))
-          
+
           set({
             user,
             token,
@@ -51,8 +65,9 @@ export const useAuthStore = create<AuthStore>()(
             isLoading: false,
             error: null,
           })
-        } catch (error: any) {
-          const errorMessage = error.response?.data?.message || 'Login failed'
+        } catch (error: unknown) {
+          const errorMessage =
+            (error as ApiError).response?.data?.message || 'Login failed'
           set({
             error: errorMessage,
             isLoading: false,
@@ -73,14 +88,14 @@ export const useAuthStore = create<AuthStore>()(
             ...userData,
             tenant_id: tenantData.id || userData.tenant_id,
           }
-          
+
           const response = await AuthService.register(registerData)
-          const { user, token } = response
-          
+          const { user, token } = response.data
+
           // Store token and user in localStorage
           localStorage.setItem('auth_token', token)
           localStorage.setItem('user', JSON.stringify(user))
-          
+
           set({
             user,
             token,
@@ -88,8 +103,9 @@ export const useAuthStore = create<AuthStore>()(
             isLoading: false,
             error: null,
           })
-        } catch (error: any) {
-          const errorMessage = error.response?.data?.message || 'Registration failed'
+        } catch (error: unknown) {
+          const errorMessage =
+            (error as ApiError).response?.data?.message || 'Registration failed'
           set({
             error: errorMessage,
             isLoading: false,
@@ -105,16 +121,16 @@ export const useAuthStore = create<AuthStore>()(
         set({ isLoading: true })
         try {
           await AuthService.logout()
-        } catch (error) {
+        } catch (_error) {
           // Even if logout fails on server, clear local state
-          console.error('Logout error:', error)
+          // Log error for debugging but don't throw
         } finally {
           // Clear localStorage including tenant-specific data
           localStorage.removeItem('auth_token')
           localStorage.removeItem('refresh_token')
           localStorage.removeItem('user')
           // Keep tenant data as user might want to login again for same tenant
-          
+
           set({
             user: null,
             token: null,
@@ -130,12 +146,14 @@ export const useAuthStore = create<AuthStore>()(
         try {
           const response = await AuthService.getUser()
           set({
-            user: response.user,
+            user: response.data.user,
             isLoading: false,
             error: null,
           })
-        } catch (error: any) {
-          const errorMessage = error.response?.data?.message || 'Failed to fetch user'
+        } catch (error: unknown) {
+          const errorMessage =
+            (error as ApiError).response?.data?.message ||
+            'Failed to fetch user'
           set({
             error: errorMessage,
             isLoading: false,
@@ -152,8 +170,10 @@ export const useAuthStore = create<AuthStore>()(
             isLoading: false,
             error: null,
           })
-        } catch (error: any) {
-          const errorMessage = error.response?.data?.message || 'Failed to change password'
+        } catch (error: unknown) {
+          const errorMessage =
+            (error as ApiError).response?.data?.message ||
+            'Failed to change password'
           set({
             error: errorMessage,
             isLoading: false,
@@ -165,18 +185,18 @@ export const useAuthStore = create<AuthStore>()(
       refreshToken: async () => {
         try {
           const response = await AuthService.refreshToken()
-          const { user, token } = response
-          
+          const { user, token } = response.data
+
           // Store new token
           localStorage.setItem('auth_token', token)
-          
+
           set({
             user,
             token,
             isAuthenticated: true,
             error: null,
           })
-        } catch (error: any) {
+        } catch (error: unknown) {
           // If refresh fails, logout user
           get().logout()
           throw error
@@ -201,7 +221,7 @@ export const useAuthStore = create<AuthStore>()(
 export const initializeAuth = () => {
   const token = localStorage.getItem('auth_token')
   const store = useAuthStore.getState()
-  
+
   if (token && !store.isAuthenticated) {
     // Try to get user data if token exists
     store.getUser().catch(() => {

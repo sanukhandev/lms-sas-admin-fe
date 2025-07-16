@@ -4,6 +4,9 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Link, useNavigate } from '@tanstack/react-router'
 import { IconBrandFacebook, IconBrandGithub } from '@tabler/icons-react'
+import { TenantDetectionService } from '@/services/tenant-detection'
+import { toast } from 'sonner'
+import { useAuthStore } from '@/stores/auth-store'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
@@ -16,8 +19,14 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { PasswordInput } from '@/components/password-input'
-import { useAuthStore } from '@/stores/auth-store'
-import { toast } from 'sonner'
+
+interface ApiError {
+  response?: {
+    data?: {
+      message?: string
+    }
+  }
+}
 
 type UserAuthFormProps = HTMLAttributes<HTMLFormElement>
 
@@ -37,7 +46,7 @@ const formSchema = z.object({
 })
 
 export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
-  const { login, isLoading, error, clearError } = useAuthStore()
+  const { login, isLoading, clearError } = useAuthStore()
   const navigate = useNavigate()
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -51,12 +60,21 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
   async function onSubmit(data: z.infer<typeof formSchema>) {
     try {
       clearError()
-      await login(data)
+
+      // Get tenant domain from current URL
+      const tenantDomain = TenantDetectionService.getTenantDomainFromUrl()
+
+      await login({
+        ...data,
+        tenant_domain: tenantDomain,
+      })
+
       toast.success('Login successful!')
       navigate({ to: '/home' })
-    } catch (error: any) {
-      console.error('Login error:', error)
-      toast.error(error.response?.data?.message || 'Login failed')
+    } catch (error: unknown) {
+      const errorMessage =
+        (error as ApiError).response?.data?.message || 'Login failed'
+      toast.error(errorMessage)
     }
   }
 
