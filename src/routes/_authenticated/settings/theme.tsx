@@ -1,8 +1,13 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { createFileRoute } from '@tanstack/react-router'
+import {
+  getThemeSettings,
+  updateThemeSettings,
+} from '@/services/tenant-settings'
+import type { ThemeSettings } from '@/services/tenant-settings'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import {
@@ -274,11 +279,107 @@ function ThemeSettings() {
     }, 1000)
   })
 
-  const onSubmit = async (_data: ThemeSettingsForm) => {
+  // Load data from API
+  useEffect(() => {
+    const loadSettings = async () => {
+      try {
+        const response = await getThemeSettings()
+        const themeData = response.data
+
+        // Set form values from API response
+        if (themeData.mode) setValue('mode', themeData.mode)
+        if (themeData.colors) {
+          Object.entries(themeData.colors).forEach(([key, value]) => {
+            if (typeof value === 'string') {
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              setValue(`colors.${key}` as any, value)
+            }
+          })
+        }
+        if (themeData.typography) {
+          if (themeData.typography.font_family) {
+            setValue('typography.font_family', themeData.typography.font_family)
+          }
+          if (themeData.typography.font_sizes) {
+            Object.entries(themeData.typography.font_sizes).forEach(
+              ([key, value]) => {
+                if (typeof value === 'string') {
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  setValue(`typography.font_sizes.${key}` as any, value)
+                }
+              }
+            )
+          }
+          if (themeData.typography.line_heights) {
+            Object.entries(themeData.typography.line_heights).forEach(
+              ([key, value]) => {
+                if (typeof value === 'string') {
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  setValue(`typography.line_heights.${key}` as any, value)
+                }
+              }
+            )
+          }
+          if (themeData.typography.font_weights) {
+            Object.entries(themeData.typography.font_weights).forEach(
+              ([key, value]) => {
+                if (typeof value === 'string') {
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  setValue(`typography.font_weights.${key}` as any, value)
+                }
+              }
+            )
+          }
+        }
+        if (themeData.border_radius) {
+          Object.entries(themeData.border_radius).forEach(([key, value]) => {
+            if (typeof value === 'string') {
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              setValue(`border_radius.${key}` as any, value)
+            }
+          })
+        }
+        if (themeData.shadows) {
+          Object.entries(themeData.shadows).forEach(([key, value]) => {
+            if (typeof value === 'string') {
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              setValue(`shadows.${key}` as any, value)
+            }
+          })
+        }
+        if (themeData.spacing) {
+          Object.entries(themeData.spacing).forEach(([key, value]) => {
+            if (typeof value === 'string') {
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              setValue(`spacing.${key}` as any, value)
+            }
+          })
+        }
+
+        setIsLoadingData(false)
+      } catch (_error) {
+        toast.error('Failed to load theme settings')
+        setIsLoadingData(false)
+      }
+    }
+
+    loadSettings()
+  }, [setValue])
+
+  const onSubmit = async (data: ThemeSettingsForm) => {
     setIsLoading(true)
     try {
-      // TODO: Replace with actual API call
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+      // Transform the data to match the backend expected format
+      const transformedData: ThemeSettings = {
+        mode: data.mode,
+        colors: data.colors,
+        typography: data.typography,
+        border_radius: data.border_radius,
+        shadows: data.shadows,
+        spacing: data.spacing,
+      }
+
+      await updateThemeSettings(transformedData)
       toast.success('Theme settings updated successfully!')
     } catch (_error) {
       toast.error('Failed to update theme settings')
@@ -295,7 +396,40 @@ function ThemeSettings() {
 
   if (isLoadingData) {
     return (
-      <div className='space-y-6'>
+      <main className='flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8'>
+        <div className='mx-auto max-w-6xl space-y-6'>
+          <div className='flex items-center justify-between'>
+            <div>
+              <h1 className='text-2xl font-bold'>Theme Settings</h1>
+              <p className='text-muted-foreground'>
+                Customize the visual appearance of your tenant
+              </p>
+            </div>
+          </div>
+          <div className='grid gap-6'>
+            <Card>
+              <CardHeader>
+                <div className='bg-muted h-6 w-48 animate-pulse rounded' />
+                <div className='bg-muted h-4 w-96 animate-pulse rounded' />
+              </CardHeader>
+              <CardContent className='space-y-4'>
+                {[...Array(6)].map((_, i) => (
+                  <div key={i} className='space-y-2'>
+                    <div className='bg-muted h-4 w-24 animate-pulse rounded' />
+                    <div className='bg-muted h-10 w-full animate-pulse rounded' />
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </main>
+    )
+  }
+
+  return (
+    <main className='flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8'>
+      <div className='mx-auto max-w-6xl space-y-6'>
         <div className='flex items-center justify-between'>
           <div>
             <h1 className='text-2xl font-bold'>Theme Settings</h1>
@@ -303,309 +437,296 @@ function ThemeSettings() {
               Customize the visual appearance of your tenant
             </p>
           </div>
+          <Button variant='outline' onClick={resetToDefaults}>
+            Reset to Defaults
+          </Button>
         </div>
-        <div className='grid gap-6'>
+
+        <form onSubmit={handleSubmit(onSubmit)} className='space-y-6'>
           <Card>
             <CardHeader>
-              <div className='bg-muted h-6 w-48 animate-pulse rounded' />
-              <div className='bg-muted h-4 w-96 animate-pulse rounded' />
+              <CardTitle>Theme Mode</CardTitle>
+              <CardDescription>
+                Choose the default appearance mode for your tenant
+              </CardDescription>
             </CardHeader>
             <CardContent className='space-y-4'>
-              {[...Array(6)].map((_, i) => (
-                <div key={i} className='space-y-2'>
-                  <div className='bg-muted h-4 w-24 animate-pulse rounded' />
-                  <div className='bg-muted h-10 w-full animate-pulse rounded' />
-                </div>
-              ))}
+              <div className='space-y-2'>
+                <Label htmlFor='mode'>Theme Mode</Label>
+                <Select
+                  value={watch('mode')}
+                  onValueChange={(value: 'light' | 'dark' | 'auto') =>
+                    setValue('mode', value)
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value='light'>Light</SelectItem>
+                    <SelectItem value='dark'>Dark</SelectItem>
+                    <SelectItem value='auto'>Auto (System)</SelectItem>
+                  </SelectContent>
+                </Select>
+                {errors.mode && (
+                  <p className='text-destructive text-sm'>
+                    {errors.mode.message}
+                  </p>
+                )}
+              </div>
             </CardContent>
           </Card>
-        </div>
-      </div>
-    )
-  }
 
-  return (
-    <div className='space-y-6'>
-      <div className='flex items-center justify-between'>
-        <div>
-          <h1 className='text-2xl font-bold'>Theme Settings</h1>
-          <p className='text-muted-foreground'>
-            Customize the visual appearance of your tenant
-          </p>
-        </div>
-        <Button variant='outline' onClick={resetToDefaults}>
-          Reset to Defaults
-        </Button>
-      </div>
+          <Card>
+            <CardHeader>
+              <CardTitle>Advanced Theme Configuration</CardTitle>
+              <CardDescription>
+                Fine-tune colors, typography, and spacing
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Tabs defaultValue='colors' className='w-full'>
+                <TabsList className='grid w-full grid-cols-5'>
+                  <TabsTrigger value='colors'>Colors</TabsTrigger>
+                  <TabsTrigger value='typography'>Typography</TabsTrigger>
+                  <TabsTrigger value='spacing'>Spacing</TabsTrigger>
+                  <TabsTrigger value='borders'>Borders</TabsTrigger>
+                  <TabsTrigger value='shadows'>Shadows</TabsTrigger>
+                </TabsList>
 
-      <form onSubmit={handleSubmit(onSubmit)} className='space-y-6'>
-        <Card>
-          <CardHeader>
-            <CardTitle>Theme Mode</CardTitle>
-            <CardDescription>
-              Choose the default appearance mode for your tenant
-            </CardDescription>
-          </CardHeader>
-          <CardContent className='space-y-4'>
-            <div className='space-y-2'>
-              <Label htmlFor='mode'>Theme Mode</Label>
-              <Select
-                value={watch('mode')}
-                onValueChange={(value: 'light' | 'dark' | 'auto') =>
-                  setValue('mode', value)
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value='light'>Light</SelectItem>
-                  <SelectItem value='dark'>Dark</SelectItem>
-                  <SelectItem value='auto'>Auto (System)</SelectItem>
-                </SelectContent>
-              </Select>
-              {errors.mode && (
-                <p className='text-destructive text-sm'>
-                  {errors.mode.message}
-                </p>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Advanced Theme Configuration</CardTitle>
-            <CardDescription>
-              Fine-tune colors, typography, and spacing
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Tabs defaultValue='colors' className='w-full'>
-              <TabsList className='grid w-full grid-cols-5'>
-                <TabsTrigger value='colors'>Colors</TabsTrigger>
-                <TabsTrigger value='typography'>Typography</TabsTrigger>
-                <TabsTrigger value='spacing'>Spacing</TabsTrigger>
-                <TabsTrigger value='borders'>Borders</TabsTrigger>
-                <TabsTrigger value='shadows'>Shadows</TabsTrigger>
-              </TabsList>
-
-              <TabsContent value='colors' className='space-y-4'>
-                <div className='grid grid-cols-2 gap-4'>
-                  {Object.entries(watch('colors')).map(([key, value]) => (
-                    <div key={key} className='space-y-2'>
-                      <Label htmlFor={key} className='capitalize'>
-                        {key.replace('_', ' ')}
-                      </Label>
-                      <div className='flex gap-2'>
-                        <Input
-                          type='color'
-                          value={value}
-                          onChange={(e) =>
-                            setColorValue(
-                              key as keyof ThemeSettingsForm['colors'],
-                              e.target.value
-                            )
-                          }
-                          className='border-input h-10 w-16 rounded'
-                        />
-                        <Input
-                          value={value}
-                          onChange={(e) =>
-                            setColorValue(
-                              key as keyof ThemeSettingsForm['colors'],
-                              e.target.value
-                            )
-                          }
-                          placeholder='#000000'
-                          className='flex-1'
-                        />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </TabsContent>
-
-              <TabsContent value='typography' className='space-y-4'>
-                <div className='space-y-4'>
-                  <div className='space-y-2'>
-                    <Label htmlFor='font_family'>Font Family</Label>
-                    <Select
-                      value={watch('typography.font_family')}
-                      onValueChange={(value) =>
-                        setValue('typography.font_family', value)
-                      }
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value='Inter, sans-serif'>Inter</SelectItem>
-                        <SelectItem value='Roboto, sans-serif'>
-                          Roboto
-                        </SelectItem>
-                        <SelectItem value='Open Sans, sans-serif'>
-                          Open Sans
-                        </SelectItem>
-                        <SelectItem value='Lato, sans-serif'>Lato</SelectItem>
-                        <SelectItem value='Montserrat, sans-serif'>
-                          Montserrat
-                        </SelectItem>
-                        <SelectItem value='Poppins, sans-serif'>
-                          Poppins
-                        </SelectItem>
-                        <SelectItem value='system-ui, sans-serif'>
-                          System UI
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
+                <TabsContent value='colors' className='space-y-4'>
                   <div className='grid grid-cols-2 gap-4'>
-                    <div>
-                      <Label className='text-sm font-medium'>Font Sizes</Label>
-                      <div className='mt-2 space-y-2'>
-                        {Object.entries(watch('typography.font_sizes')).map(
-                          ([key, value]) => (
-                            <div key={key} className='flex items-center gap-2'>
-                              <Label
-                                htmlFor={`font_size_${key}`}
-                                className='w-12 text-xs'
-                              >
-                                {key}
-                              </Label>
-                              <Input
-                                id={`font_size_${key}`}
-                                value={value}
-                                onChange={(e) =>
-                                  setFontSizeValue(
-                                    key as keyof ThemeSettingsForm['typography']['font_sizes'],
-                                    e.target.value
-                                  )
-                                }
-                                className='flex-1'
-                              />
-                            </div>
-                          )
-                        )}
+                    {Object.entries(watch('colors')).map(([key, value]) => (
+                      <div key={key} className='space-y-2'>
+                        <Label htmlFor={key} className='capitalize'>
+                          {key.replace('_', ' ')}
+                        </Label>
+                        <div className='flex gap-2'>
+                          <Input
+                            type='color'
+                            value={value}
+                            onChange={(e) =>
+                              setColorValue(
+                                key as keyof ThemeSettingsForm['colors'],
+                                e.target.value
+                              )
+                            }
+                            className='border-input h-10 w-16 rounded'
+                          />
+                          <Input
+                            value={value}
+                            onChange={(e) =>
+                              setColorValue(
+                                key as keyof ThemeSettingsForm['colors'],
+                                e.target.value
+                              )
+                            }
+                            placeholder='#000000'
+                            className='flex-1'
+                          />
+                        </div>
                       </div>
+                    ))}
+                  </div>
+                </TabsContent>
+
+                <TabsContent value='typography' className='space-y-4'>
+                  <div className='space-y-4'>
+                    <div className='space-y-2'>
+                      <Label htmlFor='font_family'>Font Family</Label>
+                      <Select
+                        value={watch('typography.font_family')}
+                        onValueChange={(value) =>
+                          setValue('typography.font_family', value)
+                        }
+                      >
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value='Inter, sans-serif'>
+                            Inter
+                          </SelectItem>
+                          <SelectItem value='Roboto, sans-serif'>
+                            Roboto
+                          </SelectItem>
+                          <SelectItem value='Open Sans, sans-serif'>
+                            Open Sans
+                          </SelectItem>
+                          <SelectItem value='Lato, sans-serif'>Lato</SelectItem>
+                          <SelectItem value='Montserrat, sans-serif'>
+                            Montserrat
+                          </SelectItem>
+                          <SelectItem value='Poppins, sans-serif'>
+                            Poppins
+                          </SelectItem>
+                          <SelectItem value='system-ui, sans-serif'>
+                            System UI
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
 
-                    <div>
-                      <Label className='text-sm font-medium'>
-                        Font Weights
-                      </Label>
-                      <div className='mt-2 space-y-2'>
-                        {Object.entries(watch('typography.font_weights')).map(
-                          ([key, value]) => (
-                            <div key={key} className='flex items-center gap-2'>
-                              <Label
-                                htmlFor={`font_weight_${key}`}
-                                className='w-16 text-xs'
+                    <div className='grid grid-cols-2 gap-4'>
+                      <div>
+                        <Label className='text-sm font-medium'>
+                          Font Sizes
+                        </Label>
+                        <div className='mt-2 space-y-2'>
+                          {Object.entries(watch('typography.font_sizes')).map(
+                            ([key, value]) => (
+                              <div
+                                key={key}
+                                className='flex items-center gap-2'
                               >
-                                {key}
-                              </Label>
-                              <Input
-                                id={`font_weight_${key}`}
-                                value={value}
-                                onChange={(e) =>
-                                  setFontWeightValue(
-                                    key as keyof ThemeSettingsForm['typography']['font_weights'],
-                                    e.target.value
-                                  )
-                                }
-                                className='flex-1'
-                              />
-                            </div>
-                          )
-                        )}
+                                <Label
+                                  htmlFor={`font_size_${key}`}
+                                  className='w-12 text-xs'
+                                >
+                                  {key}
+                                </Label>
+                                <Input
+                                  id={`font_size_${key}`}
+                                  value={value}
+                                  onChange={(e) =>
+                                    setFontSizeValue(
+                                      key as keyof ThemeSettingsForm['typography']['font_sizes'],
+                                      e.target.value
+                                    )
+                                  }
+                                  className='flex-1'
+                                />
+                              </div>
+                            )
+                          )}
+                        </div>
+                      </div>
+
+                      <div>
+                        <Label className='text-sm font-medium'>
+                          Font Weights
+                        </Label>
+                        <div className='mt-2 space-y-2'>
+                          {Object.entries(watch('typography.font_weights')).map(
+                            ([key, value]) => (
+                              <div
+                                key={key}
+                                className='flex items-center gap-2'
+                              >
+                                <Label
+                                  htmlFor={`font_weight_${key}`}
+                                  className='w-16 text-xs'
+                                >
+                                  {key}
+                                </Label>
+                                <Input
+                                  id={`font_weight_${key}`}
+                                  value={value}
+                                  onChange={(e) =>
+                                    setFontWeightValue(
+                                      key as keyof ThemeSettingsForm['typography']['font_weights'],
+                                      e.target.value
+                                    )
+                                  }
+                                  className='flex-1'
+                                />
+                              </div>
+                            )
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              </TabsContent>
+                </TabsContent>
 
-              <TabsContent value='spacing' className='space-y-4'>
-                <div className='grid grid-cols-2 gap-4'>
-                  {Object.entries(watch('spacing')).map(([key, value]) => (
-                    <div key={key} className='space-y-2'>
-                      <Label htmlFor={`spacing_${key}`} className='capitalize'>
-                        {key}
-                      </Label>
-                      <Input
-                        id={`spacing_${key}`}
-                        value={value}
-                        onChange={(e) =>
-                          setSpacingValue(
-                            key as keyof ThemeSettingsForm['spacing'],
-                            e.target.value
-                          )
-                        }
-                        placeholder='1rem'
-                      />
-                    </div>
-                  ))}
-                </div>
-              </TabsContent>
-
-              <TabsContent value='borders' className='space-y-4'>
-                <div className='grid grid-cols-2 gap-4'>
-                  {Object.entries(watch('border_radius')).map(
-                    ([key, value]) => (
+                <TabsContent value='spacing' className='space-y-4'>
+                  <div className='grid grid-cols-2 gap-4'>
+                    {Object.entries(watch('spacing')).map(([key, value]) => (
                       <div key={key} className='space-y-2'>
-                        <Label htmlFor={`border_${key}`} className='capitalize'>
+                        <Label
+                          htmlFor={`spacing_${key}`}
+                          className='capitalize'
+                        >
+                          {key}
+                        </Label>
+                        <Input
+                          id={`spacing_${key}`}
+                          value={value}
+                          onChange={(e) =>
+                            setSpacingValue(
+                              key as keyof ThemeSettingsForm['spacing'],
+                              e.target.value
+                            )
+                          }
+                          placeholder='1rem'
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </TabsContent>
+
+                <TabsContent value='borders' className='space-y-4'>
+                  <div className='grid grid-cols-2 gap-4'>
+                    {Object.entries(watch('border_radius')).map(
+                      ([key, value]) => (
+                        <div key={key} className='space-y-2'>
+                          <Label
+                            htmlFor={`border_${key}`}
+                            className='capitalize'
+                          >
+                            {key === 'default' ? 'Default' : key}
+                          </Label>
+                          <Input
+                            id={`border_${key}`}
+                            value={value}
+                            onChange={(e) =>
+                              setBorderRadiusValue(
+                                key as keyof ThemeSettingsForm['border_radius'],
+                                e.target.value
+                              )
+                            }
+                            placeholder='0.25rem'
+                          />
+                        </div>
+                      )
+                    )}
+                  </div>
+                </TabsContent>
+
+                <TabsContent value='shadows' className='space-y-4'>
+                  <div className='space-y-4'>
+                    {Object.entries(watch('shadows')).map(([key, value]) => (
+                      <div key={key} className='space-y-2'>
+                        <Label htmlFor={`shadow_${key}`} className='capitalize'>
                           {key === 'default' ? 'Default' : key}
                         </Label>
                         <Input
-                          id={`border_${key}`}
+                          id={`shadow_${key}`}
                           value={value}
                           onChange={(e) =>
-                            setBorderRadiusValue(
-                              key as keyof ThemeSettingsForm['border_radius'],
+                            setShadowValue(
+                              key as keyof ThemeSettingsForm['shadows'],
                               e.target.value
                             )
                           }
-                          placeholder='0.25rem'
+                          placeholder='0 1px 3px 0 rgb(0 0 0 / 0.1)'
                         />
                       </div>
-                    )
-                  )}
-                </div>
-              </TabsContent>
+                    ))}
+                  </div>
+                </TabsContent>
+              </Tabs>
+            </CardContent>
+          </Card>
 
-              <TabsContent value='shadows' className='space-y-4'>
-                <div className='space-y-4'>
-                  {Object.entries(watch('shadows')).map(([key, value]) => (
-                    <div key={key} className='space-y-2'>
-                      <Label htmlFor={`shadow_${key}`} className='capitalize'>
-                        {key === 'default' ? 'Default' : key}
-                      </Label>
-                      <Input
-                        id={`shadow_${key}`}
-                        value={value}
-                        onChange={(e) =>
-                          setShadowValue(
-                            key as keyof ThemeSettingsForm['shadows'],
-                            e.target.value
-                          )
-                        }
-                        placeholder='0 1px 3px 0 rgb(0 0 0 / 0.1)'
-                      />
-                    </div>
-                  ))}
-                </div>
-              </TabsContent>
-            </Tabs>
-          </CardContent>
-        </Card>
-
-        <div className='flex justify-end'>
-          <Button type='submit' disabled={isLoading}>
-            {isLoading ? 'Saving...' : 'Save Changes'}
-          </Button>
-        </div>
-      </form>
-    </div>
+          <div className='flex justify-end'>
+            <Button type='submit' disabled={isLoading}>
+              {isLoading ? 'Saving...' : 'Save Changes'}
+            </Button>
+          </div>
+        </form>
+      </div>
+    </main>
   )
 }
 
