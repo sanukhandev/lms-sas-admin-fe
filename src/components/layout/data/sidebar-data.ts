@@ -77,7 +77,7 @@ export const sidebarData: SidebarData = {
         },
         {
           title: 'Analytics',
-          url: '/home',
+          url: '/analytics',
           icon: IconChartBar,
         },
         {
@@ -96,7 +96,7 @@ export const sidebarData: SidebarData = {
           items: [
             {
               title: 'All Courses',
-              url: '/home',
+              url: '/courses',
             },
             {
               title: 'Categories',
