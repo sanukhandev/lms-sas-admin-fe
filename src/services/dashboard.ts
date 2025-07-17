@@ -57,6 +57,73 @@ export interface PaymentStats {
   revenueGrowth: number
 }
 
+export interface ChartData {
+  enrollment_trends: Array<{
+    period: string
+    enrollments: number
+    completions: number
+  }>
+  completion_trends: Array<{
+    period: string
+    completions: number
+    rate: number
+  }>
+  revenue_trends: Array<{
+    period: string
+    revenue: number
+    growth: number
+  }>
+  category_distribution: Array<{
+    category: string
+    count: number
+    percentage: number
+  }>
+  user_activity_trends: Array<{
+    period: string
+    logins: number
+    registrations: number
+    active_users: number
+  }>
+  monthly_stats: Array<{
+    month: string
+    total_enrollments: number
+    total_completions: number
+    total_revenue: number
+    active_users: number
+  }>
+}
+
+export interface DashboardOverview {
+  cards: {
+    main_stats: Array<{
+      title: string
+      value: string | number
+      description: string
+      icon: string
+      trend?: {
+        value: number
+        isPositive: boolean
+      }
+    }>
+    quick_stats: {
+      completion_rate: number
+      active_users: number
+      pending_enrollments: number
+      revenue_growth: number
+    }
+  }
+  charts: ChartData
+  recent_activities: RecentActivity[]
+  layout: {
+    grid: {
+      main_stats: { span: string; cols: number }
+      charts: { span: number; priority: number }
+      recent_activities: { span: number; priority: number }
+      quick_stats: { span: number; priority: number }
+    }
+  }
+}
+
 export interface TenantSettings {
   id: number
   name: string
@@ -84,6 +151,20 @@ export interface TenantSettings {
 
 export class DashboardService {
   /**
+   * Get dashboard overview with optimized structure
+   */
+  static async getDashboardOverview(): Promise<DashboardOverview> {
+    try {
+      const response = await api.get('/v1/dashboard/overview')
+      return response.data.data
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Error fetching dashboard overview:', error)
+      throw error
+    }
+  }
+
+  /**
    * Get dashboard statistics
    */
   static async getDashboardStats(): Promise<DashboardStats> {
@@ -91,6 +172,7 @@ export class DashboardService {
       const response = await api.get('/v1/dashboard/stats')
       return response.data.data
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('Error fetching dashboard stats:', error)
       // Return mock data for now
       return {

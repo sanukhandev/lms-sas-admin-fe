@@ -6,6 +6,8 @@ import {
   IconCurrencyDollar,
   IconClock,
   IconCheck,
+  IconTrendingUp,
+  IconTrendingDown,
 } from '@tabler/icons-react'
 import DashboardService from '@/services/dashboard'
 import type { RecentActivity } from '@/services/dashboard'
@@ -30,6 +32,7 @@ import { TopNav } from '@/components/layout/top-nav'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
+import { Overview } from './components/overview'
 
 const topNav = [
   { title: 'Dashboard', href: '/home', isActive: true },
@@ -38,21 +41,22 @@ const topNav = [
   { title: 'Analytics', href: '/analytics', isActive: false },
 ]
 
+// Icon mapping for dashboard cards
+const iconMap = {
+  users: IconUsers,
+  book: IconBook,
+  'clipboard-list': IconClipboardList,
+  'currency-dollar': IconCurrencyDollar,
+}
+
 export default function Dashboard() {
   const { tenant } = useTenantStore()
 
-  // Query for dashboard stats
-  const { data: dashboardStats, isLoading: statsLoading } = useQuery({
-    queryKey: ['dashboard-stats'],
-    queryFn: DashboardService.getDashboardStats,
+  // Query for dashboard overview with new structured data
+  const { data: dashboardOverview, isLoading: overviewLoading } = useQuery({
+    queryKey: ['dashboard-overview'],
+    queryFn: DashboardService.getDashboardOverview,
     refetchInterval: 30000, // Refresh every 30 seconds
-  })
-
-  // Query for recent activity
-  const { data: recentActivity, isLoading: activityLoading } = useQuery({
-    queryKey: ['recent-activity'],
-    queryFn: DashboardService.getRecentActivity,
-    refetchInterval: 15000, // Refresh every 15 seconds
   })
 
   // Query for course progress
@@ -80,42 +84,47 @@ export default function Dashboard() {
     title,
     value,
     description,
-    icon: Icon,
+    icon,
     trend,
     isLoading,
   }: {
     title: string
     value: string | number
     description: string
-    icon: React.ElementType
+    icon: string
     trend?: { value: number; isPositive: boolean }
     isLoading?: boolean
-  }) => (
-    <Card>
-      <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-        <CardTitle className='text-sm font-medium'>{title}</CardTitle>
-        <Icon className='text-muted-foreground h-4 w-4' />
-      </CardHeader>
-      <CardContent>
-        {isLoading ? (
-          <Skeleton className='mb-2 h-8 w-24' />
-        ) : (
-          <div className='text-2xl font-bold'>{value}</div>
-        )}
-        <p className='text-muted-foreground text-xs'>
-          {description}
-          {trend && (
-            <span
-              className={`ml-2 ${trend.isPositive ? 'text-green-600' : 'text-red-600'}`}
-            >
-              {trend.isPositive ? '+' : ''}
-              {trend.value}%
-            </span>
+  }) => {
+    const Icon = iconMap[icon as keyof typeof iconMap] || IconUsers
+    const TrendIcon = trend?.isPositive ? IconTrendingUp : IconTrendingDown
+
+    return (
+      <Card>
+        <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+          <CardTitle className='text-sm font-medium'>{title}</CardTitle>
+          <Icon className='text-muted-foreground h-4 w-4' />
+        </CardHeader>
+        <CardContent>
+          {isLoading ? (
+            <Skeleton className='mb-2 h-8 w-24' />
+          ) : (
+            <div className='text-2xl font-bold'>{value}</div>
           )}
-        </p>
-      </CardContent>
-    </Card>
-  )
+          <p className='text-muted-foreground flex items-center gap-1 text-xs'>
+            {description}
+            {trend && (
+              <span
+                className={`flex items-center gap-1 ${trend.isPositive ? 'text-green-600' : 'text-red-600'}`}
+              >
+                <TrendIcon className='h-3 w-3' />
+                {Math.abs(trend.value)}%
+              </span>
+            )}
+          </p>
+        </CardContent>
+      </Card>
+    )
+  }
 
   const ActivityItem = ({ activity }: { activity: RecentActivity }) => (
     <div className='flex items-center space-x-4'>
@@ -189,131 +198,201 @@ export default function Dashboard() {
           <TabsContent value='overview' className='space-y-4'>
             {/* Stats Cards */}
             <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-4'>
-              <StatCard
-                title='Total Users'
-                value={dashboardStats?.totalUsers || 0}
-                description='Active learners'
-                icon={IconUsers}
-                trend={{
-                  value: dashboardStats?.userGrowthRate || 0,
-                  isPositive: true,
-                }}
-                isLoading={statsLoading}
-              />
-              <StatCard
-                title='Total Courses'
-                value={dashboardStats?.totalCourses || 0}
-                description='Available courses'
-                icon={IconBook}
-                isLoading={statsLoading}
-              />
-              <StatCard
-                title='Total Enrollments'
-                value={dashboardStats?.totalEnrollments || 0}
-                description='Course enrollments'
-                icon={IconClipboardList}
-                isLoading={statsLoading}
-              />
-              <StatCard
-                title='Revenue'
-                value={
-                  dashboardStats
-                    ? `$${dashboardStats.totalRevenue.toLocaleString()}`
-                    : '$0'
-                }
-                description='Total revenue'
-                icon={IconCurrencyDollar}
-                isLoading={statsLoading}
-              />
+              {overviewLoading
+                ? // Loading skeleton for stats cards
+                  Array.from({ length: 4 }).map((_, i) => (
+                    <Card key={i}>
+                      <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+                        <Skeleton className='h-4 w-24' />
+                        <Skeleton className='h-4 w-4' />
+                      </CardHeader>
+                      <CardContent>
+                        <Skeleton className='mb-2 h-8 w-20' />
+                        <Skeleton className='h-3 w-32' />
+                      </CardContent>
+                    </Card>
+                  ))
+                : dashboardOverview?.cards.main_stats.map((stat, index) => (
+                    <StatCard
+                      key={index}
+                      title={stat.title}
+                      value={stat.value}
+                      description={stat.description}
+                      icon={stat.icon}
+                      trend={stat.trend}
+                      isLoading={overviewLoading}
+                    />
+                  ))}
             </div>
 
+            {/* Main Content Grid */}
             <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-7'>
-              {/* Recent Activity */}
-              <Card className='col-span-4'>
-                <CardHeader>
-                  <CardTitle>Recent Activity</CardTitle>
-                  <CardDescription>
-                    Latest activities from your learning platform
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  {activityLoading ? (
-                    <div className='space-y-4'>
-                      {[1, 2, 3, 4, 5].map((i) => (
-                        <div key={i} className='flex items-center space-x-4'>
-                          <Skeleton className='h-8 w-8 rounded-full' />
-                          <div className='space-y-2'>
-                            <Skeleton className='h-4 w-[250px]' />
-                            <Skeleton className='h-3 w-[150px]' />
+              {/* Charts Section */}
+              <div className='col-span-4'>
+                <Overview
+                  chartData={
+                    dashboardOverview?.charts || {
+                      enrollment_trends: [],
+                      completion_trends: [],
+                      revenue_trends: [],
+                      category_distribution: [],
+                      user_activity_trends: [],
+                      monthly_stats: [],
+                    }
+                  }
+                  isLoading={overviewLoading}
+                />
+              </div>
+
+              {/* Sidebar with Recent Activity and Quick Stats */}
+              <div className='col-span-3 space-y-4'>
+                {/* Recent Activity */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Recent Activity</CardTitle>
+                    <CardDescription>
+                      Latest activities from your learning platform
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    {overviewLoading ? (
+                      <div className='space-y-4'>
+                        {[1, 2, 3, 4, 5].map((i) => (
+                          <div key={i} className='flex items-center space-x-4'>
+                            <Skeleton className='h-8 w-8 rounded-full' />
+                            <div className='space-y-2'>
+                              <Skeleton className='h-4 w-[200px]' />
+                              <Skeleton className='h-3 w-[120px]' />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className='space-y-4'>
+                        {dashboardOverview?.recent_activities?.map(
+                          (activity) => (
+                            <ActivityItem
+                              key={activity.id}
+                              activity={activity}
+                            />
+                          )
+                        )}
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+
+                {/* Quick Stats */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Quick Stats</CardTitle>
+                    <CardDescription>Key metrics at a glance</CardDescription>
+                  </CardHeader>
+                  <CardContent className='space-y-4'>
+                    {overviewLoading ? (
+                      <div className='space-y-4'>
+                        {[1, 2, 3].map((i) => (
+                          <div key={i} className='space-y-2'>
+                            <div className='flex items-center justify-between'>
+                              <Skeleton className='h-4 w-32' />
+                              <Skeleton className='h-4 w-12' />
+                            </div>
+                            <Skeleton className='h-2 w-full' />
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <>
+                        <div className='space-y-2'>
+                          <div className='flex items-center justify-between'>
+                            <span className='text-sm font-medium'>
+                              Course Completion Rate
+                            </span>
+                            <span className='text-sm'>
+                              {dashboardOverview?.cards.quick_stats
+                                .completion_rate || 0}
+                              %
+                            </span>
+                          </div>
+                          <Progress
+                            value={
+                              dashboardOverview?.cards.quick_stats
+                                .completion_rate || 0
+                            }
+                            className='w-full'
+                          />
+                        </div>
+
+                        <div className='space-y-2'>
+                          <div className='flex items-center justify-between'>
+                            <span className='text-sm font-medium'>
+                              Active Users
+                            </span>
+                            <span className='text-sm'>
+                              {dashboardOverview?.cards.quick_stats
+                                .active_users || 0}
+                            </span>
+                          </div>
+                          <div className='flex items-center space-x-2'>
+                            <IconUsers className='h-4 w-4 text-green-500' />
+                            <span className='text-muted-foreground text-xs'>
+                              Currently online
+                            </span>
                           </div>
                         </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className='space-y-6'>
-                      {recentActivity?.map((activity) => (
-                        <ActivityItem key={activity.id} activity={activity} />
-                      ))}
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
 
-              {/* Quick Stats */}
-              <Card className='col-span-3'>
-                <CardHeader>
-                  <CardTitle>Quick Stats</CardTitle>
-                  <CardDescription>Key metrics at a glance</CardDescription>
-                </CardHeader>
-                <CardContent className='space-y-4'>
-                  <div className='space-y-2'>
-                    <div className='flex items-center justify-between'>
-                      <span className='text-sm font-medium'>
-                        Course Completion Rate
-                      </span>
-                      <span className='text-sm'>
-                        {dashboardStats?.courseCompletionRate || 0}%
-                      </span>
-                    </div>
-                    <Progress
-                      value={dashboardStats?.courseCompletionRate || 0}
-                      className='w-full'
-                    />
-                  </div>
+                        <div className='space-y-2'>
+                          <div className='flex items-center justify-between'>
+                            <span className='text-sm font-medium'>
+                              Pending Enrollments
+                            </span>
+                            <span className='text-sm'>
+                              {dashboardOverview?.cards.quick_stats
+                                .pending_enrollments || 0}
+                            </span>
+                          </div>
+                          <div className='flex items-center space-x-2'>
+                            <IconClock className='h-4 w-4 text-yellow-500' />
+                            <span className='text-muted-foreground text-xs'>
+                              Awaiting approval
+                            </span>
+                          </div>
+                        </div>
 
-                  <div className='space-y-2'>
-                    <div className='flex items-center justify-between'>
-                      <span className='text-sm font-medium'>Active Users</span>
-                      <span className='text-sm'>
-                        {dashboardStats?.activeUsers || 0}
-                      </span>
-                    </div>
-                    <div className='flex items-center space-x-2'>
-                      <IconUsers className='h-4 w-4 text-green-500' />
-                      <span className='text-muted-foreground text-xs'>
-                        Currently online
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className='space-y-2'>
-                    <div className='flex items-center justify-between'>
-                      <span className='text-sm font-medium'>
-                        Pending Enrollments
-                      </span>
-                      <span className='text-sm'>
-                        {dashboardStats?.pendingEnrollments || 0}
-                      </span>
-                    </div>
-                    <div className='flex items-center space-x-2'>
-                      <IconClock className='h-4 w-4 text-yellow-500' />
-                      <span className='text-muted-foreground text-xs'>
-                        Awaiting approval
-                      </span>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+                        <div className='space-y-2'>
+                          <div className='flex items-center justify-between'>
+                            <span className='text-sm font-medium'>
+                              Revenue Growth
+                            </span>
+                            <span
+                              className={`text-sm ${
+                                (dashboardOverview?.cards.quick_stats
+                                  .revenue_growth || 0) >= 0
+                                  ? 'text-green-600'
+                                  : 'text-red-600'
+                              }`}
+                            >
+                              {(dashboardOverview?.cards.quick_stats
+                                .revenue_growth || 0) >= 0
+                                ? '+'
+                                : ''}
+                              {dashboardOverview?.cards.quick_stats
+                                .revenue_growth || 0}
+                              %
+                            </span>
+                          </div>
+                          <div className='flex items-center space-x-2'>
+                            <IconCurrencyDollar className='h-4 w-4 text-blue-500' />
+                            <span className='text-muted-foreground text-xs'>
+                              Monthly growth
+                            </span>
+                          </div>
+                        </div>
+                      </>
+                    )}
+                  </CardContent>
+                </Card>
+              </div>
             </div>
           </TabsContent>
 

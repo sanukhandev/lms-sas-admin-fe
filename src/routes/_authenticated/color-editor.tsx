@@ -1,16 +1,22 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { Code, Database, Palette, Settings, Zap } from 'lucide-react'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { ColorPaletteEditor } from '@/components/color-palette-editor'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { TopNav } from '@/components/layout/top-nav'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { TenantThemeSwitch } from '@/components/tenant-theme-selector'
-import { ColorPaletteEditor } from '@/components/color-palette-editor'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Code, Database, Palette, Settings, Zap } from 'lucide-react'
 
 export const Route = createFileRoute('/_authenticated/color-editor')({
   component: ColorEditorPage,
@@ -20,20 +26,25 @@ function ColorEditorPage() {
   return (
     <>
       <Header>
-        <TopNav links={[
-          {
-              title: 'Dashboard', href: '/',
-              isActive: false
-          },
-          {
-              title: 'Theme Demo', href: '/theme-demo',
-              isActive: false
-          },
-          {
-              title: 'Color Editor', href: '/color-editor',
-              isActive: false
-          },
-        ]} />
+        <TopNav
+          links={[
+            {
+              title: 'Dashboard',
+              href: '/',
+              isActive: false,
+            },
+            {
+              title: 'Theme Demo',
+              href: '/theme-demo',
+              isActive: false,
+            },
+            {
+              title: 'Color Editor',
+              href: '/color-editor',
+              isActive: false,
+            },
+          ]}
+        />
         <div className='ml-auto flex items-center space-x-4'>
           <Search />
           <TenantThemeSwitch />
@@ -43,67 +54,81 @@ function ColorEditorPage() {
 
       <Main>
         <div className='mb-6'>
-          <h1 className='text-3xl font-bold tracking-tight'>API-Based Color Palette Editor</h1>
+          <h1 className='text-3xl font-bold tracking-tight'>
+            API-Based Color Palette Editor
+          </h1>
           <p className='text-muted-foreground mt-2'>
             Manage tenant color palettes with real-time API integration
           </p>
         </div>
 
-        <Tabs defaultValue="editor" className="w-full">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="editor">Color Editor</TabsTrigger>
-            <TabsTrigger value="api">API Usage</TabsTrigger>
-            <TabsTrigger value="examples">Examples</TabsTrigger>
-            <TabsTrigger value="integration">Integration</TabsTrigger>
+        <Tabs defaultValue='editor' className='w-full'>
+          <TabsList className='grid w-full grid-cols-4'>
+            <TabsTrigger value='editor'>Color Editor</TabsTrigger>
+            <TabsTrigger value='api'>API Usage</TabsTrigger>
+            <TabsTrigger value='examples'>Examples</TabsTrigger>
+            <TabsTrigger value='integration'>Integration</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="editor" className="space-y-6">
+          <TabsContent value='editor' className='space-y-6'>
             <ColorPaletteEditor />
           </TabsContent>
 
-          <TabsContent value="api" className="space-y-6">
-            <div className="grid gap-6 md:grid-cols-2">
+          <TabsContent value='api' className='space-y-6'>
+            <div className='grid gap-6 md:grid-cols-2'>
               <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Database className="h-5 w-5" />
+                  <CardTitle className='flex items-center gap-2'>
+                    <Database className='h-5 w-5' />
                     API Endpoints
                   </CardTitle>
                   <CardDescription>
                     Available endpoints for color palette management
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <Badge variant="outline">GET</Badge>
-                    <code className="text-sm">/api/theme/color-palettes</code>
-                    <p className="text-xs text-muted-foreground">Get all available color palettes</p>
+                <CardContent className='space-y-4'>
+                  <div className='space-y-2'>
+                    <Badge variant='outline'>GET</Badge>
+                    <code className='text-sm'>/api/theme/color-palettes</code>
+                    <p className='text-muted-foreground text-xs'>
+                      Get all available color palettes
+                    </p>
                   </div>
-                  
-                  <div className="space-y-2">
-                    <Badge variant="outline">PATCH</Badge>
-                    <code className="text-sm">/api/tenants/{'{tenantId}'}/theme/colors</code>
-                    <p className="text-xs text-muted-foreground">Update tenant color palette</p>
+
+                  <div className='space-y-2'>
+                    <Badge variant='outline'>PATCH</Badge>
+                    <code className='text-sm'>
+                      /api/tenants/{'{tenantId}'}/theme/colors
+                    </code>
+                    <p className='text-muted-foreground text-xs'>
+                      Update tenant color palette
+                    </p>
                   </div>
-                  
-                  <div className="space-y-2">
-                    <Badge variant="outline">POST</Badge>
-                    <code className="text-sm">/api/theme/generate-palette</code>
-                    <p className="text-xs text-muted-foreground">Generate palette from primary color</p>
+
+                  <div className='space-y-2'>
+                    <Badge variant='outline'>POST</Badge>
+                    <code className='text-sm'>/api/theme/generate-palette</code>
+                    <p className='text-muted-foreground text-xs'>
+                      Generate palette from primary color
+                    </p>
                   </div>
-                  
-                  <div className="space-y-2">
-                    <Badge variant="outline">POST</Badge>
-                    <code className="text-sm">/api/tenants/{'{tenantId}'}/theme/preview</code>
-                    <p className="text-xs text-muted-foreground">Preview color changes</p>
+
+                  <div className='space-y-2'>
+                    <Badge variant='outline'>POST</Badge>
+                    <code className='text-sm'>
+                      /api/tenants/{'{tenantId}'}/theme/preview
+                    </code>
+                    <p className='text-muted-foreground text-xs'>
+                      Preview color changes
+                    </p>
                   </div>
                 </CardContent>
               </Card>
 
               <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Code className="h-5 w-5" />
+                  <CardTitle className='flex items-center gap-2'>
+                    <Code className='h-5 w-5' />
                     Usage Example
                   </CardTitle>
                   <CardDescription>
@@ -111,9 +136,9 @@ function ColorEditorPage() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <pre className="text-xs bg-muted p-4 rounded-lg overflow-x-auto">
-{`// Update color palette
-const response = await fetch('/api/tenants/tenant-1/theme/colors', {
+                  <pre className='bg-muted overflow-x-auto rounded-lg p-4 text-xs'>
+                    {`// Update color palette
+const response = await fetch('/v1/tenants/tenant-1/theme/colors', {
   method: 'PATCH',
   headers: {
     'Content-Type': 'application/json',
@@ -138,123 +163,182 @@ const response = await fetch('/api/tenants/tenant-1/theme/colors', {
             </div>
           </TabsContent>
 
-          <TabsContent value="examples" className="space-y-6">
-            <div className="grid gap-6 md:grid-cols-3">
+          <TabsContent value='examples' className='space-y-6'>
+            <div className='grid gap-6 md:grid-cols-3'>
               <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Palette className="h-5 w-5" />
+                  <CardTitle className='flex items-center gap-2'>
+                    <Palette className='h-5 w-5' />
                     Corporate Blue
                   </CardTitle>
                   <CardDescription>Professional blue theme</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="flex gap-2 mb-4">
-                    <div className="w-8 h-8 rounded-md border" style={{ backgroundColor: '#3b82f6' }} />
-                    <div className="w-8 h-8 rounded-md border" style={{ backgroundColor: '#1e40af' }} />
-                    <div className="w-8 h-8 rounded-md border" style={{ backgroundColor: '#dbeafe' }} />
+                  <div className='mb-4 flex gap-2'>
+                    <div
+                      className='h-8 w-8 rounded-md border'
+                      style={{ backgroundColor: '#3b82f6' }}
+                    />
+                    <div
+                      className='h-8 w-8 rounded-md border'
+                      style={{ backgroundColor: '#1e40af' }}
+                    />
+                    <div
+                      className='h-8 w-8 rounded-md border'
+                      style={{ backgroundColor: '#dbeafe' }}
+                    />
                   </div>
-                  <div className="space-y-2">
-                    <Button size="sm" className="w-full">Primary Button</Button>
-                    <Button size="sm" variant="outline" className="w-full">Secondary</Button>
+                  <div className='space-y-2'>
+                    <Button size='sm' className='w-full'>
+                      Primary Button
+                    </Button>
+                    <Button size='sm' variant='outline' className='w-full'>
+                      Secondary
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
 
               <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Palette className="h-5 w-5" />
+                  <CardTitle className='flex items-center gap-2'>
+                    <Palette className='h-5 w-5' />
                     Nature Green
                   </CardTitle>
                   <CardDescription>Fresh green theme</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="flex gap-2 mb-4">
-                    <div className="w-8 h-8 rounded-md border" style={{ backgroundColor: '#10b981' }} />
-                    <div className="w-8 h-8 rounded-md border" style={{ backgroundColor: '#059669' }} />
-                    <div className="w-8 h-8 rounded-md border" style={{ backgroundColor: '#d1fae5' }} />
+                  <div className='mb-4 flex gap-2'>
+                    <div
+                      className='h-8 w-8 rounded-md border'
+                      style={{ backgroundColor: '#10b981' }}
+                    />
+                    <div
+                      className='h-8 w-8 rounded-md border'
+                      style={{ backgroundColor: '#059669' }}
+                    />
+                    <div
+                      className='h-8 w-8 rounded-md border'
+                      style={{ backgroundColor: '#d1fae5' }}
+                    />
                   </div>
-                  <div className="space-y-2">
-                    <Button size="sm" className="w-full">Primary Button</Button>
-                    <Button size="sm" variant="outline" className="w-full">Secondary</Button>
+                  <div className='space-y-2'>
+                    <Button size='sm' className='w-full'>
+                      Primary Button
+                    </Button>
+                    <Button size='sm' variant='outline' className='w-full'>
+                      Secondary
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
 
               <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Palette className="h-5 w-5" />
+                  <CardTitle className='flex items-center gap-2'>
+                    <Palette className='h-5 w-5' />
                     Sunset Orange
                   </CardTitle>
                   <CardDescription>Warm orange theme</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="flex gap-2 mb-4">
-                    <div className="w-8 h-8 rounded-md border" style={{ backgroundColor: '#f97316' }} />
-                    <div className="w-8 h-8 rounded-md border" style={{ backgroundColor: '#ea580c' }} />
-                    <div className="w-8 h-8 rounded-md border" style={{ backgroundColor: '#fed7aa' }} />
+                  <div className='mb-4 flex gap-2'>
+                    <div
+                      className='h-8 w-8 rounded-md border'
+                      style={{ backgroundColor: '#f97316' }}
+                    />
+                    <div
+                      className='h-8 w-8 rounded-md border'
+                      style={{ backgroundColor: '#ea580c' }}
+                    />
+                    <div
+                      className='h-8 w-8 rounded-md border'
+                      style={{ backgroundColor: '#fed7aa' }}
+                    />
                   </div>
-                  <div className="space-y-2">
-                    <Button size="sm" className="w-full">Primary Button</Button>
-                    <Button size="sm" variant="outline" className="w-full">Secondary</Button>
+                  <div className='space-y-2'>
+                    <Button size='sm' className='w-full'>
+                      Primary Button
+                    </Button>
+                    <Button size='sm' variant='outline' className='w-full'>
+                      Secondary
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
             </div>
           </TabsContent>
 
-          <TabsContent value="integration" className="space-y-6">
+          <TabsContent value='integration' className='space-y-6'>
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Settings className="h-5 w-5" />
+                <CardTitle className='flex items-center gap-2'>
+                  <Settings className='h-5 w-5' />
                   Integration Steps
                 </CardTitle>
                 <CardDescription>
                   How to integrate the color palette API into your application
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-3">
-                  <div className="flex items-start gap-3">
-                    <div className="w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-semibold">1</div>
+              <CardContent className='space-y-4'>
+                <div className='space-y-3'>
+                  <div className='flex items-start gap-3'>
+                    <div className='bg-primary text-primary-foreground flex h-6 w-6 items-center justify-center rounded-full text-sm font-semibold'>
+                      1
+                    </div>
                     <div>
-                      <h4 className="font-medium">Setup API Client</h4>
-                      <p className="text-sm text-muted-foreground">Configure axios or fetch client with authentication</p>
+                      <h4 className='font-medium'>Setup API Client</h4>
+                      <p className='text-muted-foreground text-sm'>
+                        Configure axios or fetch client with authentication
+                      </p>
                     </div>
                   </div>
-                  
-                  <div className="flex items-start gap-3">
-                    <div className="w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-semibold">2</div>
+
+                  <div className='flex items-start gap-3'>
+                    <div className='bg-primary text-primary-foreground flex h-6 w-6 items-center justify-center rounded-full text-sm font-semibold'>
+                      2
+                    </div>
                     <div>
-                      <h4 className="font-medium">Load Color Palettes</h4>
-                      <p className="text-sm text-muted-foreground">Fetch available palettes from the API</p>
+                      <h4 className='font-medium'>Load Color Palettes</h4>
+                      <p className='text-muted-foreground text-sm'>
+                        Fetch available palettes from the API
+                      </p>
                     </div>
                   </div>
-                  
-                  <div className="flex items-start gap-3">
-                    <div className="w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-semibold">3</div>
+
+                  <div className='flex items-start gap-3'>
+                    <div className='bg-primary text-primary-foreground flex h-6 w-6 items-center justify-center rounded-full text-sm font-semibold'>
+                      3
+                    </div>
                     <div>
-                      <h4 className="font-medium">Update Theme Store</h4>
-                      <p className="text-sm text-muted-foreground">Integrate with Zustand store for state management</p>
+                      <h4 className='font-medium'>Update Theme Store</h4>
+                      <p className='text-muted-foreground text-sm'>
+                        Integrate with Zustand store for state management
+                      </p>
                     </div>
                   </div>
-                  
-                  <div className="flex items-start gap-3">
-                    <div className="w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-semibold">4</div>
+
+                  <div className='flex items-start gap-3'>
+                    <div className='bg-primary text-primary-foreground flex h-6 w-6 items-center justify-center rounded-full text-sm font-semibold'>
+                      4
+                    </div>
                     <div>
-                      <h4 className="font-medium">Apply CSS Variables</h4>
-                      <p className="text-sm text-muted-foreground">Dynamically update CSS custom properties</p>
+                      <h4 className='font-medium'>Apply CSS Variables</h4>
+                      <p className='text-muted-foreground text-sm'>
+                        Dynamically update CSS custom properties
+                      </p>
                     </div>
                   </div>
-                  
-                  <div className="flex items-start gap-3">
-                    <div className="w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-semibold">5</div>
+
+                  <div className='flex items-start gap-3'>
+                    <div className='bg-primary text-primary-foreground flex h-6 w-6 items-center justify-center rounded-full text-sm font-semibold'>
+                      5
+                    </div>
                     <div>
-                      <h4 className="font-medium">Handle Persistence</h4>
-                      <p className="text-sm text-muted-foreground">Save changes to the backend and localStorage</p>
+                      <h4 className='font-medium'>Handle Persistence</h4>
+                      <p className='text-muted-foreground text-sm'>
+                        Save changes to the backend and localStorage
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -263,8 +347,8 @@ const response = await fetch('/api/tenants/tenant-1/theme/colors', {
 
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Zap className="h-5 w-5" />
+                <CardTitle className='flex items-center gap-2'>
+                  <Zap className='h-5 w-5' />
                   Features
                 </CardTitle>
                 <CardDescription>
@@ -272,35 +356,47 @@ const response = await fetch('/api/tenants/tenant-1/theme/colors', {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="grid gap-4 md:grid-cols-2">
-                  <div className="space-y-2">
-                    <h4 className="font-medium">🎨 Preset Palettes</h4>
-                    <p className="text-sm text-muted-foreground">Pre-built color combinations for quick setup</p>
+                <div className='grid gap-4 md:grid-cols-2'>
+                  <div className='space-y-2'>
+                    <h4 className='font-medium'>🎨 Preset Palettes</h4>
+                    <p className='text-muted-foreground text-sm'>
+                      Pre-built color combinations for quick setup
+                    </p>
                   </div>
-                  
-                  <div className="space-y-2">
-                    <h4 className="font-medium">🤖 AI Generation</h4>
-                    <p className="text-sm text-muted-foreground">Generate palettes from a single primary color</p>
+
+                  <div className='space-y-2'>
+                    <h4 className='font-medium'>🤖 AI Generation</h4>
+                    <p className='text-muted-foreground text-sm'>
+                      Generate palettes from a single primary color
+                    </p>
                   </div>
-                  
-                  <div className="space-y-2">
-                    <h4 className="font-medium">🛠️ Custom Editor</h4>
-                    <p className="text-sm text-muted-foreground">Fine-tune individual color values</p>
+
+                  <div className='space-y-2'>
+                    <h4 className='font-medium'>🛠️ Custom Editor</h4>
+                    <p className='text-muted-foreground text-sm'>
+                      Fine-tune individual color values
+                    </p>
                   </div>
-                  
-                  <div className="space-y-2">
-                    <h4 className="font-medium">👁️ Live Preview</h4>
-                    <p className="text-sm text-muted-foreground">See changes in real-time</p>
+
+                  <div className='space-y-2'>
+                    <h4 className='font-medium'>👁️ Live Preview</h4>
+                    <p className='text-muted-foreground text-sm'>
+                      See changes in real-time
+                    </p>
                   </div>
-                  
-                  <div className="space-y-2">
-                    <h4 className="font-medium">🌓 Dark Mode</h4>
-                    <p className="text-sm text-muted-foreground">Separate palettes for light and dark themes</p>
+
+                  <div className='space-y-2'>
+                    <h4 className='font-medium'>🌓 Dark Mode</h4>
+                    <p className='text-muted-foreground text-sm'>
+                      Separate palettes for light and dark themes
+                    </p>
                   </div>
-                  
-                  <div className="space-y-2">
-                    <h4 className="font-medium">💾 Auto-save</h4>
-                    <p className="text-sm text-muted-foreground">Automatic persistence to backend</p>
+
+                  <div className='space-y-2'>
+                    <h4 className='font-medium'>💾 Auto-save</h4>
+                    <p className='text-muted-foreground text-sm'>
+                      Automatic persistence to backend
+                    </p>
                   </div>
                 </div>
               </CardContent>
