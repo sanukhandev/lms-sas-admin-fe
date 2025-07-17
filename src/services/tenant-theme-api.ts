@@ -1,11 +1,11 @@
 import axios from 'axios'
 import { TenantThemeConfig } from '@/config/tenant-themes'
-import { 
-  TENANT_THEME_API_ENDPOINTS, 
-  ColorPaletteUpdateRequest, 
-  ColorPalette, 
+import {
+  TENANT_THEME_API_ENDPOINTS,
+  ColorPaletteUpdateRequest,
+  ColorPalette,
   TenantThemeResponse,
-  ColorPalettesResponse
+  ColorPalettesResponse,
 } from '@/types/tenant-theme-api'
 
 // Enhanced API service with color palette management
@@ -37,14 +37,19 @@ export class TenantThemeAPIService {
 
   // Get authentication token from localStorage or session storage
   static getStoredAuthToken(): string | null {
-    return localStorage.getItem('authToken') || sessionStorage.getItem('authToken')
+    return (
+      localStorage.getItem('authToken') || sessionStorage.getItem('authToken')
+    )
   }
 
   // Get tenant context from localStorage or session storage
   static getStoredTenantContext(): { tenantId: string; domain: string } | null {
-    const tenantId = localStorage.getItem('tenantId') || sessionStorage.getItem('tenantId')
-    const domain = localStorage.getItem('tenantDomain') || sessionStorage.getItem('tenantDomain')
-    
+    const tenantId =
+      localStorage.getItem('tenantId') || sessionStorage.getItem('tenantId')
+    const domain =
+      localStorage.getItem('tenantDomain') ||
+      sessionStorage.getItem('tenantDomain')
+
     if (tenantId && domain) {
       return { tenantId, domain }
     }
@@ -55,12 +60,40 @@ export class TenantThemeAPIService {
   static autoInitialize(): boolean {
     const token = this.getStoredAuthToken()
     const tenantContext = this.getStoredTenantContext()
-    
+
     if (token && tenantContext) {
       this.initialize(token, tenantContext.tenantId, tenantContext.domain)
       return true
     }
     return false
+  }
+
+  // Initialize with manual token and tenant context (for testing)
+  static initializeManually(
+    token: string,
+    tenantId: string,
+    domain: string
+  ): void {
+    this.initialize(token, tenantId, domain)
+  }
+
+  // Test function to verify API connection
+  static async testColorPalettesAPI(): Promise<boolean> {
+    try {
+      // Try to initialize with known values for testing
+      this.initializeManually(
+        '2|hmi2QveT1j2dbPTuexCZz0rLvdU71tgyjDDdSiLA3df96ce7',
+        '1',
+        'demo'
+      )
+
+      const palettes = await this.getColorPalettes()
+      return palettes.length > 0
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('API test failed:', error)
+      return false
+    }
   }
 
   // Get tenant theme configuration
@@ -77,7 +110,10 @@ export class TenantThemeAPIService {
   }
 
   // Update entire tenant theme
-  static async updateTenantTheme(tenantId: string, theme: TenantThemeConfig): Promise<void> {
+  static async updateTenantTheme(
+    tenantId: string,
+    theme: TenantThemeConfig
+  ): Promise<void> {
     try {
       await this.apiClient.put(
         TENANT_THEME_API_ENDPOINTS.updateTenantTheme(tenantId),
@@ -90,7 +126,9 @@ export class TenantThemeAPIService {
   }
 
   // Update only color palette
-  static async updateColorPalette(request: ColorPaletteUpdateRequest): Promise<void> {
+  static async updateColorPalette(
+    request: ColorPaletteUpdateRequest
+  ): Promise<void> {
     try {
       await this.apiClient.patch(
         TENANT_THEME_API_ENDPOINTS.updateColorPalette(request.tenantId),
@@ -113,13 +151,36 @@ export class TenantThemeAPIService {
         this.autoInitialize()
       }
 
+      // Ensure we have auth token and tenant context
+      const authToken =
+        this.apiClient.defaults.headers.common['Authorization'] ||
+        this.getStoredAuthToken()
+      const tenantContext = this.getStoredTenantContext()
+
+      if (!authToken) {
+        throw new Error('No authentication token available')
+      }
+
+      if (!tenantContext) {
+        throw new Error('No tenant context available')
+      }
+
+      // Clean up auth token if it's already prefixed with Bearer
+      const cleanToken =
+        typeof authToken === 'string'
+          ? authToken.replace('Bearer ', '')
+          : String(authToken)
+
       const response = await this.apiClient.get<ColorPalettesResponse>(
         TENANT_THEME_API_ENDPOINTS.getColorPalettes(),
         {
           headers: {
-            'Accept': 'application/json',
+            Accept: 'application/json',
             'Content-Type': 'application/json',
-          }
+            Authorization: `Bearer ${cleanToken}`,
+            'X-Tenant-ID': tenantContext.tenantId,
+            'X-Tenant-Domain': tenantContext.domain,
+          },
         }
       )
       return response.data.data.palettes
@@ -133,18 +194,56 @@ export class TenantThemeAPIService {
   // Get preset themes
   static async getPresetThemes(): Promise<TenantThemeConfig[]> {
     try {
+      // Auto-initialize if not already done
+      if (!this.apiClient.defaults.headers.common['Authorization']) {
+        this.autoInitialize()
+      }
+
+      // Ensure we have auth token and tenant context
+      const authToken =
+        this.apiClient.defaults.headers.common['Authorization'] ||
+        this.getStoredAuthToken()
+      const tenantContext = this.getStoredTenantContext()
+
+      if (!authToken) {
+        throw new Error('No authentication token available')
+      }
+
+      if (!tenantContext) {
+        throw new Error('No tenant context available')
+      }
+
+      // Clean up auth token if it's already prefixed with Bearer
+      const cleanToken =
+        typeof authToken === 'string'
+          ? authToken.replace('Bearer ', '')
+          : String(authToken)
+
       const response = await this.apiClient.get(
-        TENANT_THEME_API_ENDPOINTS.getPresetThemes()
+        TENANT_THEME_API_ENDPOINTS.getPresetThemes(),
+        {
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${cleanToken}`,
+            'X-Tenant-ID': tenantContext.tenantId,
+            'X-Tenant-Domain': tenantContext.domain,
+          },
+        }
       )
       return response.data.data.presets
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('Error fetching preset themes:', error)
       throw new Error('Failed to fetch preset themes')
     }
   }
 
   // Save custom theme
-  static async saveCustomTheme(tenantId: string, theme: TenantThemeConfig): Promise<void> {
+  static async saveCustomTheme(
+    tenantId: string,
+    theme: TenantThemeConfig
+  ): Promise<void> {
     try {
       await this.apiClient.post(
         TENANT_THEME_API_ENDPOINTS.saveCustomTheme(tenantId),
@@ -157,10 +256,12 @@ export class TenantThemeAPIService {
   }
 
   // Generate color palette from primary color
-  static async generateColorPalette(primaryColor: string): Promise<ColorPalette> {
+  static async generateColorPalette(
+    primaryColor: string
+  ): Promise<ColorPalette> {
     try {
       const response = await this.apiClient.post('/v1/theme/generate-palette', {
-        primaryColor
+        primaryColor,
       })
       return response.data.data.palette
     } catch (error) {
@@ -170,7 +271,10 @@ export class TenantThemeAPIService {
   }
 
   // Preview color changes without saving
-  static async previewColorPalette(_tenantId: string, colors: Record<string, string>): Promise<string> {
+  static async previewColorPalette(
+    _tenantId: string,
+    colors: Record<string, string>
+  ): Promise<string> {
     try {
       const response = await this.apiClient.post(
         `/v1/tenant/settings/theme/preview`,
@@ -184,13 +288,15 @@ export class TenantThemeAPIService {
   }
 
   // Bulk update multiple tenant themes
-  static async bulkUpdateTenantThemes(updates: Array<{
-    tenantId: string
-    theme: Partial<TenantThemeConfig>
-  }>): Promise<void> {
+  static async bulkUpdateTenantThemes(
+    updates: Array<{
+      tenantId: string
+      theme: Partial<TenantThemeConfig>
+    }>
+  ): Promise<void> {
     try {
       await this.apiClient.post('/v1/theme/bulk-update', {
-        updates
+        updates,
       })
     } catch (error) {
       console.error('Error bulk updating tenant themes:', error)
@@ -199,7 +305,9 @@ export class TenantThemeAPIService {
   }
 
   // Get theme usage analytics
-  static async getThemeAnalytics(_tenantId: string): Promise<Record<string, unknown>> {
+  static async getThemeAnalytics(
+    _tenantId: string
+  ): Promise<Record<string, unknown>> {
     try {
       const response = await this.apiClient.get(
         `/v1/tenant/settings/theme/analytics`
@@ -279,7 +387,7 @@ export class MockTenantThemeAPIService {
         sidebarBorder: 'oklch(0.208 0.042 265.755)',
         sidebarRing: 'oklch(0.75 0.2 262.4)',
       },
-      preview: 'linear-gradient(45deg, #3b82f6, #1e40af)'
+      preview: 'linear-gradient(45deg, #3b82f6, #1e40af)',
     },
     {
       id: 'nature-green',
@@ -345,26 +453,30 @@ export class MockTenantThemeAPIService {
         sidebarBorder: 'oklch(0.208 0.042 265.755)',
         sidebarRing: 'oklch(0.75 0.12 142.5)',
       },
-      preview: 'linear-gradient(45deg, #10b981, #059669)'
-    }
+      preview: 'linear-gradient(45deg, #10b981, #059669)',
+    },
   ]
 
   static async getColorPalettes(): Promise<ColorPalette[]> {
     // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 500))
+    await new Promise((resolve) => setTimeout(resolve, 500))
     return this.mockPalettes
   }
 
-  static async updateColorPalette(request: ColorPaletteUpdateRequest): Promise<void> {
+  static async updateColorPalette(
+    request: ColorPaletteUpdateRequest
+  ): Promise<void> {
     // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 800))
+    await new Promise((resolve) => setTimeout(resolve, 800))
     console.log('Mock API: Updated color palette for tenant:', request.tenantId)
   }
 
-  static async generateColorPalette(primaryColor: string): Promise<ColorPalette> {
+  static async generateColorPalette(
+    primaryColor: string
+  ): Promise<ColorPalette> {
     // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 1200))
-    
+    await new Promise((resolve) => setTimeout(resolve, 1200))
+
     // Mock generated palette
     return {
       id: 'generated-' + Date.now(),
@@ -430,7 +542,7 @@ export class MockTenantThemeAPIService {
         sidebarBorder: 'oklch(0.208 0.042 265.755)',
         sidebarRing: primaryColor,
       },
-      preview: `linear-gradient(45deg, ${primaryColor}, ${primaryColor}aa)`
+      preview: `linear-gradient(45deg, ${primaryColor}, ${primaryColor}aa)`,
     }
   }
 }
