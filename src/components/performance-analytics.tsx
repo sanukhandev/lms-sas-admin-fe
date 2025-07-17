@@ -143,14 +143,8 @@ export default function PerformanceAnalytics() {
   }
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold tracking-tight">Performance Analytics</h2>
-          <p className="text-muted-foreground">
-            Course completion rates, student performance, and learning outcomes
-          </p>
-        </div>
+      {/* Time Range Filter */}
+      <div className="flex justify-end">
         <div className="flex gap-2">
           {TIME_RANGES.map((range) => (
             <Button

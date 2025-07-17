@@ -164,8 +164,36 @@ function GrowthCard({ title, currentPeriod, previousPeriod, growthRate, icon: Ic
 }
 
 export default function AnalyticsOverview() {
+  const [activeTab, setActiveTab] = useState('overview')
   const [timeRange, setTimeRange] = useState('30d')
   const { data: analytics, isLoading, error } = useAnalyticsOverview(timeRange)
+
+  const getTabContent = (tab: string) => {
+    switch (tab) {
+      case 'overview':
+        return {
+          title: 'Analytics Overview',
+          description: 'Comprehensive view of your platform\'s key performance indicators and growth metrics.'
+        }
+      case 'engagement':
+        return {
+          title: 'Engagement Analytics',
+          description: 'Track user engagement patterns, session data, and course interaction metrics.'
+        }
+      case 'performance':
+        return {
+          title: 'Performance Analytics',
+          description: 'Monitor course completion rates, student performance, and learning outcomes.'
+        }
+      default:
+        return {
+          title: 'Analytics Overview',
+          description: 'Comprehensive view of your platform\'s key performance indicators and growth metrics.'
+        }
+    }
+  }
+
+  const currentTabContent = getTabContent(activeTab)
 
   if (error) {
     return (
@@ -179,36 +207,38 @@ export default function AnalyticsOverview() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
+      {/* Header with Tabs */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight">Analytics Overview</h2>
-          <p className="text-muted-foreground">
-            Key performance metrics and insights for your learning platform
-          </p>
+          <h1 className="text-3xl font-bold tracking-tight">{currentTabContent.title}</h1>
+          <p className="text-muted-foreground">{currentTabContent.description}</p>
         </div>
-        <div className="flex gap-2">
-          {TIME_RANGES.map((range) => (
-            <Button
-              key={range.value}
-              variant={timeRange === range.value ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setTimeRange(range.value)}
-            >
-              {range.label}
-            </Button>
-          ))}
-        </div>
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-auto">
+          <TabsList>
+            <TabsTrigger value="overview">Overview</TabsTrigger>
+            <TabsTrigger value="engagement">Engagement</TabsTrigger>
+            <TabsTrigger value="performance">Performance</TabsTrigger>
+          </TabsList>
+        </Tabs>
       </div>
 
-      <Tabs defaultValue="overview" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="engagement">Engagement</TabsTrigger>
-          <TabsTrigger value="performance">Performance</TabsTrigger>
-        </TabsList>
-
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
         <TabsContent value="overview" className="space-y-4">
+          {/* Time Range Filter */}
+          <div className="flex justify-end">
+            <div className="flex gap-2">
+              {TIME_RANGES.map((range) => (
+                <Button
+                  key={range.value}
+                  variant={timeRange === range.value ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setTimeRange(range.value)}
+                >
+                  {range.label}
+                </Button>
+              ))}
+            </div>
+          </div>
           {/* Key Metrics */}
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             <MetricCard

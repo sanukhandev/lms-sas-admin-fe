@@ -79,14 +79,8 @@ export default function EngagementAnalytics() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold tracking-tight">Engagement Analytics</h2>
-          <p className="text-muted-foreground">
-            User activity, course interactions, and learning engagement insights
-          </p>
-        </div>
+      {/* Time Range Filter */}
+      <div className="flex justify-end">
         <div className="flex gap-2">
           {TIME_RANGES.map((range) => (
             <Button
