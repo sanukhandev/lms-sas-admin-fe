@@ -13,6 +13,8 @@ import { TopNav } from '@/components/layout/top-nav'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
+import { CoursePerformanceTable } from './components/course-performance-table'
+import { CoursesOverview } from './components/courses-overview'
 import { Overview } from './components/overview'
 
 const topNav = [
@@ -62,20 +64,8 @@ export default function IntegratedDashboard() {
           </TabsContent>
 
           <TabsContent value='courses' className='space-y-4'>
-            <Card>
-              <CardHeader>
-                <CardTitle>Course Performance</CardTitle>
-                <CardDescription>
-                  Track course enrollment and completion rates
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className='text-2xl font-bold'>Coming Soon</div>
-                <p className='text-muted-foreground text-xs'>
-                  Detailed course analytics and performance metrics
-                </p>
-              </CardContent>
-            </Card>
+            <CoursesOverview />
+            <CoursePerformanceTable />
           </TabsContent>
 
           <TabsContent value='users' className='space-y-4'>
