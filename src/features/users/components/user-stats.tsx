@@ -7,7 +7,6 @@ import { Badge } from '@/components/ui/badge'
 
 export function UserStats() {
   const { data: userStats, isLoading, error } = useUserStats()
-    debugger
   if (isLoading) {
     return (
       <div className='mb-8 space-y-6'>

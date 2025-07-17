@@ -1,11 +1,4 @@
 import { useTenantStore } from '@/stores/tenant-store'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
@@ -19,6 +12,7 @@ import { Overview } from './components/overview'
 import { UserActivityFeed } from './components/user-activity-feed'
 import { UsersManagementTable } from './components/users-management-table'
 import { UsersOverview } from './components/users-overview'
+import AnalyticsOverview from '@/components/analytics-overview'
 
 const topNav = [
   { title: 'Dashboard', href: '/home', isActive: true },
@@ -84,20 +78,7 @@ export default function IntegratedDashboard() {
           </TabsContent>
 
           <TabsContent value='analytics' className='space-y-4'>
-            <Card>
-              <CardHeader>
-                <CardTitle>Advanced Analytics</CardTitle>
-                <CardDescription>
-                  Deep dive into learning platform analytics
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className='text-2xl font-bold'>Coming Soon</div>
-                <p className='text-muted-foreground text-xs'>
-                  Advanced reporting and analytics features
-                </p>
-              </CardContent>
-            </Card>
+            <AnalyticsOverview />
           </TabsContent>
         </Tabs>
       </Main>
