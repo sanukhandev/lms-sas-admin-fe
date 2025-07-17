@@ -232,6 +232,28 @@ export class DashboardService {
             avatar: '/avatars/03.png',
           },
         },
+        {
+          id: 4,
+          type: 'enrollment',
+          message: 'John Smith enrolled in UI/UX Design Fundamentals',
+          timestamp: '8 hours ago',
+          user: {
+            name: 'John Smith',
+            email: 'john.smith@email.com',
+            avatar: '/avatars/04.png',
+          },
+        },
+        {
+          id: 5,
+          type: 'completion',
+          message: 'Lisa Brown completed JavaScript Fundamentals',
+          timestamp: '12 hours ago',
+          user: {
+            name: 'Lisa Brown',
+            email: 'lisa.brown@email.com',
+            avatar: '/avatars/05.png',
+          },
+        },
       ]
     }
   }

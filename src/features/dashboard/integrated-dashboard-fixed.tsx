@@ -1,4 +1,21 @@
+import { useQuery } from '@tanstack/react-query'
+import {
+  IconUsers,
+  IconBook,
+  IconClipboardList,
+  IconCurrencyDollar,
+  IconClock,
+  IconCheck,
+  IconTrendingUp,
+  IconTrendingDown,
+} from '@tabler/icons-react'
+import DashboardService from '@/services/dashboard'
+import type { RecentActivity } from '@/services/dashboard'
+import { toast } from 'sonner'
 import { useTenantStore } from '@/stores/tenant-store'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
@@ -6,6 +23,8 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import { Progress } from '@/components/ui/progress'
+import { Skeleton } from '@/components/ui/skeleton'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
@@ -23,7 +42,7 @@ const topNav = [
 ]
 
 export default function IntegratedDashboard() {
-  const { currentTenant } = useTenantStore()
+  const { tenant } = useTenantStore()
 
   return (
     <>
@@ -39,8 +58,8 @@ export default function IntegratedDashboard() {
         <div className='mb-2 flex items-center justify-between space-y-2'>
           <div>
             <h2 className='text-2xl font-bold tracking-tight'>
-              {currentTenant?.name
-                ? `Welcome back! Here's what's happening with ${currentTenant.name}.`
+              {tenant?.name
+                ? `Welcome back! Here's what's happening with ${tenant.name}.`
                 : "Welcome back! Here's what's happening with your learning platform."}
             </h2>
             <p className='text-muted-foreground'>

@@ -10,7 +10,10 @@ import {
   IconCheck,
 } from '@tabler/icons-react'
 import { DashboardService } from '@/services/dashboard'
-import type { DashboardOverview as DashboardOverviewType, RecentActivity } from '@/services/dashboard'
+import type {
+  DashboardOverview as DashboardOverviewType,
+  RecentActivity,
+} from '@/services/dashboard'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -93,30 +96,65 @@ export function Overview() {
     )
   }
 
-  const ActivityItem = ({
-    activity,
-  }: {
-    activity: DashboardOverviewType['recent_activities'][0]
-  }) => (
-    <div className='flex items-center space-x-4'>
-      <Avatar className='h-8 w-8'>
-        <AvatarImage src={activity.user.avatar} />
-        <AvatarFallback>
-          {activity.user.name
-            .split(' ')
-            .map((n: string) => n[0])
-            .join('')}
-        </AvatarFallback>
-      </Avatar>
-      <div className='flex-1 space-y-1'>
-        <p className='text-sm leading-none font-medium'>{activity.message}</p>
-        <p className='text-muted-foreground text-xs'>{activity.timestamp}</p>
+  const ActivityItem = ({ activity }: { activity: RecentActivity }) => {
+    const getActivityIcon = (type: string) => {
+      switch (type) {
+        case 'completion':
+          return <IconCheck className='h-4 w-4 text-green-500' />
+        case 'payment':
+          return <IconCurrencyDollar className='h-4 w-4 text-blue-500' />
+        default:
+          return <IconUsers className='h-4 w-4 text-gray-500' />
+      }
+    }
+
+    const getBadgeVariant = (type: string) => {
+      switch (type) {
+        case 'completion':
+          return 'default'
+        case 'payment':
+          return 'secondary'
+        default:
+          return 'outline'
+      }
+    }
+
+    return (
+      <div className='flex items-start space-x-4 rounded-lg p-3 transition-colors hover:bg-gray-50'>
+        <div className='relative'>
+          <Avatar className='h-10 w-10'>
+            <AvatarImage src={activity.user.avatar} />
+            <AvatarFallback className='bg-primary/10 text-primary font-medium'>
+              {activity.user.name
+                .split(' ')
+                .map((n: string) => n[0])
+                .join('')}
+            </AvatarFallback>
+          </Avatar>
+          <div className='absolute -right-1 -bottom-1 rounded-full bg-white p-1 shadow-sm'>
+            {getActivityIcon(activity.type)}
+          </div>
+        </div>
+        <div className='min-w-0 flex-1'>
+          <div className='mb-1 flex items-center justify-between'>
+            <p className='truncate text-sm font-medium text-gray-900'>
+              {activity.user.name}
+            </p>
+            <Badge variant={getBadgeVariant(activity.type)} className='text-xs'>
+              {activity.type}
+            </Badge>
+          </div>
+          <p className='mb-1 text-sm leading-relaxed text-gray-600'>
+            {activity.message}
+          </p>
+          <p className='flex items-center text-xs text-gray-500'>
+            <IconClock className='mr-1 h-3 w-3' />
+            {activity.timestamp}
+          </p>
+        </div>
       </div>
-      <Badge variant={activity.type === 'completion' ? 'default' : 'secondary'}>
-        {activity.type}
-      </Badge>
-    </div>
-  )
+    )
+  }
 
   if (isLoading) {
     return (
@@ -194,30 +232,15 @@ export function Overview() {
         ))}
       </div>
 
-      {/* Charts and Activities Grid */}
-      <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-7'>
-        {/* Charts Section */}
-        <div className='col-span-4'>
+      {/* Charts and Quick Stats Grid - Analytics Overview with Quick Stats */}
+      <div className='grid gap-4 lg:grid-cols-10'>
+        {/* Charts Section - 70% width */}
+        <div className='col-span-7'>
           <DashboardCharts data={dashboardData.charts} />
         </div>
 
-        {/* Right Side Panel */}
-        <div className='col-span-3 space-y-4'>
-          {/* Recent Activity */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Recent Activity</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className='space-y-6'>
-                {dashboardData.recent_activities.map((activity) => (
-                  <ActivityItem key={activity.id} activity={activity} />
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Quick Stats */}
+        {/* Quick Stats Panel - 30% width */}
+        <div className='col-span-3'>
           <Card>
             <CardHeader>
               <CardTitle>Quick Stats</CardTitle>
@@ -297,6 +320,53 @@ export function Overview() {
           </Card>
         </div>
       </div>
+
+      {/* Recent Activity - Full Width at Bottom */}
+      <Card>
+        <CardHeader className='pb-4'>
+          <CardTitle className='text-lg font-semibold'>
+            Recent Activity
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {isLoadingActivities ? (
+            <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
+              {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+                <div key={i} className='flex items-start space-x-4 p-3'>
+                  <Skeleton className='h-10 w-10 rounded-full' />
+                  <div className='flex-1 space-y-2'>
+                    <Skeleton className='h-4 w-24' />
+                    <Skeleton className='h-3 w-full' />
+                    <Skeleton className='h-3 w-20' />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className='grid gap-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
+              {recentActivities && recentActivities.length > 0 ? (
+                recentActivities
+                  .slice(0, 8)
+                  .map((activity) => (
+                    <ActivityItem key={activity.id} activity={activity} />
+                  ))
+              ) : (
+                <div className='col-span-full py-12 text-center'>
+                  <div className='mx-auto mb-4 h-12 w-12 text-gray-400'>
+                    <IconUsers className='h-full w-full' />
+                  </div>
+                  <p className='text-sm font-medium text-gray-500'>
+                    No recent activities
+                  </p>
+                  <p className='mt-1 text-xs text-gray-400'>
+                    Activity will appear here once users start interacting
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   )
 }

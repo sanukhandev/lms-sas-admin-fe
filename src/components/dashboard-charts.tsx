@@ -32,6 +32,22 @@ const COLORS = [
 ]
 
 export function DashboardCharts({ data, className }: DashboardChartsProps) {
+  // Handle empty or undefined data
+  if (!data) {
+    return (
+      <Card className={className}>
+        <CardHeader>
+          <CardTitle>Analytics Overview</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className='flex h-[350px] items-center justify-center'>
+            <p className='text-muted-foreground'>No chart data available</p>
+          </div>
+        </CardContent>
+      </Card>
+    )
+  }
+
   return (
     <Card className={className}>
       <CardHeader>
@@ -50,113 +66,120 @@ export function DashboardCharts({ data, className }: DashboardChartsProps) {
 
           <TabsContent value='enrollment' className='space-y-4'>
             <div className='h-[350px]'>
-              <ResponsiveContainer width='100%' height='100%'>
-                <AreaChart data={data.enrollment_trends}>
-                  <CartesianGrid strokeDasharray='3 3' />
-                  <XAxis
-                    dataKey='period'
-                    stroke='hsl(var(--muted-foreground))'
-                    fontSize={12}
-                    tickLine={false}
-                    axisLine={false}
-                  />
-                  <YAxis
-                    stroke='hsl(var(--muted-foreground))'
-                    fontSize={12}
-                    tickLine={false}
-                    axisLine={false}
-                  />
-                  <Tooltip
-                    content={({ active, payload, label }) => {
-                      if (active && payload && payload.length) {
-                        return (
-                          <div className='bg-background rounded-lg border p-3 shadow-md'>
-                            <p className='font-medium'>{label}</p>
-                            <p className='text-sm text-blue-600'>
-                              Enrollments: {payload[0]?.value}
-                            </p>
-                            <p className='text-sm text-green-600'>
-                              Completions: {payload[1]?.value}
-                            </p>
-                          </div>
-                        )
-                      }
-                      return null
-                    }}
-                  />
-                  <Area
-                    type='monotone'
-                    dataKey='enrollments'
-                    stackId='1'
-                    stroke='hsl(var(--chart-1))'
-                    fill='hsl(var(--chart-1))'
-                    fillOpacity={0.8}
-                  />
-                  <Area
-                    type='monotone'
-                    dataKey='completions'
-                    stackId='1'
-                    stroke='hsl(var(--chart-2))'
-                    fill='hsl(var(--chart-2))'
-                    fillOpacity={0.8}
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
+              {data.enrollment_trends && data.enrollment_trends.length > 0 ? (
+                <ResponsiveContainer width='100%' height='100%'>
+                  <AreaChart data={data.enrollment_trends}>
+                    <CartesianGrid strokeDasharray='3 3' />
+                    <XAxis
+                      dataKey='date'
+                      stroke='hsl(var(--muted-foreground))'
+                      fontSize={12}
+                      tickLine={false}
+                      axisLine={false}
+                    />
+                    <YAxis
+                      stroke='hsl(var(--muted-foreground))'
+                      fontSize={12}
+                      tickLine={false}
+                      axisLine={false}
+                    />
+                    <Tooltip
+                      content={({ active, payload, label }) => {
+                        if (active && payload && payload.length) {
+                          return (
+                            <div className='bg-background rounded-lg border p-3 shadow-md'>
+                              <p className='font-medium'>{label}</p>
+                              <p className='text-sm text-blue-600'>
+                                Enrollments: {payload[0]?.value}
+                              </p>
+                            </div>
+                          )
+                        }
+                        return null
+                      }}
+                    />
+                    <Area
+                      type='monotone'
+                      dataKey='count'
+                      stackId='1'
+                      stroke='hsl(var(--chart-1))'
+                      fill='hsl(var(--chart-1))'
+                      fillOpacity={0.8}
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
+              ) : (
+                <div className='flex h-full items-center justify-center'>
+                  <div className='text-center'>
+                    <p className='text-muted-foreground text-lg'>
+                      No enrollment data available
+                    </p>
+                    <p className='text-muted-foreground mt-2 text-sm'>
+                      Enrollment trends will appear here once you have
+                      enrollment data
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
           </TabsContent>
 
           <TabsContent value='completion' className='space-y-4'>
             <div className='h-[350px]'>
-              <ResponsiveContainer width='100%' height='100%'>
-                <LineChart data={data.completion_trends}>
-                  <CartesianGrid strokeDasharray='3 3' />
-                  <XAxis
-                    dataKey='period'
-                    stroke='hsl(var(--muted-foreground))'
-                    fontSize={12}
-                    tickLine={false}
-                    axisLine={false}
-                  />
-                  <YAxis
-                    stroke='hsl(var(--muted-foreground))'
-                    fontSize={12}
-                    tickLine={false}
-                    axisLine={false}
-                  />
-                  <Tooltip
-                    content={({ active, payload, label }) => {
-                      if (active && payload && payload.length) {
-                        return (
-                          <div className='bg-background rounded-lg border p-3 shadow-md'>
-                            <p className='font-medium'>{label}</p>
-                            <p className='text-sm text-green-600'>
-                              Completions: {payload[0]?.value}
-                            </p>
-                            <p className='text-sm text-blue-600'>
-                              Rate: {payload[1]?.value}%
-                            </p>
-                          </div>
-                        )
-                      }
-                      return null
-                    }}
-                  />
-                  <Line
-                    type='monotone'
-                    dataKey='completions'
-                    stroke='hsl(var(--chart-2))'
-                    strokeWidth={2}
-                    dot={{ fill: 'hsl(var(--chart-2))' }}
-                  />
-                  <Line
-                    type='monotone'
-                    dataKey='rate'
-                    stroke='hsl(var(--chart-3))'
-                    strokeWidth={2}
-                    dot={{ fill: 'hsl(var(--chart-3))' }}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
+              {data.completion_trends && data.completion_trends.length > 0 ? (
+                <ResponsiveContainer width='100%' height='100%'>
+                  <LineChart data={data.completion_trends}>
+                    <CartesianGrid strokeDasharray='3 3' />
+                    <XAxis
+                      dataKey='date'
+                      stroke='hsl(var(--muted-foreground))'
+                      fontSize={12}
+                      tickLine={false}
+                      axisLine={false}
+                    />
+                    <YAxis
+                      stroke='hsl(var(--muted-foreground))'
+                      fontSize={12}
+                      tickLine={false}
+                      axisLine={false}
+                    />
+                    <Tooltip
+                      content={({ active, payload, label }) => {
+                        if (active && payload && payload.length) {
+                          return (
+                            <div className='bg-background rounded-lg border p-3 shadow-md'>
+                              <p className='font-medium'>{label}</p>
+                              <p className='text-sm text-green-600'>
+                                Completions: {payload[0]?.value}
+                              </p>
+                            </div>
+                          )
+                        }
+                        return null
+                      }}
+                    />
+                    <Line
+                      type='monotone'
+                      dataKey='count'
+                      stroke='hsl(var(--chart-2))'
+                      strokeWidth={2}
+                      dot={{ fill: 'hsl(var(--chart-2))' }}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              ) : (
+                <div className='flex h-full items-center justify-center'>
+                  <div className='text-center'>
+                    <p className='text-muted-foreground text-lg'>
+                      No completion data available
+                    </p>
+                    <p className='text-muted-foreground mt-2 text-sm'>
+                      Completion trends will appear here once you have
+                      completion data
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
           </TabsContent>
 
@@ -166,7 +189,7 @@ export function DashboardCharts({ data, className }: DashboardChartsProps) {
                 <BarChart data={data.revenue_trends}>
                   <CartesianGrid strokeDasharray='3 3' />
                   <XAxis
-                    dataKey='period'
+                    dataKey='date'
                     stroke='hsl(var(--muted-foreground))'
                     fontSize={12}
                     tickLine={false}
@@ -188,9 +211,6 @@ export function DashboardCharts({ data, className }: DashboardChartsProps) {
                             <p className='text-sm text-green-600'>
                               Revenue: ${payload[0]?.value?.toLocaleString()}
                             </p>
-                            <p className='text-sm text-blue-600'>
-                              Growth: {payload[1]?.value}%
-                            </p>
                           </div>
                         )
                       }
@@ -198,7 +218,7 @@ export function DashboardCharts({ data, className }: DashboardChartsProps) {
                     }}
                   />
                   <Bar
-                    dataKey='revenue'
+                    dataKey='total'
                     fill='hsl(var(--chart-1))'
                     radius={[4, 4, 0, 0]}
                   />
@@ -216,8 +236,11 @@ export function DashboardCharts({ data, className }: DashboardChartsProps) {
                     cx='50%'
                     cy='50%'
                     labelLine={false}
-                    label={({ name, percentage }) => `${name} (${percentage}%)`}
-                    outerRadius={80}
+                    label={({ category, percent }) => {
+                      const percentage = (percent * 100).toFixed(1)
+                      return `${category}: ${percentage}%`
+                    }}
+                    outerRadius={120}
                     fill='#8884d8'
                     dataKey='count'
                   >
@@ -231,16 +254,25 @@ export function DashboardCharts({ data, className }: DashboardChartsProps) {
                   <Tooltip
                     content={({ active, payload }) => {
                       if (active && payload && payload.length) {
+                        const itemData = payload[0]?.payload
+                        const total =
+                          data.category_distribution?.reduce(
+                            (sum: number, item: { count: number }) =>
+                              sum + item.count,
+                            0
+                          ) || 0
+                        const percentage =
+                          total > 0
+                            ? ((itemData.count / total) * 100).toFixed(1)
+                            : '0'
                         return (
                           <div className='bg-background rounded-lg border p-3 shadow-md'>
-                            <p className='font-medium'>
-                              {payload[0]?.payload.category}
-                            </p>
+                            <p className='font-medium'>{itemData.category}</p>
                             <p className='text-sm text-blue-600'>
-                              Count: {payload[0]?.value}
+                              Count: {itemData.count}
                             </p>
                             <p className='text-sm text-green-600'>
-                              Percentage: {payload[0]?.payload.percentage}%
+                              Percentage: {percentage}%
                             </p>
                           </div>
                         )
@@ -259,7 +291,7 @@ export function DashboardCharts({ data, className }: DashboardChartsProps) {
                 <AreaChart data={data.user_activity_trends}>
                   <CartesianGrid strokeDasharray='3 3' />
                   <XAxis
-                    dataKey='period'
+                    dataKey='date'
                     stroke='hsl(var(--muted-foreground))'
                     fontSize={12}
                     tickLine={false}
@@ -280,12 +312,6 @@ export function DashboardCharts({ data, className }: DashboardChartsProps) {
                             <p className='text-sm text-blue-600'>
                               Active Users: {payload[0]?.value}
                             </p>
-                            <p className='text-sm text-green-600'>
-                              Logins: {payload[1]?.value}
-                            </p>
-                            <p className='text-sm text-purple-600'>
-                              Registrations: {payload[2]?.value}
-                            </p>
                           </div>
                         )
                       }
@@ -294,26 +320,10 @@ export function DashboardCharts({ data, className }: DashboardChartsProps) {
                   />
                   <Area
                     type='monotone'
-                    dataKey='active_users'
+                    dataKey='count'
                     stackId='1'
                     stroke='hsl(var(--chart-1))'
                     fill='hsl(var(--chart-1))'
-                    fillOpacity={0.8}
-                  />
-                  <Area
-                    type='monotone'
-                    dataKey='logins'
-                    stackId='1'
-                    stroke='hsl(var(--chart-2))'
-                    fill='hsl(var(--chart-2))'
-                    fillOpacity={0.8}
-                  />
-                  <Area
-                    type='monotone'
-                    dataKey='registrations'
-                    stackId='1'
-                    stroke='hsl(var(--chart-3))'
-                    fill='hsl(var(--chart-3))'
                     fillOpacity={0.8}
                   />
                 </AreaChart>
@@ -324,7 +334,7 @@ export function DashboardCharts({ data, className }: DashboardChartsProps) {
           <TabsContent value='monthly' className='space-y-4'>
             <div className='h-[350px]'>
               <ResponsiveContainer width='100%' height='100%'>
-                <BarChart data={data.monthly_stats}>
+                <BarChart data={[data.monthly_stats]}>
                   <CartesianGrid strokeDasharray='3 3' />
                   <XAxis
                     dataKey='month'
@@ -354,9 +364,6 @@ export function DashboardCharts({ data, className }: DashboardChartsProps) {
                             <p className='text-sm text-purple-600'>
                               Revenue: ${payload[2]?.value?.toLocaleString()}
                             </p>
-                            <p className='text-sm text-orange-600'>
-                              Active Users: {payload[3]?.value}
-                            </p>
                           </div>
                         )
                       }
@@ -364,23 +371,18 @@ export function DashboardCharts({ data, className }: DashboardChartsProps) {
                     }}
                   />
                   <Bar
-                    dataKey='total_enrollments'
+                    dataKey='enrollments'
                     fill='hsl(var(--chart-1))'
                     radius={[4, 4, 0, 0]}
                   />
                   <Bar
-                    dataKey='total_completions'
+                    dataKey='completions'
                     fill='hsl(var(--chart-2))'
                     radius={[4, 4, 0, 0]}
                   />
                   <Bar
-                    dataKey='total_revenue'
+                    dataKey='revenue'
                     fill='hsl(var(--chart-3))'
-                    radius={[4, 4, 0, 0]}
-                  />
-                  <Bar
-                    dataKey='active_users'
-                    fill='hsl(var(--chart-4))'
                     radius={[4, 4, 0, 0]}
                   />
                 </BarChart>
