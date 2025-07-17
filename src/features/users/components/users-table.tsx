@@ -36,9 +36,25 @@ declare module '@tanstack/react-table' {
 interface DataTableProps {
   columns: ColumnDef<User>[]
   data: User[]
+  pagination?: {
+    page: number
+    perPage: number
+    total: number
+    lastPage: number
+    onPageChange: (page: number) => void
+    onPerPageChange: (perPage: number) => void
+  }
+  filters?: {
+    search?: string
+    role?: string
+    status?: string
+    onSearchChange: (search?: string) => void
+    onRoleChange: (role?: string) => void
+    onStatusChange: (status?: string) => void
+  }
 }
 
-export function UsersTable({ columns, data }: DataTableProps) {
+export function UsersTable({ columns, data, pagination, filters }: DataTableProps) {
   const [rowSelection, setRowSelection] = useState({})
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
@@ -59,16 +75,19 @@ export function UsersTable({ columns, data }: DataTableProps) {
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
     getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
+    getFilteredRowModel: pagination ? undefined : getFilteredRowModel(),
+    getPaginationRowModel: pagination ? undefined : getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
+    manualPagination: !!pagination,
+    manualFiltering: !!filters,
+    pageCount: pagination ? pagination.lastPage : undefined,
   })
 
   return (
     <div className='space-y-4'>
-      <DataTableToolbar table={table} />
+      <DataTableToolbar table={table} filters={filters} />
       <div className='rounded-md border'>
         <Table>
           <TableHeader>
@@ -127,7 +146,7 @@ export function UsersTable({ columns, data }: DataTableProps) {
           </TableBody>
         </Table>
       </div>
-      <DataTablePagination table={table} />
+      <DataTablePagination table={table} pagination={pagination} />
     </div>
   )
 }

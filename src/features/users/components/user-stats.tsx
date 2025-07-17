@@ -1,49 +1,65 @@
-import { useQuery } from '@tanstack/react-query'
-import { usersService } from '@/services/users'
-import {
-  Users,
-  UserCheck,
-  UserPlus,
-  DollarSign,
-  TrendingUp,
-  Trophy,
-} from 'lucide-react'
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
-import { Badge } from '@/components/ui/badge'
+import { useUserStats } from '@/hooks/use-users'
+import { Users, UserCheck, UserPlus, DollarSign, TrendingUp, Trophy } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { Badge } from '@/components/ui/badge'
 
-export function UsersOverview() {
-  const {
-    data: userStats,
-    isLoading,
-    error,
-  } = useQuery({
-    queryKey: ['userStats'],
-    queryFn: () => usersService.getUserStats(),
-  })
+export function UserStats() {
+  const { data: userStats, isLoading, error } = useUserStats()
+    debugger
   if (isLoading) {
     return (
-      <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-4'>
-        {Array.from({ length: 4 }, (_, i) => (
-          <Card key={i}>
-            <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-              <Skeleton className='h-4 w-24' />
-              <Skeleton className='h-4 w-4' />
-            </CardHeader>
-            <CardContent>
-              <Skeleton className='mb-2 h-8 w-20' />
-              <Skeleton className='h-3 w-32' />
-            </CardContent>
-          </Card>
-        ))}
+      <div className='mb-8 space-y-6'>
+        {/* Stats Cards */}
+        <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-4'>
+          {Array.from({ length: 4 }, (_, i) => (
+            <Card key={i}>
+              <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+                <Skeleton className='h-4 w-24' />
+                <Skeleton className='h-4 w-4' />
+              </CardHeader>
+              <CardContent>
+                <Skeleton className='mb-2 h-8 w-20' />
+                <Skeleton className='h-3 w-32' />
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+        
+        {/* Top Performers Skeleton */}
+        <Card>
+          <CardHeader>
+            <Skeleton className='h-6 w-32' />
+          </CardHeader>
+          <CardContent>
+            <div className='space-y-4'>
+              {Array.from({ length: 3 }, (_, i) => (
+                <div key={i} className='flex items-center justify-between'>
+                  <div className='flex items-center space-x-3'>
+                    <Skeleton className='h-8 w-8 rounded-full' />
+                    <Skeleton className='h-8 w-8 rounded-full' />
+                    <div>
+                      <Skeleton className='mb-1 h-4 w-24' />
+                      <Skeleton className='h-3 w-32' />
+                    </div>
+                  </div>
+                  <div className='text-right'>
+                    <Skeleton className='mb-1 h-4 w-16' />
+                    <Skeleton className='h-5 w-20' />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
       </div>
     )
   }
 
   if (error) {
     return (
-      <Card>
+      <Card className='mb-8'>
         <CardContent className='pt-6'>
           <div className='text-center text-red-500'>
             Failed to load user statistics
@@ -59,7 +75,7 @@ export function UsersOverview() {
       value: userStats?.data?.totalUsers || 0,
       description: 'All registered users',
       icon: Users,
-      trend: (userStats?.data?.totalUsers || 0) > 0 ? `${userStats?.data.totalUsers} users registered` : 'No users yet',
+      trend: '+12% from last month',
     },
     {
       title: 'Active Users',
@@ -73,19 +89,20 @@ export function UsersOverview() {
       value: userStats?.data?.newUsersThisMonth || 0,
       description: 'New registrations',
       icon: UserPlus,
-      trend: (userStats?.data?.newUsersThisMonth || 0) > 0 ? `${userStats?.data.newUsersThisMonth} new users` : 'No new users this month',
+      trend: '+23% from last month',
     },
     {
       title: 'Total Revenue',
       value: `$${(userStats?.data?.totalRevenue || 0).toLocaleString()}`,
       description: 'From all users',
       icon: DollarSign,
-      trend: (userStats?.data?.totalRevenue || 0) > 0 ? `$${userStats?.data.totalRevenue.toLocaleString()} total revenue` : 'No revenue yet',
+      trend: '+15% from last month',
     },
   ]
 
   return (
-    <div className='space-y-6'>
+    <div className='mb-8 space-y-6'>
+      {/* Stats Cards */}
       <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-4'>
         {metrics.map((metric, index) => {
           const Icon = metric.icon
@@ -123,7 +140,7 @@ export function UsersOverview() {
           </CardHeader>
           <CardContent>
             <div className='space-y-4'>
-              {userStats.data?.topPerformers.slice(0, 5).map((user, index) => (
+              {userStats?.data?.topPerformers.slice(0, 5).map((user, index) => (
                 <div
                   key={user.id}
                   className='flex items-center justify-between'

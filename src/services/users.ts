@@ -34,12 +34,14 @@ export interface UsersResponse {
 }
 
 export interface UserStats {
-  totalUsers: number
-  activeUsers: number
-  newUsersThisMonth: number
-  totalRevenue: number
-  averageProgress: number
-  topPerformers: User[]
+  data: {
+    totalUsers: number
+    activeUsers: number
+    newUsersThisMonth: number
+    totalRevenue: number
+    averageProgress: number
+    topPerformers: User[]
+  }
 }
 
 export interface UserActivityResponse {

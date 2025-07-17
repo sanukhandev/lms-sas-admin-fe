@@ -8,12 +8,41 @@ import { DataTableViewOptions } from './data-table-view-options'
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>
+  filters?: {
+    search?: string
+    role?: string
+    status?: string
+    onSearchChange: (search?: string) => void
+    onRoleChange: (role?: string) => void
+    onStatusChange: (status?: string) => void
+  }
 }
 
 export function DataTableToolbar<TData>({
   table,
+  filters,
 }: DataTableToolbarProps<TData>) {
-  const isFiltered = table.getState().columnFilters.length > 0
+  const isFiltered = filters
+    ? !!(filters.search || filters.role || filters.status)
+    : table.getState().columnFilters.length > 0
+
+  const handleSearchChange = (value: string) => {
+    if (filters) {
+      filters.onSearchChange(value || undefined)
+    } else {
+      table.getColumn('name')?.setFilterValue(value)
+    }
+  }
+
+  const handleClearFilters = () => {
+    if (filters) {
+      filters.onSearchChange(undefined)
+      filters.onRoleChange(undefined)
+      filters.onStatusChange(undefined)
+    } else {
+      table.resetColumnFilters()
+    }
+  }
 
   return (
     <div className='flex items-center justify-between'>
@@ -21,38 +50,41 @@ export function DataTableToolbar<TData>({
         <Input
           placeholder='Filter users...'
           value={
-            (table.getColumn('username')?.getFilterValue() as string) ?? ''
+            filters 
+              ? filters.search || '' 
+              : (table.getColumn('name')?.getFilterValue() as string) ?? ''
           }
-          onChange={(event) =>
-            table.getColumn('username')?.setFilterValue(event.target.value)
-          }
+          onChange={(event) => handleSearchChange(event.target.value)}
           className='h-8 w-[150px] lg:w-[250px]'
         />
         <div className='flex gap-x-2'>
-          {table.getColumn('status') && (
+          {(filters || table.getColumn('status')) && (
             <DataTableFacetedFilter
               column={table.getColumn('status')}
               title='Status'
               options={[
                 { label: 'Active', value: 'active' },
                 { label: 'Inactive', value: 'inactive' },
-                { label: 'Invited', value: 'invited' },
                 { label: 'Suspended', value: 'suspended' },
               ]}
+              serverSideValue={filters?.status}
+              onServerSideChange={filters?.onStatusChange}
             />
           )}
-          {table.getColumn('role') && (
+          {(filters || table.getColumn('role')) && (
             <DataTableFacetedFilter
               column={table.getColumn('role')}
               title='Role'
               options={userTypes.map((t) => ({ ...t }))}
+              serverSideValue={filters?.role}
+              onServerSideChange={filters?.onRoleChange}
             />
           )}
         </div>
         {isFiltered && (
           <Button
             variant='ghost'
-            onClick={() => table.resetColumnFilters()}
+            onClick={handleClearFilters}
             className='h-8 px-2 lg:px-3'
           >
             Reset

@@ -3,29 +3,28 @@ import { z } from 'zod'
 const userStatusSchema = z.union([
   z.literal('active'),
   z.literal('inactive'),
-  z.literal('invited'),
   z.literal('suspended'),
 ])
 export type UserStatus = z.infer<typeof userStatusSchema>
 
 const userRoleSchema = z.union([
-  z.literal('superadmin'),
   z.literal('admin'),
-  z.literal('cashier'),
-  z.literal('manager'),
+  z.literal('instructor'),
+  z.literal('student'),
 ])
 
 const userSchema = z.object({
-  id: z.string(),
-  firstName: z.string(),
-  lastName: z.string(),
-  username: z.string(),
+  id: z.number(),
+  name: z.string(),
   email: z.string(),
-  phoneNumber: z.string(),
-  status: userStatusSchema,
   role: userRoleSchema,
-  createdAt: z.coerce.date(),
-  updatedAt: z.coerce.date(),
+  status: userStatusSchema,
+  enrolledCourses: z.number(),
+  completedCourses: z.number(),
+  progressPercentage: z.number(),
+  lastLogin: z.string(),
+  joinedAt: z.string(),
+  totalSpent: z.number(),
 })
 export type User = z.infer<typeof userSchema>
 
