@@ -113,7 +113,9 @@ export default function EngagementAnalytics() {
               <Skeleton className="h-8 w-16" />
             ) : (
               <div className="text-2xl font-bold">
-                {engagement?.daily_active_users?.length ?? 0}
+                {engagement?.daily_active_users?.length 
+                  ? engagement.daily_active_users[engagement.daily_active_users.length - 1]?.active_users ?? 0
+                  : 0}
               </div>
             )}
             <p className="text-xs text-muted-foreground">
@@ -221,6 +223,72 @@ export default function EngagementAnalytics() {
         )}
       </div>
 
+      {/* Engagement Summary */}
+      <div>
+        <h3 className="text-lg font-semibold mb-4">Engagement Summary</h3>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-sm">Total Interactions</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {isLoading ? (
+                <Skeleton className="h-8 w-16" />
+              ) : (
+                <div className="text-2xl font-bold">
+                  {engagement?.engagement_trends?.reduce((acc: number, trend: any) => acc + trend.total_interactions, 0) ?? 0}
+                </div>
+              )}
+              <p className="text-xs text-muted-foreground">
+                Course interactions in period
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-sm">Peak Activity Day</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {isLoading ? (
+                <Skeleton className="h-8 w-24" />
+              ) : (
+                <div className="text-2xl font-bold">
+                  {engagement?.daily_active_users?.length 
+                    ? new Date(engagement.daily_active_users.reduce((max: any, day: any) => 
+                        day.active_users > max.active_users ? day : max
+                      ).date).toLocaleDateString('en-US', { weekday: 'short' })
+                    : 'N/A'}
+                </div>
+              )}
+              <p className="text-xs text-muted-foreground">
+                Most active day of week
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-sm">Avg Course Progress</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {isLoading ? (
+                <Skeleton className="h-8 w-16" />
+              ) : (
+                <div className="text-2xl font-bold">
+                  {engagement?.popular_courses?.length 
+                    ? (engagement.popular_courses.reduce((acc: number, course: any) => acc + course.completion_rate, 0) / engagement.popular_courses.length).toFixed(1)
+                    : 0}%
+                </div>
+              )}
+              <p className="text-xs text-muted-foreground">
+                Average across all courses
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+
       {/* Engagement Trends */}
       <div>
         <h3 className="text-lg font-semibold mb-4">Engagement Trends</h3>
@@ -237,10 +305,26 @@ export default function EngagementAnalytics() {
                 <Skeleton className="h-[180px] w-full" />
               </div>
             ) : engagement?.engagement_trends?.length ? (
-              <div className="h-[200px] flex items-center justify-center">
-                <div className="text-muted-foreground">
-                  Chart visualization will be implemented with chart library
+              <div className="space-y-4">
+                <div className="grid grid-cols-4 gap-2 text-xs font-medium text-muted-foreground mb-2">
+                  <span>Date</span>
+                  <span>Active Users</span>
+                  <span>Interactions</span>
+                  <span>Avg Progress</span>
                 </div>
+                {engagement.engagement_trends.slice(-7).map((trend: any, index: number) => (
+                  <div key={index} className="grid grid-cols-4 gap-2 text-sm">
+                    <span className="text-muted-foreground">
+                      {new Date(trend.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                    </span>
+                    <span className="font-medium">{trend.active_users}</span>
+                    <span className="text-muted-foreground">{trend.total_interactions}</span>
+                    <div className="flex items-center gap-2">
+                      <Progress value={trend.avg_progress} className="h-1.5 flex-1" />
+                      <span className="text-xs">{trend.avg_progress}%</span>
+                    </div>
+                  </div>
+                ))}
               </div>
             ) : (
               <div className="h-[200px] flex items-center justify-center">
