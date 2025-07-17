@@ -16,6 +16,9 @@ import { ThemeSwitch } from '@/components/theme-switch'
 import { CoursePerformanceTable } from './components/course-performance-table'
 import { CoursesOverview } from './components/courses-overview'
 import { Overview } from './components/overview'
+import { UserActivityFeed } from './components/user-activity-feed'
+import { UsersManagementTable } from './components/users-management-table'
+import { UsersOverview } from './components/users-overview'
 
 const topNav = [
   { title: 'Dashboard', href: '/home', isActive: true },
@@ -69,20 +72,15 @@ export default function IntegratedDashboard() {
           </TabsContent>
 
           <TabsContent value='users' className='space-y-4'>
-            <Card>
-              <CardHeader>
-                <CardTitle>User Management</CardTitle>
-                <CardDescription>
-                  Manage learners and track their progress
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className='text-2xl font-bold'>Coming Soon</div>
-                <p className='text-muted-foreground text-xs'>
-                  User analytics and management tools
-                </p>
-              </CardContent>
-            </Card>
+            <UsersOverview />
+            <div className='grid gap-4 md:grid-cols-3'>
+              <div className='md:col-span-2'>
+                <UsersManagementTable />
+              </div>
+              <div className='md:col-span-1'>
+                <UserActivityFeed />
+              </div>
+            </div>
           </TabsContent>
 
           <TabsContent value='analytics' className='space-y-4'>
