@@ -1,22 +1,22 @@
 // API endpoints for tenant theme management
 export const TENANT_THEME_API_ENDPOINTS = {
   // Get tenant theme
-  getTenantTheme: (tenantId: string) => `/api/tenants/${tenantId}/theme`,
-  
+  getTenantTheme: (_tenantId: string) => `/v1/tenant/settings/theme`,
+
   // Update tenant theme
-  updateTenantTheme: (tenantId: string) => `/api/tenants/${tenantId}/theme`,
-  
+  updateTenantTheme: (_tenantId: string) => `/v1/tenant/settings/theme`,
+
   // Get color palettes
-  getColorPalettes: () => `/api/theme/color-palettes`,
-  
+  getColorPalettes: () => `/v1/theme/color-palettes`,
+
   // Update color palette
-  updateColorPalette: (tenantId: string) => `/api/tenants/${tenantId}/theme/colors`,
-  
+  updateColorPalette: (_tenantId: string) => `/v1/tenant/settings/theme`,
+
   // Preset themes
-  getPresetThemes: () => `/api/theme/presets`,
-  
+  getPresetThemes: () => `/v1/theme/presets`,
+
   // Save custom theme
-  saveCustomTheme: (tenantId: string) => `/api/tenants/${tenantId}/theme/custom`,
+  saveCustomTheme: (_tenantId: string) => `/v1/tenant/settings/theme`,
 }
 
 // Color palette update request types
@@ -117,7 +117,7 @@ export interface TenantThemeResponse {
   success: boolean
   data: {
     tenantId: string
-    theme: any
+    theme: Record<string, unknown>
     updatedAt: string
     version: string
   }

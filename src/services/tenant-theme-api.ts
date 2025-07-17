@@ -11,7 +11,7 @@ import {
 // Enhanced API service with color palette management
 export class TenantThemeAPIService {
   private static apiClient = axios.create({
-    baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3001',
+    baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8000/api',
     timeout: 10000,
     headers: {
       'Content-Type': 'application/json',
@@ -21,6 +21,46 @@ export class TenantThemeAPIService {
   // Add auth token to requests
   static setAuthToken(token: string) {
     this.apiClient.defaults.headers.common['Authorization'] = `Bearer ${token}`
+  }
+
+  // Set tenant context for requests
+  static setTenantContext(tenantId: string, domain: string) {
+    this.apiClient.defaults.headers.common['X-Tenant-ID'] = tenantId
+    this.apiClient.defaults.headers.common['X-Tenant-Domain'] = domain
+  }
+
+  // Initialize with auth and tenant context
+  static initialize(token: string, tenantId: string, domain: string) {
+    this.setAuthToken(token)
+    this.setTenantContext(tenantId, domain)
+  }
+
+  // Get authentication token from localStorage or session storage
+  static getStoredAuthToken(): string | null {
+    return localStorage.getItem('authToken') || sessionStorage.getItem('authToken')
+  }
+
+  // Get tenant context from localStorage or session storage
+  static getStoredTenantContext(): { tenantId: string; domain: string } | null {
+    const tenantId = localStorage.getItem('tenantId') || sessionStorage.getItem('tenantId')
+    const domain = localStorage.getItem('tenantDomain') || sessionStorage.getItem('tenantDomain')
+    
+    if (tenantId && domain) {
+      return { tenantId, domain }
+    }
+    return null
+  }
+
+  // Auto-initialize from stored values
+  static autoInitialize(): boolean {
+    const token = this.getStoredAuthToken()
+    const tenantContext = this.getStoredTenantContext()
+    
+    if (token && tenantContext) {
+      this.initialize(token, tenantContext.tenantId, tenantContext.domain)
+      return true
+    }
+    return false
   }
 
   // Get tenant theme configuration
@@ -68,11 +108,23 @@ export class TenantThemeAPIService {
   // Get available color palettes
   static async getColorPalettes(): Promise<ColorPalette[]> {
     try {
+      // Auto-initialize if not already done
+      if (!this.apiClient.defaults.headers.common['Authorization']) {
+        this.autoInitialize()
+      }
+
       const response = await this.apiClient.get<ColorPalettesResponse>(
-        TENANT_THEME_API_ENDPOINTS.getColorPalettes()
+        TENANT_THEME_API_ENDPOINTS.getColorPalettes(),
+        {
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+          }
+        }
       )
       return response.data.data.palettes
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('Error fetching color palettes:', error)
       throw new Error('Failed to fetch color palettes')
     }
@@ -107,7 +159,7 @@ export class TenantThemeAPIService {
   // Generate color palette from primary color
   static async generateColorPalette(primaryColor: string): Promise<ColorPalette> {
     try {
-      const response = await this.apiClient.post('/api/theme/generate-palette', {
+      const response = await this.apiClient.post('/v1/theme/generate-palette', {
         primaryColor
       })
       return response.data.data.palette
@@ -118,10 +170,10 @@ export class TenantThemeAPIService {
   }
 
   // Preview color changes without saving
-  static async previewColorPalette(tenantId: string, colors: any): Promise<string> {
+  static async previewColorPalette(_tenantId: string, colors: Record<string, string>): Promise<string> {
     try {
       const response = await this.apiClient.post(
-        `/api/tenants/${tenantId}/theme/preview`,
+        `/v1/tenant/settings/theme/preview`,
         { colors }
       )
       return response.data.data.cssVariables
@@ -137,7 +189,7 @@ export class TenantThemeAPIService {
     theme: Partial<TenantThemeConfig>
   }>): Promise<void> {
     try {
-      await this.apiClient.post('/api/theme/bulk-update', {
+      await this.apiClient.post('/v1/theme/bulk-update', {
         updates
       })
     } catch (error) {
@@ -147,10 +199,10 @@ export class TenantThemeAPIService {
   }
 
   // Get theme usage analytics
-  static async getThemeAnalytics(tenantId: string): Promise<any> {
+  static async getThemeAnalytics(_tenantId: string): Promise<Record<string, unknown>> {
     try {
       const response = await this.apiClient.get(
-        `/api/tenants/${tenantId}/theme/analytics`
+        `/v1/tenant/settings/theme/analytics`
       )
       return response.data.data
     } catch (error) {
