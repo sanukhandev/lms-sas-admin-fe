@@ -10,11 +10,10 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as _root_fixedRouteImport } from './routes/__root_fixed'
+import { Route as ThemeDemoRouteImport } from './routes/theme-demo'
 import { Route as ClerkRouteRouteImport } from './routes/clerk/route'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
-import { Route as AuthenticatedThemeDemoNewRouteImport } from './routes/_authenticated/theme-demo-new'
-import { Route as AuthenticatedThemeDemoRouteImport } from './routes/_authenticated/theme-demo'
 import { Route as AuthenticatedHomeRouteImport } from './routes/_authenticated/home'
 import { Route as AuthenticatedColorEditorRouteImport } from './routes/_authenticated/color-editor'
 import { Route as errors503RouteImport } from './routes/(errors)/503'
@@ -52,6 +51,11 @@ const _root_fixedRoute = _root_fixedRouteImport.update({
   id: '/__root_fixed',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ThemeDemoRoute = ThemeDemoRouteImport.update({
+  id: '/theme-demo',
+  path: '/theme-demo',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ClerkRouteRoute = ClerkRouteRouteImport.update({
   id: '/clerk',
   path: '/clerk',
@@ -64,17 +68,6 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
 const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedThemeDemoNewRoute =
-  AuthenticatedThemeDemoNewRouteImport.update({
-    id: '/theme-demo-new',
-    path: '/theme-demo-new',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const AuthenticatedThemeDemoRoute = AuthenticatedThemeDemoRouteImport.update({
-  id: '/theme-demo',
-  path: '/theme-demo',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedHomeRoute = AuthenticatedHomeRouteImport.update({
@@ -252,6 +245,7 @@ const AuthenticatedSettingsAccountRoute =
 
 export interface FileRoutesByFullPath {
   '/clerk': typeof ClerkAuthenticatedRouteRouteWithChildren
+  '/theme-demo': typeof ThemeDemoRoute
   '/settings': typeof AuthenticatedSettingsRouteRouteWithChildren
   '/clerk/': typeof ClerkauthRouteRouteWithChildren
   '/forgot-password': typeof authForgotPasswordRoute
@@ -265,8 +259,6 @@ export interface FileRoutesByFullPath {
   '/503': typeof errors503Route
   '/color-editor': typeof AuthenticatedColorEditorRoute
   '/home': typeof AuthenticatedHomeRoute
-  '/theme-demo': typeof AuthenticatedThemeDemoRoute
-  '/theme-demo-new': typeof AuthenticatedThemeDemoNewRoute
   '/': typeof AuthenticatedIndexRoute
   '/settings/account': typeof AuthenticatedSettingsAccountRoute
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
@@ -288,6 +280,7 @@ export interface FileRoutesByFullPath {
   '/users': typeof AuthenticatedUsersIndexRoute
 }
 export interface FileRoutesByTo {
+  '/theme-demo': typeof ThemeDemoRoute
   '/clerk': typeof ClerkAuthenticatedRouteRouteWithChildren
   '/forgot-password': typeof authForgotPasswordRoute
   '/otp': typeof authOtpRoute
@@ -300,8 +293,6 @@ export interface FileRoutesByTo {
   '/503': typeof errors503Route
   '/color-editor': typeof AuthenticatedColorEditorRoute
   '/home': typeof AuthenticatedHomeRoute
-  '/theme-demo': typeof AuthenticatedThemeDemoRoute
-  '/theme-demo-new': typeof AuthenticatedThemeDemoNewRoute
   '/': typeof AuthenticatedIndexRoute
   '/settings/account': typeof AuthenticatedSettingsAccountRoute
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
@@ -327,6 +318,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/clerk': typeof ClerkRouteRouteWithChildren
   '/__root_fixed': typeof _root_fixedRoute
+  '/theme-demo': typeof ThemeDemoRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRouteRouteWithChildren
   '/clerk/(auth)': typeof ClerkauthRouteRouteWithChildren
   '/clerk/_authenticated': typeof ClerkAuthenticatedRouteRouteWithChildren
@@ -341,8 +333,6 @@ export interface FileRoutesById {
   '/(errors)/503': typeof errors503Route
   '/_authenticated/color-editor': typeof AuthenticatedColorEditorRoute
   '/_authenticated/home': typeof AuthenticatedHomeRoute
-  '/_authenticated/theme-demo': typeof AuthenticatedThemeDemoRoute
-  '/_authenticated/theme-demo-new': typeof AuthenticatedThemeDemoNewRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
   '/_authenticated/settings/account': typeof AuthenticatedSettingsAccountRoute
   '/_authenticated/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
@@ -367,6 +357,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/clerk'
+    | '/theme-demo'
     | '/settings'
     | '/clerk/'
     | '/forgot-password'
@@ -380,8 +371,6 @@ export interface FileRouteTypes {
     | '/503'
     | '/color-editor'
     | '/home'
-    | '/theme-demo'
-    | '/theme-demo-new'
     | '/'
     | '/settings/account'
     | '/settings/appearance'
@@ -403,6 +392,7 @@ export interface FileRouteTypes {
     | '/users'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/theme-demo'
     | '/clerk'
     | '/forgot-password'
     | '/otp'
@@ -415,8 +405,6 @@ export interface FileRouteTypes {
     | '/503'
     | '/color-editor'
     | '/home'
-    | '/theme-demo'
-    | '/theme-demo-new'
     | '/'
     | '/settings/account'
     | '/settings/appearance'
@@ -441,6 +429,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/clerk'
     | '/__root_fixed'
+    | '/theme-demo'
     | '/_authenticated/settings'
     | '/clerk/(auth)'
     | '/clerk/_authenticated'
@@ -455,8 +444,6 @@ export interface FileRouteTypes {
     | '/(errors)/503'
     | '/_authenticated/color-editor'
     | '/_authenticated/home'
-    | '/_authenticated/theme-demo'
-    | '/_authenticated/theme-demo-new'
     | '/_authenticated/'
     | '/_authenticated/settings/account'
     | '/_authenticated/settings/appearance'
@@ -482,6 +469,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   ClerkRouteRoute: typeof ClerkRouteRouteWithChildren
   _root_fixedRoute: typeof _root_fixedRoute
+  ThemeDemoRoute: typeof ThemeDemoRoute
   authForgotPasswordRoute: typeof authForgotPasswordRoute
   authOtpRoute: typeof authOtpRoute
   authSignInRoute: typeof authSignInRoute
@@ -500,6 +488,13 @@ declare module '@tanstack/react-router' {
       path: ''
       fullPath: ''
       preLoaderRoute: typeof _root_fixedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/theme-demo': {
+      id: '/theme-demo'
+      path: '/theme-demo'
+      fullPath: '/theme-demo'
+      preLoaderRoute: typeof ThemeDemoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/clerk': {
@@ -521,20 +516,6 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof AuthenticatedIndexRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/theme-demo-new': {
-      id: '/_authenticated/theme-demo-new'
-      path: '/theme-demo-new'
-      fullPath: '/theme-demo-new'
-      preLoaderRoute: typeof AuthenticatedThemeDemoNewRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/theme-demo': {
-      id: '/_authenticated/theme-demo'
-      path: '/theme-demo'
-      fullPath: '/theme-demo'
-      preLoaderRoute: typeof AuthenticatedThemeDemoRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/home': {
@@ -801,8 +782,6 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedSettingsRouteRoute: typeof AuthenticatedSettingsRouteRouteWithChildren
   AuthenticatedColorEditorRoute: typeof AuthenticatedColorEditorRoute
   AuthenticatedHomeRoute: typeof AuthenticatedHomeRoute
-  AuthenticatedThemeDemoRoute: typeof AuthenticatedThemeDemoRoute
-  AuthenticatedThemeDemoNewRoute: typeof AuthenticatedThemeDemoNewRoute
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
   AuthenticatedAppsIndexRoute: typeof AuthenticatedAppsIndexRoute
   AuthenticatedChatsIndexRoute: typeof AuthenticatedChatsIndexRoute
@@ -815,8 +794,6 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedSettingsRouteRoute: AuthenticatedSettingsRouteRouteWithChildren,
   AuthenticatedColorEditorRoute: AuthenticatedColorEditorRoute,
   AuthenticatedHomeRoute: AuthenticatedHomeRoute,
-  AuthenticatedThemeDemoRoute: AuthenticatedThemeDemoRoute,
-  AuthenticatedThemeDemoNewRoute: AuthenticatedThemeDemoNewRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
   AuthenticatedAppsIndexRoute: AuthenticatedAppsIndexRoute,
   AuthenticatedChatsIndexRoute: AuthenticatedChatsIndexRoute,
@@ -875,6 +852,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   ClerkRouteRoute: ClerkRouteRouteWithChildren,
   _root_fixedRoute: _root_fixedRoute,
+  ThemeDemoRoute: ThemeDemoRoute,
   authForgotPasswordRoute: authForgotPasswordRoute,
   authOtpRoute: authOtpRoute,
   authSignInRoute: authSignInRoute,
