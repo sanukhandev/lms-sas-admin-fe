@@ -73,8 +73,15 @@ export function UserRegisterForm({
     try {
       clearError()
 
-      // Get tenant domain from current URL
-      const tenantDomain = TenantDetectionService.getTenantDomainFromUrl()
+
+      // Prefer tenant domain from localStorage, fallback to URL
+      let tenantDomain = undefined;
+      const storedTenant = TenantDetectionService.getCurrentTenant?.();
+      if (storedTenant && storedTenant.domain) {
+        tenantDomain = storedTenant.domain;
+      } else {
+        tenantDomain = TenantDetectionService.getTenantDomainFromUrl();
+      }
 
       await register({
         ...data,

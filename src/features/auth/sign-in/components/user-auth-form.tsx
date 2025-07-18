@@ -60,9 +60,13 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
   async function onSubmit(data: z.infer<typeof formSchema>) {
     try {
       clearError()
-
-      // Get tenant domain from current URL
-      const tenantDomain = TenantDetectionService.getTenantDomainFromUrl()
+      let tenantDomain = undefined;
+      const storedTenant = TenantDetectionService.getCurrentTenant?.();
+      if (storedTenant && storedTenant.domain) {
+        tenantDomain = storedTenant.domain;
+      } else {
+        tenantDomain = TenantDetectionService.getTenantDomainFromUrl();
+      }
 
       await login({
         ...data,
