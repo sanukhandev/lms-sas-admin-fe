@@ -18,6 +18,7 @@ export const createColumns = (
     header: ({ column }) => {
       return (
         <Button
+          type='button'
           variant='ghost'
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
@@ -60,6 +61,7 @@ export const createColumns = (
     header: ({ column }) => {
       return (
         <Button
+          type='button'
           variant='ghost'
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
@@ -82,6 +84,7 @@ export const createColumns = (
     header: ({ column }) => {
       return (
         <Button
+          type='button'
           variant='ghost'
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
@@ -104,6 +107,7 @@ export const createColumns = (
       return (
         <div className='flex items-center space-x-2'>
           <Button
+            type='button'
             variant='ghost'
             size='sm'
             onClick={() => {
@@ -113,6 +117,7 @@ export const createColumns = (
             <Eye className='h-4 w-4' />
           </Button>
           <Button
+            type='button'
             variant='ghost'
             size='sm'
             onClick={() => {
@@ -122,6 +127,7 @@ export const createColumns = (
             <Edit className='h-4 w-4' />
           </Button>
           <Button
+            type='button'
             variant='ghost'
             size='sm'
             onClick={() => {

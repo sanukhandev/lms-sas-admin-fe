@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 import {
   RowData,
   SortingState,
@@ -31,9 +31,11 @@ declare module '@tanstack/react-table' {
   }
 }
 
+
 interface CategoriesTableProps {
-  searchTerm?: string
+  searchTerm?: string;
 }
+
 
 export function CategoriesTable({ searchTerm }: CategoriesTableProps) {
   const {
@@ -45,28 +47,17 @@ export function CategoriesTable({ searchTerm }: CategoriesTableProps) {
     handleDeleteCategory,
   } = useCategoriesContext()
 
-  // Create columns with action handlers
-  const columns = createColumns({
-    onView: handleViewCategory,
-    onEdit: handleEditCategory,
-    onDelete: handleDeleteCategory,
-  })
 
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = useState({})
+  const [globalFilter, setGlobalFilter] = useState<string>("")
+  const [pageSize, setPageSize] = useState(10)
 
-  // Always use the categories array directly
 
-  // Filter categories based on search term
-  const filteredCategories = categories.filter(
-    (category) =>
-      category.name.toLowerCase().includes(searchTerm?.toLowerCase() || '') ||
-      category.slug.toLowerCase().includes(searchTerm?.toLowerCase() || '')
-  )
-
+  // Filtering is now handled by TanStack's row model
   const table = useReactTable({
-    data: filteredCategories,
+    data: categories,
     columns: createColumns({
       onView: handleViewCategory,
       onEdit: handleEditCategory,
@@ -76,11 +67,17 @@ export function CategoriesTable({ searchTerm }: CategoriesTableProps) {
       sorting,
       columnVisibility,
       rowSelection,
+      globalFilter,
+      pagination: {
+        pageIndex: 0,
+        pageSize: pageSize,
+      },
     },
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
     onColumnVisibilityChange: setColumnVisibility,
+    onGlobalFilterChange: setGlobalFilter,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -88,6 +85,13 @@ export function CategoriesTable({ searchTerm }: CategoriesTableProps) {
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
   })
+
+
+  // Sync searchTerm prop to globalFilter
+  React.useEffect(() => {
+    setGlobalFilter(searchTerm || "")
+  }, [searchTerm])
+
 
   if (isLoading) {
     return (
@@ -169,13 +173,51 @@ export function CategoriesTable({ searchTerm }: CategoriesTableProps) {
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={columns.length} className='h-24 text-center'>
+              <TableCell colSpan={table.getAllColumns().length} className='h-24 text-center'>
                 No results.
               </TableCell>
             </TableRow>
           )}
         </TableBody>
       </Table>
+      {/* Pagination Controls */}
+      <div className='flex items-center justify-between px-2 py-2'>
+        <div className='flex-1 text-sm text-muted-foreground'>
+          Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
+        </div>
+        <div className='flex items-center gap-2'>
+          <button
+            type='button'
+            className='border rounded px-2 py-1 disabled:opacity-50'
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+          >
+            Previous
+          </button>
+          <button
+            type='button'
+            className='border rounded px-2 py-1 disabled:opacity-50'
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+          >
+            Next
+          </button>
+          <select
+            className='border rounded px-2 py-1'
+            value={pageSize}
+            onChange={e => {
+              setPageSize(Number(e.target.value))
+              table.setPageSize(Number(e.target.value))
+            }}
+          >
+            {[10, 20, 30, 40, 50].map(size => (
+              <option key={size} value={size}>
+                Show {size}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
     </div>
   )
 }

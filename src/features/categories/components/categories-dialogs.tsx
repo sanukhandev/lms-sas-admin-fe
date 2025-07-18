@@ -74,6 +74,7 @@ export const CategoriesDialogs = () => {
 
   // Always use normalized categories from context
   const parentCategories = categories.filter((cat: Category) => !cat.parent_id)
+  const isCategoriesLoading = !categories || categories.length === 0
 
   const createMutation = useCreateCategory()
   const updateMutation = useUpdateCategory()
@@ -144,6 +145,7 @@ export const CategoriesDialogs = () => {
         }
 
         await createMutation.mutateAsync(createData)
+        reset({ name: '', slug: '', parent_id: null })
         setIsCreateDialogOpen(false)
       } else if (isEditDialogOpen && selectedCategory) {
         const updateData: UpdateCategoryRequest = {
@@ -156,10 +158,9 @@ export const CategoriesDialogs = () => {
           id: selectedCategory.id,
           data: updateData,
         })
+        reset({ name: '', slug: '', parent_id: null })
         setIsEditDialogOpen(false)
       }
-
-      reset()
     } catch (_error) {
       toast.error('Failed to save category')
     } finally {
@@ -196,8 +197,13 @@ export const CategoriesDialogs = () => {
   }
 
   const closeCreateDialog = () => {
-    setIsCreateDialogOpen(false)
-    reset()
+    // Always reset before closing
+    reset({
+      name: '',
+      slug: '',
+      parent_id: null,
+    })
+    if (isCreateDialogOpen) setIsCreateDialogOpen(false)
   }
 
   const closeEditDialog = () => {
@@ -213,7 +219,6 @@ export const CategoriesDialogs = () => {
       {/* Create/Edit Dialog */}
       <Dialog
         open={isFormDialog}
-        onOpenChange={isCreateDialogOpen ? closeCreateDialog : closeEditDialog}
       >
         <DialogContent className='sm:max-w-[425px]'>
           <DialogHeader>
@@ -259,20 +264,27 @@ export const CategoriesDialogs = () => {
                 onValueChange={(value) => {
                   setValue('parent_id', value === 'root' ? null : Number(value))
                 }}
+                disabled={isCategoriesLoading}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder='Select parent category (optional)' />
+                  <SelectValue placeholder={isCategoriesLoading ? 'Loading categories...' : 'Select parent category (optional)'} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value='root'>No parent (root category)</SelectItem>
-                  {parentCategories.map((category: Category) => (
-                    <SelectItem
-                      key={category.id}
-                      value={category.id.toString()}
-                    >
-                      {category.name}
-                    </SelectItem>
-                  ))}
+                  {isCategoriesLoading ? (
+                    <SelectItem value='root' disabled>Loading categories...</SelectItem>
+                  ) : (
+                    <>
+                      <SelectItem value='root'>No parent (root category)</SelectItem>
+                      {parentCategories.map((category: Category) => (
+                        <SelectItem
+                          key={category.id}
+                          value={category.id.toString()}
+                        >
+                          {category.name}
+                        </SelectItem>
+                      ))}
+                    </>
+                  )}
                 </SelectContent>
               </Select>
             </div>
