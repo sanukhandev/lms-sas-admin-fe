@@ -42,7 +42,6 @@ import {
   useUpdateCategory,
   useDeleteCategory,
 } from '../hooks/use-categories'
-import { useCategories } from '../hooks/use-categories'
 import { useCategoriesContext } from '../hooks/use-categories-context'
 
 const categorySchema = z.object({
@@ -57,6 +56,7 @@ const categorySchema = z.object({
 type CategoryFormData = z.infer<typeof categorySchema>
 
 export const CategoriesDialogs = () => {
+
   const {
     isCreateDialogOpen,
     setIsCreateDialogOpen,
@@ -69,10 +69,10 @@ export const CategoriesDialogs = () => {
     selectedCategory,
     selectedCategories,
     setSelectedCategories,
+    categories,
   } = useCategoriesContext()
 
-  const { data: categoriesData } = useCategories()
-  const categories = categoriesData?.data || []
+  // Always use normalized categories from context
   const parentCategories = categories.filter((cat: Category) => !cat.parent_id)
 
   const createMutation = useCreateCategory()
