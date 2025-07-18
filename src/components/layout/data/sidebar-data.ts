@@ -100,7 +100,7 @@ export const sidebarData: SidebarData = {
             },
             {
               title: 'Categories',
-              url: '/home',
+              url: '/categories',
             },
             {
               title: 'Course Builder',
