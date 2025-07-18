@@ -78,7 +78,9 @@ export default function CategoriesProvider({
 
   const value: CategoriesContextType = {
     // Data
-    categories: categoriesData?.data || [],
+    categories: Array.isArray(categoriesData?.data)
+      ? categoriesData.data
+      : categoriesData?.data?.data || [],
     isLoading,
     error,
 

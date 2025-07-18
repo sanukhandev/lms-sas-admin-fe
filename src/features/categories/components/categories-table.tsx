@@ -59,9 +59,10 @@ export function CategoriesTable({ searchTerm }: CategoriesTableProps) {
   // Always use the categories array directly
 
   // Filter categories based on search term
-  const filteredCategories = categories.filter((category) =>
-    category.name.toLowerCase().includes(searchTerm?.toLowerCase() || '') ||
-    category.slug.toLowerCase().includes(searchTerm?.toLowerCase() || '')
+  const filteredCategories = categories.filter(
+    (category) =>
+      category.name.toLowerCase().includes(searchTerm?.toLowerCase() || '') ||
+      category.slug.toLowerCase().includes(searchTerm?.toLowerCase() || '')
   )
 
   const table = useReactTable({
@@ -161,20 +162,14 @@ export function CategoriesTable({ searchTerm }: CategoriesTableProps) {
               >
                 {row.getVisibleCells().map((cell) => (
                   <TableCell key={cell.id}>
-                    {flexRender(
-                      cell.column.columnDef.cell,
-                      cell.getContext()
-                    )}
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 ))}
               </TableRow>
             ))
           ) : (
             <TableRow>
-              <TableCell
-                colSpan={columns.length}
-                className='h-24 text-center'
-              >
+              <TableCell colSpan={columns.length} className='h-24 text-center'>
                 No results.
               </TableCell>
             </TableRow>
