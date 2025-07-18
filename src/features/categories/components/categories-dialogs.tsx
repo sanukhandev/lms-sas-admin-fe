@@ -255,16 +255,16 @@ export const CategoriesDialogs = () => {
             <div className='space-y-2'>
               <Label htmlFor='parent_id'>Parent Category</Label>
               <Select
-                value={watch('parent_id')?.toString() || ''}
+                value={watch('parent_id') === null ? 'root' : watch('parent_id')?.toString()}
                 onValueChange={(value) => {
-                  setValue('parent_id', value === '' ? null : Number(value))
+                  setValue('parent_id', value === 'root' ? null : Number(value))
                 }}
               >
                 <SelectTrigger>
                   <SelectValue placeholder='Select parent category (optional)' />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value=''>No parent (root category)</SelectItem>
+                  <SelectItem value='root'>No parent (root category)</SelectItem>
                   {parentCategories.map((category: Category) => (
                     <SelectItem
                       key={category.id}
