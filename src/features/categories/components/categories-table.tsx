@@ -37,6 +37,7 @@ interface CategoriesTableProps {
 }
 
 
+
 export function CategoriesTable({ searchTerm }: CategoriesTableProps) {
   const {
     categories,
@@ -47,13 +48,12 @@ export function CategoriesTable({ searchTerm }: CategoriesTableProps) {
     handleDeleteCategory,
   } = useCategoriesContext()
 
-
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = useState({})
   const [globalFilter, setGlobalFilter] = useState<string>("")
-  const [pageSize, setPageSize] = useState(10)
-
+  const [pageSize, setPageSize] = useState(15)
+  const [pageIndex, setPageIndex] = useState(0)
 
   // Filtering is now handled by TanStack's row model
   const table = useReactTable({
@@ -69,8 +69,8 @@ export function CategoriesTable({ searchTerm }: CategoriesTableProps) {
       rowSelection,
       globalFilter,
       pagination: {
-        pageIndex: 0,
-        pageSize: pageSize,
+        pageIndex,
+        pageSize,
       },
     },
     enableRowSelection: true,
@@ -78,6 +78,19 @@ export function CategoriesTable({ searchTerm }: CategoriesTableProps) {
     onSortingChange: setSorting,
     onColumnVisibilityChange: setColumnVisibility,
     onGlobalFilterChange: setGlobalFilter,
+    onPaginationChange: (updater) => {
+      // updater can be a number or a function
+      if (typeof updater === 'function') {
+        setPageIndex((prev) => {
+          const result = updater({ pageIndex: prev, pageSize });
+          return result.pageIndex;
+        });
+      } else if (typeof updater === 'object' && updater !== null && 'pageIndex' in updater) {
+        setPageIndex(updater.pageIndex);
+      } else if (typeof updater === 'number') {
+        setPageIndex(updater);
+      }
+    },
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -86,11 +99,15 @@ export function CategoriesTable({ searchTerm }: CategoriesTableProps) {
     getFacetedUniqueValues: getFacetedUniqueValues(),
   })
 
-
   // Sync searchTerm prop to globalFilter
   React.useEffect(() => {
     setGlobalFilter(searchTerm || "")
   }, [searchTerm])
+
+  // Reset pageIndex when data or pageSize changes
+  React.useEffect(() => {
+    setPageIndex(0)
+  }, [categories, pageSize, globalFilter])
 
 
   if (isLoading) {
@@ -189,7 +206,7 @@ export function CategoriesTable({ searchTerm }: CategoriesTableProps) {
           <button
             type='button'
             className='border rounded px-2 py-1 disabled:opacity-50'
-            onClick={() => table.previousPage()}
+            onClick={() => setPageIndex((prev) => Math.max(prev - 1, 0))}
             disabled={!table.getCanPreviousPage()}
           >
             Previous
@@ -197,7 +214,7 @@ export function CategoriesTable({ searchTerm }: CategoriesTableProps) {
           <button
             type='button'
             className='border rounded px-2 py-1 disabled:opacity-50'
-            onClick={() => table.nextPage()}
+            onClick={() => setPageIndex((prev) => (table.getCanNextPage() ? prev + 1 : prev))}
             disabled={!table.getCanNextPage()}
           >
             Next
@@ -208,6 +225,7 @@ export function CategoriesTable({ searchTerm }: CategoriesTableProps) {
             onChange={e => {
               setPageSize(Number(e.target.value))
               table.setPageSize(Number(e.target.value))
+              setPageIndex(0)
             }}
           >
             {[10, 20, 30, 40, 50].map(size => (
