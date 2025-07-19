@@ -474,8 +474,9 @@ export class TenantDetectionService {
     }
 
     // Update page title
-    if (branding.company_name) {
-      document.title = `${branding.company_name} - LMS`
+    const tenantDisplayName = branding.company_name || tenant.name
+    if (tenantDisplayName) {
+      document.title = `${tenantDisplayName} - Admin Dashboard`
       console.log('📝 [TenantDetection] Updated page title to:', document.title)
     } else {
       document.title = `${tenant.name} - LMS`

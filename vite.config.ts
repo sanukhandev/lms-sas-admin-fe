@@ -23,4 +23,31 @@ export default defineConfig({
       '@tabler/icons-react': '@tabler/icons-react/dist/esm/icons/index.mjs',
     },
   },
+  server: {
+    port: 5173,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+        secure: false,
+        configure: (proxy, _options) => {
+          proxy.on('error', (err, _req, _res) => {
+            console.log('Proxy error:', err)
+          })
+          proxy.on('proxyReq', (_proxyReq, req, _res) => {
+            console.log('Proxying request:', req.method, req.url)
+          })
+          proxy.on('proxyRes', (proxyRes, req, _res) => {
+            console.log('Received response:', proxyRes.statusCode, req.url)
+          })
+        },
+      },
+    },
+  },
+  define: {
+    // Ensure env variables are properly defined
+    'import.meta.env.VITE_API_URL': JSON.stringify(
+      process.env.VITE_API_URL || 'http://localhost:8000/api'
+    ),
+  },
 })

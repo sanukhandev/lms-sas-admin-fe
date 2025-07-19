@@ -327,7 +327,12 @@ export const useTenantThemeStore = create<TenantThemeStore>()(
           favicon.href = themeConfig.theme.branding.favicon
         }
 
-        document.title = `${themeConfig.theme.branding.companyName} - Admin Dashboard`
+        // Get tenant info from localStorage for proper title
+        const tenantData = JSON.parse(localStorage.getItem('current_tenant') || '{}')
+        const tenantDisplayName = tenantData.settings?.branding?.company_name || 
+                                 tenantData.name || 
+                                 themeConfig.theme.branding.companyName
+        document.title = `${tenantDisplayName} - Admin Dashboard`
       },
 
       initializeTenantThemes: () => {
