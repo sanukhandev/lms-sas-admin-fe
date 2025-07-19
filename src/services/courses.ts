@@ -3,12 +3,98 @@ import { api } from '@/lib/api'
 export interface Course {
   id: number
   title: string
-  enrollments: number
-  completions: number
-  completionRate: number
-  averageProgress: number
-  instructor: string
-  status: 'active' | 'inactive'
+  description?: string
+  short_description?: string
+  slug?: string
+  category_id?: number
+  category_name?: string
+  instructor_id?: number
+  instructor_name?: string
+  price?: number
+  currency?: string
+  level?: string
+  duration_hours?: number
+  status: 'draft' | 'published' | 'archived'
+  is_active: boolean
+  thumbnail_url?: string
+  preview_video_url?: string
+  requirements?: string
+  what_you_will_learn?: string
+  meta_description?: string
+  tags?: string
+  average_rating?: number
+  enrollment_count: number
+  completion_rate: number
+  content_count: number
+  created_at: string
+  updated_at: string
+}
+
+export interface Module {
+  id: string
+  course_id: string
+  title: string
+  description?: string
+  position: number
+  duration_hours?: number
+  chapters_count: number
+  chapters: Chapter[]
+  created_at: string
+  updated_at: string
+}
+
+export interface Chapter {
+  id: string
+  module_id: string
+  title: string
+  description?: string
+  position: number
+  duration_minutes?: number
+  video_url?: string
+  content?: string
+  learning_objectives: string[]
+  is_completed: boolean
+  created_at: string
+  updated_at: string
+}
+
+export interface CourseStructure {
+  course_id: string
+  title: string
+  description?: string
+  status: 'draft' | 'published' | 'archived'
+  is_active: boolean
+  modules: Module[]
+  total_duration: number
+  total_chapters: number
+  created_at: string
+  updated_at: string
+}
+
+export interface CoursePricing {
+  course_id: string
+  access_model: 'one_time' | 'monthly_subscription' | 'full_curriculum'
+  base_price: number
+  base_currency: string
+  discount_percentage: number
+  discounted_price?: number
+  subscription_price?: number
+  trial_period_days?: number
+  is_active: boolean
+  enabled_access_models: string[]
+  created_at: string
+  updated_at: string
+}
+
+export interface CourseStats {
+  totalCourses: number
+  publishedCourses: number
+  draftCourses: number
+  totalEnrollments: number
+  averageRating: number
+  totalRevenue: number
+  categoriesCount: number
+  instructorsCount: number
 }
 
 export interface CoursesResponse {
@@ -21,44 +107,212 @@ export interface CoursesResponse {
   }
 }
 
+export interface CreateModuleRequest {
+  title: string
+  description?: string
+  duration_hours?: number
+  position?: number
+}
+
+export interface UpdateModuleRequest {
+  title?: string
+  description?: string
+  duration_hours?: number
+  position?: number
+}
+
+export interface CreateChapterRequest {
+  title: string
+  description?: string
+  duration_minutes?: number
+  position?: number
+}
+
+export interface UpdateChapterRequest {
+  title?: string
+  description?: string
+  duration_minutes?: number
+  position?: number
+}
+
+export interface UpdatePricingRequest {
+  access_model: 'one_time' | 'monthly_subscription' | 'full_curriculum'
+  base_price?: number
+  discount_percentage?: number
+  subscription_price?: number
+  trial_period_days?: number
+  is_active: boolean
+}
+
+export interface ReorderItem {
+  id: string
+  position: number
+  parent_id?: string
+}
+
 export const coursesService = {
+  /**
+   * Get courses with pagination and filtering
+   */
   async getCourses(
     page: number = 1,
     perPage: number = 15,
     search?: string,
     status?: string,
+    category?: string,
     instructor?: string
   ): Promise<CoursesResponse> {
     const params = new URLSearchParams({
       page: page.toString(),
       per_page: perPage.toString(),
-      ...(search && { search }),
-      ...(status && { status }),
-      ...(instructor && { instructor }),
     })
-    
+
+    if (search) params.append('search', search)
+    if (status) params.append('status', status)
+    if (category) params.append('category', category)
+    if (instructor) params.append('instructor', instructor)
+
     const response = await api.get<CoursesResponse>(
-      `/v1/dashboard/courses?${params.toString()}`
+      `/v1/courses?${params.toString()}`
     )
     return response.data
   },
 
-  async getCourse(id: number): Promise<Course> {
-    const response = await api.get<Course>(`/v1/dashboard/courses/${id}`)
+  /**
+   * Get single course
+   */
+  async getCourse(id: number): Promise<{ data: Course }> {
+    const response = await api.get<{ data: Course }>(`/v1/courses/${id}`)
     return response.data
   },
 
-  async createCourse(course: Partial<Course>): Promise<Course> {
-    const response = await api.post<Course>('/v1/dashboard/courses', course)
+  /**
+   * Update a course
+   */
+  async updateCourse(id: number, data: Partial<Course>): Promise<{ data: Course }> {
+    const response = await api.put<{ data: Course }>(`/v1/courses/${id}`, data)
     return response.data
   },
 
-  async updateCourse(id: number, course: Partial<Course>): Promise<Course> {
-    const response = await api.put<Course>(`/v1/dashboard/courses/${id}`, course)
+  /**
+   * Get course statistics
+   */
+  async getCourseStats(): Promise<{ data: CourseStats }> {
+    const response = await api.get<{ data: CourseStats }>('/v1/courses/statistics')
     return response.data
   },
 
-  async deleteCourse(id: number): Promise<void> {
-    await api.delete(`/v1/dashboard/courses/${id}`)
+  /**
+   * Get course structure for builder
+   */
+  async getCourseStructure(courseId: string): Promise<{ data: CourseStructure }> {
+    const response = await api.get<{ data: CourseStructure }>(`/v1/course-builder/${courseId}/structure`)
+    return response.data
+  },
+
+  /**
+   * Create module
+   */
+  async createModule(courseId: string, data: CreateModuleRequest): Promise<{ data: Module }> {
+    const response = await api.post<{ data: Module }>(`/v1/course-builder/${courseId}/modules`, data)
+    return response.data
+  },
+
+  /**
+   * Update module
+   */
+  async updateModule(
+    courseId: string, 
+    moduleId: string, 
+    data: UpdateModuleRequest
+  ): Promise<{ data: Module }> {
+    const response = await api.put<{ data: Module }>(`/v1/course-builder/${courseId}/modules/${moduleId}`, data)
+    return response.data
+  },
+
+  /**
+   * Delete module
+   */
+  async deleteModule(courseId: string, moduleId: string): Promise<void> {
+    await api.delete(`/v1/course-builder/${courseId}/modules/${moduleId}`)
+  },
+
+  /**
+   * Create chapter
+   */
+  async createChapter(
+    courseId: string, 
+    moduleId: string, 
+    data: CreateChapterRequest
+  ): Promise<{ data: Chapter }> {
+    const response = await api.post<{ data: Chapter }>(`/v1/course-builder/${courseId}/modules/${moduleId}/chapters`, data)
+    return response.data
+  },
+
+  /**
+   * Update chapter
+   */
+  async updateChapter(
+    courseId: string, 
+    moduleId: string, 
+    chapterId: string, 
+    data: UpdateChapterRequest
+  ): Promise<{ data: Chapter }> {
+    const response = await api.put<{ data: Chapter }>(`/v1/course-builder/${courseId}/modules/${moduleId}/chapters/${chapterId}`, data)
+    return response.data
+  },
+
+  /**
+   * Delete chapter
+   */
+  async deleteChapter(courseId: string, moduleId: string, chapterId: string): Promise<void> {
+    await api.delete(`/v1/course-builder/${courseId}/modules/${moduleId}/chapters/${chapterId}`)
+  },
+
+  /**
+   * Reorder content
+   */
+  async reorderContent(courseId: string, items: ReorderItem[]): Promise<void> {
+    await api.post(`/v1/course-builder/${courseId}/reorder`, { items })
+  },
+
+  /**
+   * Get course pricing
+   */
+  async getCoursePricing(courseId: string): Promise<{ data: CoursePricing }> {
+    const response = await api.get<{ data: CoursePricing }>(`/v1/course-builder/${courseId}/pricing`)
+    return response.data
+  },
+
+  /**
+   * Update course pricing
+   */
+  async updateCoursePricing(courseId: string, data: UpdatePricingRequest): Promise<{ data: CoursePricing }> {
+    const response = await api.put<{ data: CoursePricing }>(`/v1/course-builder/${courseId}/pricing`, data)
+    return response.data
+  },
+
+  /**
+   * Get supported access models
+   */
+  async getSupportedAccessModels(): Promise<{ data: string[] }> {
+    const response = await api.get<{ data: string[] }>('/v1/course-builder/access-models')
+    return response.data
+  },
+
+  /**
+   * Publish course
+   */
+  async publishCourse(courseId: string): Promise<{ data: Course }> {
+    const response = await api.post<{ data: Course }>(`/v1/course-builder/${courseId}/publish`)
+    return response.data
+  },
+
+  /**
+   * Unpublish course
+   */
+  async unpublishCourse(courseId: string): Promise<{ data: Course }> {
+    const response = await api.post<{ data: Course }>(`/v1/course-builder/${courseId}/unpublish`)
+    return response.data
   },
 }

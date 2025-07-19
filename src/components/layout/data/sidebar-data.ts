@@ -95,16 +95,12 @@ export const sidebarData: SidebarData = {
           icon: IconBook,
           items: [
             {
-              title: 'All Courses',
-              url: '/courses',
+              title: 'Course Builder',
+              url: '/course-builder',
             },
             {
               title: 'Categories',
               url: '/categories',
-            },
-            {
-              title: 'Course Builder',
-              url: '/home',
             },
             {
               title: 'Curriculum',

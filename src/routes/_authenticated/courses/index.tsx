@@ -1,6 +1,7 @@
-import { createFileRoute } from '@tanstack/react-router'
-import Courses from '@/features/courses'
+import { createFileRoute, redirect } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/_authenticated/courses/')({
-  component: Courses,
+  beforeLoad: () => {
+    throw redirect({ to: '/course-builder' })
+  },
 })
