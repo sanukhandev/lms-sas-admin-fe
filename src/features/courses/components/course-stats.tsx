@@ -1,13 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { BookOpen, Users, Target, TrendingUp } from 'lucide-react'
-import { useCourses } from '@/hooks/use-courses'
+import { useCourseStats } from '@/hooks/use-courses'
 
 export function CourseStats() {
-  const { data: coursesResponse, isLoading } = useCourses({
-    page: 1,
-    perPage: 1000, // Get all courses for stats
-  })
+  const { data: coursesResponse, isLoading } = useCourseStats()
 
   const courses = coursesResponse?.data || []
   

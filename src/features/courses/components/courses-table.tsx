@@ -114,6 +114,7 @@ export function CoursesTable<TData extends Course, TValue>({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
+                  className={isLoading ? 'opacity-50' : ''}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
@@ -131,7 +132,7 @@ export function CoursesTable<TData extends Course, TValue>({
                   colSpan={columns.length}
                   className='h-24 text-center'
                 >
-                  No courses found.
+                  {isLoading ? 'Loading...' : 'No courses found.'}
                 </TableCell>
               </TableRow>
             )}
