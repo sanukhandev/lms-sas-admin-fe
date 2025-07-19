@@ -36,6 +36,7 @@ declare module '@tanstack/react-table' {
 interface DataTableProps {
   columns: ColumnDef<User>[]
   data: User[]
+  isLoading?: boolean
   pagination?: {
     page: number
     perPage: number
@@ -54,7 +55,7 @@ interface DataTableProps {
   }
 }
 
-export function UsersTable({ columns, data, pagination, filters }: DataTableProps) {
+export function UsersTable({ columns, data, isLoading = false, pagination, filters }: DataTableProps) {
   const [rowSelection, setRowSelection] = useState({})
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
@@ -87,7 +88,7 @@ export function UsersTable({ columns, data, pagination, filters }: DataTableProp
 
   return (
     <div className='space-y-4'>
-      <DataTableToolbar table={table} filters={filters} />
+      <DataTableToolbar table={table} filters={filters} isLoading={isLoading} />
       <div className='rounded-md border'>
         <Table>
           <TableHeader>
@@ -118,7 +119,7 @@ export function UsersTable({ columns, data, pagination, filters }: DataTableProp
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
-                  className='group/row'
+                  className={`group/row ${isLoading ? 'opacity-50' : ''}`}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell
@@ -139,7 +140,7 @@ export function UsersTable({ columns, data, pagination, filters }: DataTableProp
                   colSpan={columns.length}
                   className='h-24 text-center'
                 >
-                  No results.
+                  {isLoading ? 'Loading...' : 'No results.'}
                 </TableCell>
               </TableRow>
             )}

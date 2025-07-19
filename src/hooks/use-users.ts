@@ -15,7 +15,11 @@ export function useUsers(params: UseUsersParams = {}) {
   return useQuery<UsersResponse>({
     queryKey: ['users', page, perPage, search, role, status],
     queryFn: () => usersService.getUsers(page, perPage, search, role, status),
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 1000 * 60 * 2, // 2 minutes - shorter for more responsive updates
+    gcTime: 1000 * 60 * 5, // 5 minutes garbage collection
+    retry: 1, // Only retry once on failure
+    retryDelay: 1000, // Wait 1 second before retry
+    refetchOnWindowFocus: false, // Prevent unnecessary refetches
   })
 }
 
@@ -23,7 +27,11 @@ export function useUserStats() {
   return useQuery<UserStats>({
     queryKey: ['userStats'],
     queryFn: () => usersService.getUserStats(),
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 1000 * 60 * 10, // 10 minutes for stats
+    gcTime: 1000 * 60 * 15, // 15 minutes garbage collection
+    retry: 1,
+    retryDelay: 1000,
+    refetchOnWindowFocus: false,
   })
 }
 

@@ -1,10 +1,10 @@
-import { useState } from 'react'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
 import { useCourses } from '@/hooks/use-courses'
+import { useOptimizedTableFilters } from '@/hooks/use-optimized-table-filters'
 import { columns } from './components/courses-columns'
 import { CoursesDialogs } from './components/courses-dialogs'
 import { CoursesPrimaryButtons } from './components/courses-primary-buttons'
@@ -14,19 +14,27 @@ import CoursesProvider from './context/courses-context'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Card, CardContent } from '@/components/ui/card'
 
+interface CourseFilters {
+  status: string | undefined
+  instructor: string | undefined
+}
+
 export default function Courses() {
-  const [page, setPage] = useState(1)
-  const [perPage, setPerPage] = useState(15)
-  const [search, setSearch] = useState<string>()
-  const [status, setStatus] = useState<string>()
-  const [instructor, setInstructor] = useState<string>()
+  const tableFilters = useOptimizedTableFilters<CourseFilters>({
+    searchDelay: 300,
+    initialSearch: '',
+    initialFilters: {
+      status: undefined,
+      instructor: undefined,
+    },
+  })
 
   const { data: coursesResponse, isLoading, error } = useCourses({
-    page,
-    perPage,
-    search,
-    status,
-    instructor,
+    page: tableFilters.page,
+    perPage: tableFilters.perPage,
+    search: tableFilters.debouncedSearch,
+    status: tableFilters.filters.status,
+    instructor: tableFilters.filters.instructor,
   })
 
   const courseList = coursesResponse?.data || []
@@ -56,23 +64,7 @@ export default function Courses() {
         </div>
 
         <div className='-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-y-0 lg:space-x-12'>
-          {isLoading ? (
-            <Card>
-              <CardContent className='p-6'>
-                <div className='space-y-4'>
-                  {Array.from({ length: 5 }, (_, i) => (
-                    <div key={i} className='flex items-center space-x-4'>
-                      <Skeleton className='h-4 w-4' />
-                      <Skeleton className='h-4 w-32' />
-                      <Skeleton className='h-4 w-48' />
-                      <Skeleton className='h-4 w-24' />
-                      <Skeleton className='h-4 w-16' />
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          ) : error ? (
+          {error ? (
             <Card>
               <CardContent className='pt-6'>
                 <div className='text-center text-red-500'>
@@ -84,21 +76,22 @@ export default function Courses() {
             <CoursesTable 
               data={courseList} 
               columns={columns}
+              isLoading={isLoading}
               pagination={{
-                page,
-                perPage,
+                page: tableFilters.page,
+                perPage: tableFilters.perPage,
                 total: coursesResponse?.meta.total || 0,
                 lastPage: coursesResponse?.meta.last_page || 1,
-                onPageChange: setPage,
-                onPerPageChange: setPerPage,
+                onPageChange: tableFilters.setPage,
+                onPerPageChange: tableFilters.setPerPage,
               }}
               filters={{
-                search,
-                status,
-                instructor,
-                onSearchChange: setSearch,
-                onStatusChange: setStatus,
-                onInstructorChange: setInstructor,
+                search: tableFilters.search,
+                status: tableFilters.filters.status,
+                instructor: tableFilters.filters.instructor,
+                onSearchChange: tableFilters.handleSearchChange,
+                onStatusChange: (value) => tableFilters.handleFilterChange('status', value),
+                onInstructorChange: (value) => tableFilters.handleFilterChange('instructor', value),
               }}
             />
           )}

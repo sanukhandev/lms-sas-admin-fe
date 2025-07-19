@@ -30,6 +30,7 @@ import { DataTableToolbar } from './data-table-toolbar'
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
+  isLoading?: boolean
   pagination: {
     page: number
     perPage: number
@@ -51,6 +52,7 @@ interface DataTableProps<TData, TValue> {
 export function CategoriesTable<TData extends Category, TValue>({
   columns,
   data,
+  isLoading = false,
   pagination,
   filters,
 }: DataTableProps<TData, TValue>) {
@@ -83,7 +85,7 @@ export function CategoriesTable<TData extends Category, TValue>({
 
   return (
     <div className='space-y-4'>
-      <DataTableToolbar table={table} filters={filters} />
+      <DataTableToolbar table={table} filters={filters} isLoading={isLoading} />
       <div className='rounded-md border'>
         <Table>
           <TableHeader>
@@ -110,6 +112,7 @@ export function CategoriesTable<TData extends Category, TValue>({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
+                  className={isLoading ? 'opacity-50' : ''}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
@@ -127,7 +130,7 @@ export function CategoriesTable<TData extends Category, TValue>({
                   colSpan={columns.length}
                   className='h-24 text-center'
                 >
-                  No results.
+                  {isLoading ? 'Loading...' : 'No results.'}
                 </TableCell>
               </TableRow>
             )}

@@ -30,6 +30,7 @@ import { type Course } from '@/services/courses'
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
+  isLoading?: boolean
   pagination: {
     page: number
     perPage: number
@@ -51,6 +52,7 @@ interface DataTableProps<TData, TValue> {
 export function CoursesTable<TData extends Course, TValue>({
   columns,
   data,
+  isLoading = false,
   pagination,
   filters,
 }: DataTableProps<TData, TValue>) {
@@ -85,7 +87,7 @@ export function CoursesTable<TData extends Course, TValue>({
 
   return (
     <div className='space-y-4'>
-      <DataTableToolbar table={table} filters={filters} />
+      <DataTableToolbar table={table} filters={filters} isLoading={isLoading} />
       <div className='rounded-md border'>
         <Table>
           <TableHeader>

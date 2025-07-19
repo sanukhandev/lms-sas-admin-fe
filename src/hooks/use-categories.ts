@@ -19,7 +19,11 @@ export function useCategories(params: UseCategoriesParams, options?: { enabled?:
       params.parentId,
       params.rootOnly
     ),
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    staleTime: 1000 * 60 * 2, // 2 minutes - shorter for more responsive updates
+    gcTime: 1000 * 60 * 5, // 5 minutes garbage collection
+    retry: 1, // Only retry once on failure
+    retryDelay: 1000, // Wait 1 second before retry
+    refetchOnWindowFocus: false, // Prevent unnecessary refetches
     ...options,
   })
 }
