@@ -22,6 +22,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { SkeletonTableRows } from '@/components/ui/skeleton-table-row'
 
 import { DataTablePagination } from './data-table-pagination'
 import { DataTableToolbar } from './data-table-toolbar'
@@ -126,13 +127,16 @@ export function CoursesTable<TData extends Course, TValue>({
                   ))}
                 </TableRow>
               ))
+            ) : isLoading ? (
+              // Show skeleton rows while loading
+              <SkeletonTableRows columns={columns.length} />
             ) : (
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
                   className='h-24 text-center'
                 >
-                  {isLoading ? 'Loading...' : 'No courses found.'}
+                  No courses found.
                 </TableCell>
               </TableRow>
             )}

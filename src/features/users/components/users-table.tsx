@@ -22,6 +22,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { Skeleton } from '@/components/ui/skeleton'
+import { SkeletonTableRows } from '@/components/ui/skeleton-table-row'
 import { User } from '../data/schema'
 import { DataTablePagination } from './data-table-pagination'
 import { DataTableToolbar } from './data-table-toolbar'
@@ -134,13 +136,16 @@ export function UsersTable({ columns, data, isLoading = false, pagination, filte
                   ))}
                 </TableRow>
               ))
+            ) : isLoading ? (
+              // Show skeleton rows while loading
+              <SkeletonTableRows columns={columns.length} />
             ) : (
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
                   className='h-24 text-center'
                 >
-                  {isLoading ? 'Loading...' : 'No results.'}
+                  No results.
                 </TableCell>
               </TableRow>
             )}

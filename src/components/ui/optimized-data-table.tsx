@@ -23,6 +23,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { Skeleton } from '@/components/ui/skeleton'
+import { SkeletonTableRows } from '@/components/ui/skeleton-table-row'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { DataTableViewOptions } from '../categories/components/data-table-view-options'
@@ -183,13 +185,16 @@ export function OptimizedDataTable<TData, TValue>({
                   ))}
                 </TableRow>
               ))
+            ) : isLoading ? (
+              // Show skeleton rows while loading
+              <SkeletonTableRows columns={columns.length} />
             ) : (
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
                   className='h-24 text-center'
                 >
-                  {isLoading ? 'Loading...' : emptyMessage}
+                  {emptyMessage}
                 </TableCell>
               </TableRow>
             )}
