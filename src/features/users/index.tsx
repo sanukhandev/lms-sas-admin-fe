@@ -11,7 +11,6 @@ import { UsersPrimaryButtons } from './components/users-primary-buttons'
 import { UsersTable } from './components/users-table'
 import { UserStats } from './components/user-stats'
 import UsersProvider from './context/users-context'
-import { Skeleton } from '@/components/ui/skeleton'
 import { Card, CardContent } from '@/components/ui/card'
 
 interface UserFilters {
@@ -89,7 +88,7 @@ export default function Users() {
                 search: tableFilters.search,
                 role: tableFilters.filters.role,
                 status: tableFilters.filters.status,
-                onSearchChange: tableFilters.handleSearchChange,
+                onSearchChange: (search?: string) => tableFilters.handleSearchChange(search || ''),
                 onRoleChange: (value) => tableFilters.handleFilterChange('role', value),
                 onStatusChange: (value) => tableFilters.handleFilterChange('status', value),
               }}
