@@ -11,12 +11,10 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as _root_fixedRouteImport } from './routes/__root_fixed'
 import { Route as ThemeDemoRouteImport } from './routes/theme-demo'
-import { Route as CourseBuilderRouteImport } from './routes/course-builder'
 import { Route as ClerkRouteRouteImport } from './routes/clerk/route'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
 import { Route as AuthenticatedHomeRouteImport } from './routes/_authenticated/home'
-import { Route as AuthenticatedCourseBuilderRouteImport } from './routes/_authenticated/course-builder'
 import { Route as AuthenticatedColorEditorRouteImport } from './routes/_authenticated/color-editor'
 import { Route as errors503RouteImport } from './routes/(errors)/503'
 import { Route as errors500RouteImport } from './routes/(errors)/500'
@@ -35,7 +33,6 @@ import { Route as AuthenticatedTasksIndexRouteImport } from './routes/_authentic
 import { Route as AuthenticatedSettingsIndexRouteImport } from './routes/_authenticated/settings/index'
 import { Route as AuthenticatedHelpCenterIndexRouteImport } from './routes/_authenticated/help-center/index'
 import { Route as AuthenticatedCoursesIndexRouteImport } from './routes/_authenticated/courses/index'
-import { Route as AuthenticatedCourseBuilderIndexRouteImport } from './routes/_authenticated/course-builder/index'
 import { Route as AuthenticatedChatsIndexRouteImport } from './routes/_authenticated/chats/index'
 import { Route as AuthenticatedCategoriesIndexRouteImport } from './routes/_authenticated/categories/index'
 import { Route as AuthenticatedAppsIndexRouteImport } from './routes/_authenticated/apps/index'
@@ -62,11 +59,6 @@ const ThemeDemoRoute = ThemeDemoRouteImport.update({
   path: '/theme-demo',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CourseBuilderRoute = CourseBuilderRouteImport.update({
-  id: '/course-builder',
-  path: '/course-builder',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ClerkRouteRoute = ClerkRouteRouteImport.update({
   id: '/clerk',
   path: '/clerk',
@@ -86,12 +78,6 @@ const AuthenticatedHomeRoute = AuthenticatedHomeRouteImport.update({
   path: '/home',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedCourseBuilderRoute =
-  AuthenticatedCourseBuilderRouteImport.update({
-    id: '/course-builder',
-    path: '/course-builder',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
 const AuthenticatedColorEditorRoute =
   AuthenticatedColorEditorRouteImport.update({
     id: '/color-editor',
@@ -184,12 +170,6 @@ const AuthenticatedCoursesIndexRoute =
     id: '/courses/',
     path: '/courses/',
     getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const AuthenticatedCourseBuilderIndexRoute =
-  AuthenticatedCourseBuilderIndexRouteImport.update({
-    id: '/',
-    path: '/',
-    getParentRoute: () => AuthenticatedCourseBuilderRoute,
   } as any)
 const AuthenticatedChatsIndexRoute = AuthenticatedChatsIndexRouteImport.update({
   id: '/chats/',
@@ -286,7 +266,6 @@ const AuthenticatedSettingsAccountRoute =
 
 export interface FileRoutesByFullPath {
   '/clerk': typeof ClerkAuthenticatedRouteRouteWithChildren
-  '/course-builder': typeof AuthenticatedCourseBuilderRouteWithChildren
   '/theme-demo': typeof ThemeDemoRoute
   '/settings': typeof AuthenticatedSettingsRouteRouteWithChildren
   '/clerk/': typeof ClerkauthRouteRouteWithChildren
@@ -318,7 +297,6 @@ export interface FileRoutesByFullPath {
   '/apps': typeof AuthenticatedAppsIndexRoute
   '/categories': typeof AuthenticatedCategoriesIndexRoute
   '/chats': typeof AuthenticatedChatsIndexRoute
-  '/course-builder/': typeof AuthenticatedCourseBuilderIndexRoute
   '/courses': typeof AuthenticatedCoursesIndexRoute
   '/help-center': typeof AuthenticatedHelpCenterIndexRoute
   '/settings/': typeof AuthenticatedSettingsIndexRoute
@@ -326,7 +304,6 @@ export interface FileRoutesByFullPath {
   '/users': typeof AuthenticatedUsersIndexRoute
 }
 export interface FileRoutesByTo {
-  '/course-builder': typeof AuthenticatedCourseBuilderIndexRoute
   '/theme-demo': typeof ThemeDemoRoute
   '/clerk': typeof ClerkAuthenticatedRouteRouteWithChildren
   '/forgot-password': typeof authForgotPasswordRoute
@@ -368,7 +345,6 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/clerk': typeof ClerkRouteRouteWithChildren
   '/__root_fixed': typeof _root_fixedRoute
-  '/course-builder': typeof CourseBuilderRoute
   '/theme-demo': typeof ThemeDemoRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRouteRouteWithChildren
   '/clerk/(auth)': typeof ClerkauthRouteRouteWithChildren
@@ -383,7 +359,6 @@ export interface FileRoutesById {
   '/(errors)/500': typeof errors500Route
   '/(errors)/503': typeof errors503Route
   '/_authenticated/color-editor': typeof AuthenticatedColorEditorRoute
-  '/_authenticated/course-builder': typeof AuthenticatedCourseBuilderRouteWithChildren
   '/_authenticated/home': typeof AuthenticatedHomeRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
   '/_authenticated/settings/account': typeof AuthenticatedSettingsAccountRoute
@@ -402,7 +377,6 @@ export interface FileRoutesById {
   '/_authenticated/apps/': typeof AuthenticatedAppsIndexRoute
   '/_authenticated/categories/': typeof AuthenticatedCategoriesIndexRoute
   '/_authenticated/chats/': typeof AuthenticatedChatsIndexRoute
-  '/_authenticated/course-builder/': typeof AuthenticatedCourseBuilderIndexRoute
   '/_authenticated/courses/': typeof AuthenticatedCoursesIndexRoute
   '/_authenticated/help-center/': typeof AuthenticatedHelpCenterIndexRoute
   '/_authenticated/settings/': typeof AuthenticatedSettingsIndexRoute
@@ -413,7 +387,6 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/clerk'
-    | '/course-builder'
     | '/theme-demo'
     | '/settings'
     | '/clerk/'
@@ -445,7 +418,6 @@ export interface FileRouteTypes {
     | '/apps'
     | '/categories'
     | '/chats'
-    | '/course-builder/'
     | '/courses'
     | '/help-center'
     | '/settings/'
@@ -453,7 +425,6 @@ export interface FileRouteTypes {
     | '/users'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/course-builder'
     | '/theme-demo'
     | '/clerk'
     | '/forgot-password'
@@ -494,7 +465,6 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/clerk'
     | '/__root_fixed'
-    | '/course-builder'
     | '/theme-demo'
     | '/_authenticated/settings'
     | '/clerk/(auth)'
@@ -509,7 +479,6 @@ export interface FileRouteTypes {
     | '/(errors)/500'
     | '/(errors)/503'
     | '/_authenticated/color-editor'
-    | '/_authenticated/course-builder'
     | '/_authenticated/home'
     | '/_authenticated/'
     | '/_authenticated/settings/account'
@@ -528,7 +497,6 @@ export interface FileRouteTypes {
     | '/_authenticated/apps/'
     | '/_authenticated/categories/'
     | '/_authenticated/chats/'
-    | '/_authenticated/course-builder/'
     | '/_authenticated/courses/'
     | '/_authenticated/help-center/'
     | '/_authenticated/settings/'
@@ -540,7 +508,6 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   ClerkRouteRoute: typeof ClerkRouteRouteWithChildren
   _root_fixedRoute: typeof _root_fixedRoute
-  CourseBuilderRoute: typeof CourseBuilderRoute
   ThemeDemoRoute: typeof ThemeDemoRoute
   authForgotPasswordRoute: typeof authForgotPasswordRoute
   authOtpRoute: typeof authOtpRoute
@@ -569,13 +536,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ThemeDemoRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/course-builder': {
-      id: '/course-builder'
-      path: '/course-builder'
-      fullPath: '/course-builder'
-      preLoaderRoute: typeof CourseBuilderRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/clerk': {
       id: '/clerk'
       path: '/clerk'
@@ -602,13 +562,6 @@ declare module '@tanstack/react-router' {
       path: '/home'
       fullPath: '/home'
       preLoaderRoute: typeof AuthenticatedHomeRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/course-builder': {
-      id: '/_authenticated/course-builder'
-      path: '/course-builder'
-      fullPath: '/course-builder'
-      preLoaderRoute: typeof AuthenticatedCourseBuilderRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/color-editor': {
@@ -736,13 +689,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/courses'
       preLoaderRoute: typeof AuthenticatedCoursesIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/course-builder/': {
-      id: '/_authenticated/course-builder/'
-      path: '/'
-      fullPath: '/course-builder/'
-      preLoaderRoute: typeof AuthenticatedCourseBuilderIndexRouteImport
-      parentRoute: typeof AuthenticatedCourseBuilderRoute
     }
     '/_authenticated/chats/': {
       id: '/_authenticated/chats/'
@@ -892,24 +838,9 @@ const AuthenticatedSettingsRouteRouteWithChildren =
     AuthenticatedSettingsRouteRouteChildren,
   )
 
-interface AuthenticatedCourseBuilderRouteChildren {
-  AuthenticatedCourseBuilderIndexRoute: typeof AuthenticatedCourseBuilderIndexRoute
-}
-
-const AuthenticatedCourseBuilderRouteChildren: AuthenticatedCourseBuilderRouteChildren =
-  {
-    AuthenticatedCourseBuilderIndexRoute: AuthenticatedCourseBuilderIndexRoute,
-  }
-
-const AuthenticatedCourseBuilderRouteWithChildren =
-  AuthenticatedCourseBuilderRoute._addFileChildren(
-    AuthenticatedCourseBuilderRouteChildren,
-  )
-
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedSettingsRouteRoute: typeof AuthenticatedSettingsRouteRouteWithChildren
   AuthenticatedColorEditorRoute: typeof AuthenticatedColorEditorRoute
-  AuthenticatedCourseBuilderRoute: typeof AuthenticatedCourseBuilderRouteWithChildren
   AuthenticatedHomeRoute: typeof AuthenticatedHomeRoute
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
   AuthenticatedAnalyticsIndexRoute: typeof AuthenticatedAnalyticsIndexRoute
@@ -925,7 +856,6 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedSettingsRouteRoute: AuthenticatedSettingsRouteRouteWithChildren,
   AuthenticatedColorEditorRoute: AuthenticatedColorEditorRoute,
-  AuthenticatedCourseBuilderRoute: AuthenticatedCourseBuilderRouteWithChildren,
   AuthenticatedHomeRoute: AuthenticatedHomeRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
   AuthenticatedAnalyticsIndexRoute: AuthenticatedAnalyticsIndexRoute,
@@ -988,7 +918,6 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   ClerkRouteRoute: ClerkRouteRouteWithChildren,
   _root_fixedRoute: _root_fixedRoute,
-  CourseBuilderRoute: CourseBuilderRoute,
   ThemeDemoRoute: ThemeDemoRoute,
   authForgotPasswordRoute: authForgotPasswordRoute,
   authOtpRoute: authOtpRoute,
