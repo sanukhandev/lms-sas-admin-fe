@@ -2,7 +2,7 @@ import { type ColumnDef } from '@tanstack/react-table'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
-import { BookOpen, Users, BarChart3, Wrench, Settings } from 'lucide-react'
+import { BookOpen, Users, Wrench, Settings } from 'lucide-react'
 import { DataTableColumnHeader } from './data-table-column-header'
 import { DataTableRowActions } from './data-table-row-actions'
 import { type Course } from '@/services/courses'
@@ -50,12 +50,12 @@ export const columns: ColumnDef<Course>[] = [
     },
   },
   {
-    accessorKey: 'instructor_name',
+    accessorKey: 'instructorName',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title='Tutor' />
     ),
     cell: ({ row }) => {
-      const instructor = row.original.instructor_name
+      const instructor = row.original.instructorName
       return (
         <div className='flex items-center space-x-2'>
           <div className='w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center'>
@@ -70,12 +70,12 @@ export const columns: ColumnDef<Course>[] = [
     enableSorting: false,
   },
   {
-    accessorKey: 'category_name',
+    accessorKey: 'categoryName',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title='Category' />
     ),
     cell: ({ row }) => {
-      const category = row.original.category_name
+      const category = row.original.categoryName
       return (
         <Badge variant="outline" className='bg-blue-50 text-blue-700 border-blue-200'>
           {category || 'Uncategorized'}
@@ -85,12 +85,12 @@ export const columns: ColumnDef<Course>[] = [
     enableSorting: false,
   },
   {
-    accessorKey: 'enrollment_count',
+    accessorKey: 'enrollmentCount',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title='Active Students' />
     ),
     cell: ({ row }) => {
-      const count = row.original.enrollment_count || 0
+      const count = row.original.enrollmentCount || 0
       return (
         <div className='flex items-center space-x-2'>
           <Users className='h-4 w-4 text-muted-foreground' />
@@ -100,12 +100,12 @@ export const columns: ColumnDef<Course>[] = [
     },
   },
   {
-    accessorKey: 'completion_rate',
+    accessorKey: 'completionRate',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title='Completion Rate' />
     ),
     cell: ({ row }) => {
-      const rate = row.original.completion_rate || 0
+      const rate = row.original.completionRate || 0
       return (
         <div className='flex items-center space-x-3 min-w-[120px]'>
           <Progress value={rate} className='flex-1 h-2' />

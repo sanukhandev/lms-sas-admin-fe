@@ -7,9 +7,9 @@ export interface Course {
   short_description?: string
   slug?: string
   category_id?: number
-  category_name?: string
+  categoryName?: string
   instructor_id?: number
-  instructor_name?: string
+  instructorName?: string
   price?: number
   currency?: string
   level?: string
@@ -23,8 +23,8 @@ export interface Course {
   meta_description?: string
   tags?: string
   average_rating?: number
-  enrollment_count: number
-  completion_rate: number
+  enrollmentCount: number
+  completionRate: number
   content_count: number
   created_at: string
   updated_at: string
@@ -87,12 +87,12 @@ export interface CoursePricing {
 }
 
 export interface CourseStats {
-  total_courses: number
-  published_courses: number
-  draft_courses: number
-  total_active_students: number
-  average_completion_rate: number
-  top_performing_courses: Course[]
+  totalCourses: number
+  publishedCourses: number
+  draftCourses: number
+  totalActiveStudents: number
+  averageCompletionRate: number
+  topPerformingCourses: Course[]
 }
 
 export interface CoursesResponse {
