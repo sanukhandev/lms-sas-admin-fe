@@ -10,8 +10,12 @@ import { CoursesDialogs } from './components/courses-dialogs'
 import { CoursesPrimaryButtons } from './components/courses-primary-buttons'
 import { CoursesTable } from './components/courses-table'
 import { CourseStats } from './components/course-stats'
+import { CourseDetailsDialog } from './components/course-details-dialog'
 import CoursesProvider from './context/courses-context'
 import { Card, CardContent } from '@/components/ui/card'
+import { useEffect, useState } from 'react'
+import { type Course } from '@/services/courses'
+import { useNavigate } from '@tanstack/react-router'
 
 interface CourseFilters {
   status: string | undefined
@@ -19,6 +23,10 @@ interface CourseFilters {
 }
 
 export default function Courses() {
+  const navigate = useNavigate()
+  const [selectedCourse, setSelectedCourse] = useState<Course | null>(null)
+  const [showDetailsDialog, setShowDetailsDialog] = useState(false)
+
   const tableFilters = useOptimizedTableFilters<CourseFilters>({
     searchDelay: 300,
     initialSearch: '',
@@ -37,6 +45,36 @@ export default function Courses() {
   })
 
   const courseList = coursesResponse?.data || []
+
+  // Handle course action events
+  useEffect(() => {
+    const handleShowCourseDetails = (event: CustomEvent) => {
+      setSelectedCourse(event.detail.course)
+      setShowDetailsDialog(true)
+    }
+
+    const handleBuildCourse = (event: CustomEvent) => {
+      const courseId = event.detail.courseId
+      // Navigate to course builder
+      navigate({ to: `/course-builder/${courseId}` })
+    }
+
+    const handleModifyCourse = (event: CustomEvent) => {
+      const courseId = event.detail.courseId
+      // Navigate to course editor
+      navigate({ to: `/courses/${courseId}/edit` })
+    }
+
+    window.addEventListener('showCourseDetails', handleShowCourseDetails as EventListener)
+    window.addEventListener('buildCourse', handleBuildCourse as EventListener)
+    window.addEventListener('modifyCourse', handleModifyCourse as EventListener)
+
+    return () => {
+      window.removeEventListener('showCourseDetails', handleShowCourseDetails as EventListener)
+      window.removeEventListener('buildCourse', handleBuildCourse as EventListener)
+      window.removeEventListener('modifyCourse', handleModifyCourse as EventListener)
+    }
+  }, [navigate])
 
   return (
     <CoursesProvider>
@@ -98,6 +136,13 @@ export default function Courses() {
       </Main>
 
       <CoursesDialogs />
+      
+      {/* Course Details Dialog */}
+      <CourseDetailsDialog
+        course={selectedCourse}
+        open={showDetailsDialog}
+        onOpenChange={setShowDetailsDialog}
+      />
     </CoursesProvider>
   )
 }

@@ -87,14 +87,12 @@ export interface CoursePricing {
 }
 
 export interface CourseStats {
-  totalCourses: number
-  publishedCourses: number
-  draftCourses: number
-  totalEnrollments: number
-  averageRating: number
-  totalRevenue: number
-  categoriesCount: number
-  instructorsCount: number
+  total_courses: number
+  published_courses: number
+  draft_courses: number
+  total_active_students: number
+  average_completion_rate: number
+  top_performing_courses: Course[]
 }
 
 export interface CoursesResponse {
