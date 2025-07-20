@@ -7,10 +7,6 @@ import { TopCourses } from './top-courses'
 export function CourseStats() {
   const { data: statsResponse, isLoading, error } = useCourseStats()
 
-  // Add logging to debug the API response
-  console.log('Course Stats Response:', statsResponse)
-  console.log('Course Stats Error:', error)
-
   if (isLoading) {
     return (
       <div className='space-y-6'>

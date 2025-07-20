@@ -51,12 +51,12 @@ export function CourseDetailsDialog({ course, open, onOpenChange }: CourseDetail
                 <div className="flex items-center space-x-2">
                   <Users className="h-4 w-4 text-muted-foreground" />
                   <span className="text-sm font-medium">Instructor:</span>
-                  <span className="text-sm">{course.instructor_name || 'Unassigned'}</span>
+                  <span className="text-sm">{course.instructorName || 'Unassigned'}</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <BookOpen className="h-4 w-4 text-muted-foreground" />
                   <span className="text-sm font-medium">Category:</span>
-                  <Badge variant="outline">{course.category_name || 'Uncategorized'}</Badge>
+                  <Badge variant="outline">{course.categoryName || 'Uncategorized'}</Badge>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Target className="h-4 w-4 text-muted-foreground" />
@@ -110,7 +110,7 @@ export function CourseDetailsDialog({ course, open, onOpenChange }: CourseDetail
                   <span className="text-sm font-medium">Enrolled Students</span>
                 </div>
                 <p className="text-2xl font-bold text-blue-600">
-                  {course.enrollment_count?.toLocaleString() || 0}
+                  {course.enrollmentCount?.toLocaleString() || 0}
                 </p>
               </div>
               <div className="text-center p-4 bg-muted/50 rounded-lg">
@@ -119,7 +119,7 @@ export function CourseDetailsDialog({ course, open, onOpenChange }: CourseDetail
                   <span className="text-sm font-medium">Completion Rate</span>
                 </div>
                 <p className="text-2xl font-bold text-green-600">
-                  {course.completion_rate?.toFixed(1) || 0}%
+                  {course.completionRate?.toFixed(1) || 0}%
                 </p>
               </div>
               <div className="text-center p-4 bg-muted/50 rounded-lg">
@@ -144,11 +144,13 @@ export function CourseDetailsDialog({ course, open, onOpenChange }: CourseDetail
                     <p>{course.what_you_will_learn}</p>
                   ) : (
                     <ul className="list-disc list-inside space-y-1">
-                      {Array.isArray(course.what_you_will_learn) 
-                        ? course.what_you_will_learn.map((item, index) => (
-                            <li key={index}>{item}</li>
-                          ))
-                        : <li>{course.what_you_will_learn}</li>
+                      {course.what_you_will_learn 
+                        ? (Array.isArray(course.what_you_will_learn) 
+                            ? (course.what_you_will_learn as string[]).map((item: string, index: number) => (
+                                <li key={index}>{item}</li>
+                              ))
+                            : <li>{course.what_you_will_learn}</li>)
+                        : <li>No learning objectives listed</li>
                       }
                     </ul>
                   )}
@@ -167,11 +169,13 @@ export function CourseDetailsDialog({ course, open, onOpenChange }: CourseDetail
                     <p>{course.requirements}</p>
                   ) : (
                     <ul className="list-disc list-inside space-y-1">
-                      {Array.isArray(course.requirements) 
-                        ? course.requirements.map((item, index) => (
-                            <li key={index}>{item}</li>
-                          ))
-                        : <li>{course.requirements}</li>
+                      {course.requirements 
+                        ? (Array.isArray(course.requirements) 
+                            ? (course.requirements as string[]).map((item: string, index: number) => (
+                                <li key={index}>{item}</li>
+                              ))
+                            : <li>{course.requirements}</li>)
+                        : <li>No requirements listed</li>
                       }
                     </ul>
                   )}
