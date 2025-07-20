@@ -20,7 +20,6 @@ import {
 import { toast } from 'sonner'
 import { useTenantTheme } from '@/context/tenant-theme-context'
 import { useTenantThemeStore } from '@/stores/tenant-theme-store'
-import { MockTenantThemeAPIService } from '@/services/tenant-theme-api'
 
 interface TestResult {
   name: string
@@ -34,7 +33,6 @@ export function ColorPaletteTestSuite() {
   const { tenantId } = useTenantTheme()
   const { 
     colorPalettes, 
-    currentThemeConfig,
     updateColorPaletteAPI,
     generateColorPalette,
     loadColorPalettes,

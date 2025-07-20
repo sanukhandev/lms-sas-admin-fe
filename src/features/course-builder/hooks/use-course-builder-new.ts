@@ -6,7 +6,6 @@ export {
   useCourseStructure,
   useCoursePricing,
   useSupportedAccessModels,
-  useCreateCourse,
   useCreateModule,
   useUpdateModule,
   useDeleteModule,
@@ -15,7 +14,7 @@ export {
   useDeleteChapter,
   useUpdateCoursePricing,
   usePublishCourse,
-} from '../../../hooks/use-courses'
+} from './use-course-builder'
 
 // Course Builder specific types
 export interface CourseFilters {

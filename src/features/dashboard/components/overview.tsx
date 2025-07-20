@@ -11,7 +11,6 @@ import {
 } from '@tabler/icons-react'
 import { DashboardService } from '@/services/dashboard'
 import type {
-  DashboardOverview as DashboardOverviewType,
   RecentActivity,
 } from '@/services/dashboard'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'

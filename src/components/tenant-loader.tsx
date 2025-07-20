@@ -1,4 +1,3 @@
-import { useEffect } from 'react'
 import { useTenantContext } from '@/context/tenant-context'
 import { Skeleton } from '@/components/ui/skeleton'
 

@@ -4,17 +4,17 @@ import { BookOpen, Users, Target, TrendingUp } from 'lucide-react'
 import { useCourseStats } from '@/hooks/use-courses'
 
 export function CourseStats() {
-  const { data: coursesResponse, isLoading } = useCourseStats()
+  const { data: statsResponse, isLoading } = useCourseStats()
 
-  const courses = coursesResponse?.data || []
-  
-  const stats = {
-    totalCourses: courses.length,
-    totalEnrollments: courses.reduce((sum, course) => sum + course.enrollments, 0),
-    averageCompletionRate: courses.length > 0 
-      ? Math.round(courses.reduce((sum, course) => sum + course.completionRate, 0) / courses.length)
-      : 0,
-    activeCourses: courses.filter(course => course.status === 'active').length,
+  const stats = statsResponse?.data || {
+    totalCourses: 0,
+    publishedCourses: 0,
+    draftCourses: 0,
+    totalEnrollments: 0,
+    averageRating: 0,
+    totalRevenue: 0,
+    categoriesCount: 0,
+    instructorsCount: 0,
   }
 
   if (isLoading) {
@@ -48,7 +48,7 @@ export function CourseStats() {
         <CardContent>
           <div className='text-2xl font-bold'>{stats.totalCourses}</div>
           <p className='text-xs text-muted-foreground'>
-            {stats.activeCourses} active courses
+            {stats.publishedCourses} published
           </p>
         </CardContent>
       </Card>
@@ -68,11 +68,11 @@ export function CourseStats() {
 
       <Card>
         <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-          <CardTitle className='text-sm font-medium'>Avg Completion Rate</CardTitle>
+          <CardTitle className='text-sm font-medium'>Average Rating</CardTitle>
           <Target className='h-4 w-4 text-muted-foreground' />
         </CardHeader>
         <CardContent>
-          <div className='text-2xl font-bold'>{stats.averageCompletionRate}%</div>
+          <div className='text-2xl font-bold'>{stats.averageRating.toFixed(1)}</div>
           <p className='text-xs text-muted-foreground'>
             Platform average
           </p>
@@ -81,11 +81,11 @@ export function CourseStats() {
 
       <Card>
         <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-          <CardTitle className='text-sm font-medium'>Active Courses</CardTitle>
+          <CardTitle className='text-sm font-medium'>Published Courses</CardTitle>
           <TrendingUp className='h-4 w-4 text-muted-foreground' />
         </CardHeader>
         <CardContent>
-          <div className='text-2xl font-bold'>{stats.activeCourses}</div>
+          <div className='text-2xl font-bold'>{stats.publishedCourses}</div>
           <p className='text-xs text-muted-foreground'>
             Currently available
           </p>

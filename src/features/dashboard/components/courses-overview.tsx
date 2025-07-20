@@ -13,13 +13,13 @@ export function CoursesOverview() {
   const courses = coursesData?.data || []
 
   const totalCourses = courses.length
-  const activeCourses = courses.filter((c) => c.status === 'active').length
+  const activeCourses = courses.filter((c) => c.status === 'published').length
   const totalEnrollments = courses.reduce(
-    (sum, course) => sum + course.enrollments,
+    (sum, course) => sum + course.enrollment_count,
     0
   )
   const totalCompletions = courses.reduce(
-    (sum, course) => sum + course.completions,
+    (sum, course) => sum + course.content_count,
     0
   )
   const averageCompletionRate =

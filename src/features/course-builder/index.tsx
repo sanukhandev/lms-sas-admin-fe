@@ -11,10 +11,11 @@ import { CourseDetailsTab } from './tabs/course-details-tab'
 import { CourseStructureTab } from './tabs/course-structure-tab'
 import { CoursePricingTab } from './tabs/course-pricing-tab'
 import { CoursePublishingTab } from './tabs/course-publishing-tab'
-import CourseBuilderProvider from './context/course-builder-context'
 import { CoursePlannerTab } from './tabs/course-planner-tab'
+import { CreateCourseDialog } from './components/create-course-dialog'
+import CourseBuilderProvider, { useCourseBuilderContext } from './context/course-builder-context'
 
-export function CourseBuilder() {
+function CourseBuilderContent() {
   const [activeTab, setActiveTab] = useState('overview')
   const [selectedCourseId, setSelectedCourseId] = useState<string | null>(null)
   const [stats, setStats] = useState({
@@ -23,6 +24,8 @@ export function CourseBuilder() {
     draftCourses: 4,
     totalDuration: 2640, // in minutes
   })
+
+  const { isCreateDialogOpen, setIsCreateDialogOpen } = useCourseBuilderContext()
 
   const handleStatsUpdate = useCallback((newStats: typeof stats) => {
     setStats(newStats)
@@ -39,7 +42,7 @@ export function CourseBuilder() {
   }, [])
 
   return (
-    <CourseBuilderProvider>
+    <>
       <Header>
         <Search placeholder='Search courses, modules, chapters...' />
         <ProfileDropdown />
@@ -128,6 +131,20 @@ export function CourseBuilder() {
           </Tabs>
         </div>
       </Main>
+
+      {/* Enhanced Create Course Dialog */}
+      <CreateCourseDialog 
+        open={isCreateDialogOpen} 
+        onOpenChange={setIsCreateDialogOpen}
+      />
+    </>
+  )
+}
+
+export function CourseBuilder() {
+  return (
+    <CourseBuilderProvider>
+      <CourseBuilderContent />
     </CourseBuilderProvider>
   )
 }

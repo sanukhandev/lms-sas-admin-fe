@@ -11,7 +11,6 @@ import { CoursesPrimaryButtons } from './components/courses-primary-buttons'
 import { CoursesTable } from './components/courses-table'
 import { CourseStats } from './components/course-stats'
 import CoursesProvider from './context/courses-context'
-import { Skeleton } from '@/components/ui/skeleton'
 import { Card, CardContent } from '@/components/ui/card'
 
 interface CourseFilters {
@@ -89,7 +88,7 @@ export default function Courses() {
                 search: tableFilters.search,
                 status: tableFilters.filters.status,
                 instructor: tableFilters.filters.instructor,
-                onSearchChange: tableFilters.handleSearchChange,
+                onSearchChange: (search) => tableFilters.handleSearchChange(search || ''),
                 onStatusChange: (value) => tableFilters.handleFilterChange('status', value),
                 onInstructorChange: (value) => tableFilters.handleFilterChange('instructor', value),
               }}

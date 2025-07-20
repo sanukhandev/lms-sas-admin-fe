@@ -102,7 +102,7 @@ export class TenantThemeAPIService {
       const response = await this.apiClient.get<TenantThemeResponse>(
         TENANT_THEME_API_ENDPOINTS.getTenantTheme(tenantId)
       )
-      return response.data.data.theme
+      return response.data.data.theme as unknown as TenantThemeConfig
     } catch (error) {
       console.error('Error fetching tenant theme:', error)
       throw new Error('Failed to fetch tenant theme')

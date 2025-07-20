@@ -187,6 +187,14 @@ export const coursesService = {
   },
 
   /**
+   * Create a new course
+   */
+  async createCourse(data: Partial<Course>): Promise<{ data: Course }> {
+    const response = await api.post<{ data: Course }>('/v1/courses', data)
+    return response.data
+  },
+
+  /**
    * Update a course
    */
   async updateCourse(id: number, data: Partial<Course>): Promise<{ data: Course }> {
@@ -267,6 +275,35 @@ export const coursesService = {
    */
   async deleteChapter(courseId: string, moduleId: string, chapterId: string): Promise<void> {
     await api.delete(`/v1/course-builder/${courseId}/modules/${moduleId}/chapters/${chapterId}`)
+  },
+
+  /**
+   * Create class
+   */
+  async createClass(
+    courseId: string, 
+    moduleId: string, 
+    chapterId: string, 
+    data: {
+      title: string
+      description: string
+      content_type: string
+      duration_minutes: number
+      is_preview: boolean
+      is_required: boolean
+      content_url?: string
+    }
+  ): Promise<{ data: any }> {
+    const response = await api.post(`/v1/course-builder/${courseId}/modules/${moduleId}/chapters/${chapterId}/classes`, data)
+    return response.data
+  },
+
+  /**
+   * Update course structure
+   */
+  async updateCourseStructure(courseId: string, structure: any): Promise<{ data: any }> {
+    const response = await api.put(`/v1/course-builder/${courseId}/structure`, structure)
+    return response.data
   },
 
   /**

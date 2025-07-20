@@ -11,7 +11,6 @@ import { CategoriesPrimaryButtons } from './components/categories-primary-button
 import { CategoriesTable } from './components/categories-table'
 import { CategoryStats } from './components/category-stats'
 import CategoriesProvider from './context/categories-context'
-import { Skeleton } from '@/components/ui/skeleton'
 import { Card, CardContent } from '@/components/ui/card'
 
 interface CategoryFilters {

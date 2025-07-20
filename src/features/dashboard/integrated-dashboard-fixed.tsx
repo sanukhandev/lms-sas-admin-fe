@@ -1,31 +1,6 @@
-import { useQuery } from '@tanstack/react-query'
-import {
-  IconUsers,
-  IconBook,
-  IconClipboardList,
-  IconCurrencyDollar,
-  IconClock,
-  IconCheck,
-  IconTrendingUp,
-  IconTrendingDown,
-} from '@tabler/icons-react'
-import DashboardService from '@/services/dashboard'
-import type { RecentActivity } from '@/services/dashboard'
-import { toast } from 'sonner'
-import { useTenantStore } from '@/stores/tenant-store'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
-import { Progress } from '@/components/ui/progress'
-import { Skeleton } from '@/components/ui/skeleton'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { useTenantStore } from '@/stores/tenant-store'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { TopNav } from '@/components/layout/top-nav'

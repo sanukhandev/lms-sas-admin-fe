@@ -237,7 +237,7 @@ export function DashboardCharts({ data, className }: DashboardChartsProps) {
                     cy='50%'
                     labelLine={false}
                     label={({ category, percent }) => {
-                      const percentage = (percent * 100).toFixed(1)
+                      const percentage = ((percent || 0) * 100).toFixed(1)
                       return `${category}: ${percentage}%`
                     }}
                     outerRadius={120}

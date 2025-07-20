@@ -22,7 +22,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { Skeleton } from '@/components/ui/skeleton'
 import { SkeletonTableRows } from '@/components/ui/skeleton-table-row'
 import { User } from '../data/schema'
 import { DataTablePagination } from './data-table-pagination'

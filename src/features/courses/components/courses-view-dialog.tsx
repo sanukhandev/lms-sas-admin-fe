@@ -29,11 +29,11 @@ export function CoursesViewDialog() {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <p className="text-sm font-medium">Instructor</p>
-              <p className="text-sm text-muted-foreground">{selectedCourse.instructor}</p>
+              <p className="text-sm text-muted-foreground">{selectedCourse.instructor_name || 'No instructor assigned'}</p>
             </div>
             <div>
               <p className="text-sm font-medium">Status</p>
-              <Badge variant={selectedCourse.status === 'active' ? 'default' : 'secondary'}>
+              <Badge variant={selectedCourse.status === 'published' ? 'default' : 'secondary'}>
                 {selectedCourse.status}
               </Badge>
             </div>
@@ -42,27 +42,27 @@ export function CoursesViewDialog() {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <p className="text-sm font-medium">Total Enrollments</p>
-              <p className="text-2xl font-bold">{selectedCourse.enrollments}</p>
+              <p className="text-2xl font-bold">{selectedCourse.enrollment_count}</p>
             </div>
             <div>
               <p className="text-sm font-medium">Completions</p>
-              <p className="text-2xl font-bold">{selectedCourse.completions}</p>
+              <p className="text-2xl font-bold">{selectedCourse.content_count}</p>
             </div>
           </div>
 
           <div>
             <p className="text-sm font-medium mb-2">Completion Rate</p>
             <div className="flex items-center space-x-2">
-              <Progress value={selectedCourse.completionRate} className="flex-1" />
-              <span className="text-sm font-medium">{selectedCourse.completionRate}%</span>
+              <Progress value={selectedCourse.completion_rate} className="flex-1" />
+              <span className="text-sm font-medium">{selectedCourse.completion_rate}%</span>
             </div>
           </div>
 
           <div>
             <p className="text-sm font-medium mb-2">Average Progress</p>
             <div className="flex items-center space-x-2">
-              <Progress value={selectedCourse.averageProgress} className="flex-1" />
-              <span className="text-sm font-medium">{selectedCourse.averageProgress}%</span>
+              <Progress value={selectedCourse.average_rating ? selectedCourse.average_rating * 20 : 0} className="flex-1" />
+              <span className="text-sm font-medium">{selectedCourse.average_rating ? selectedCourse.average_rating.toFixed(1) : '0.0'}/5</span>
             </div>
           </div>
         </div>

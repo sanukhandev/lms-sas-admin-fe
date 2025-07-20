@@ -217,3 +217,22 @@ export function usePublishCourse() {
     },
   })
 }
+
+export function useCreateCourse() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (courseData: any) => {
+      return coursesService.createCourse(courseData)
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['courses'] })
+      queryClient.invalidateQueries({ queryKey: ['courseStats'] })
+      
+      toast.success('Course created successfully')
+    },
+    onError: (error: any) => {
+      toast.error(error?.message || 'Failed to create course')
+    },
+  })
+}

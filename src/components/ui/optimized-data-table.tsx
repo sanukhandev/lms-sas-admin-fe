@@ -23,12 +23,11 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { Skeleton } from '@/components/ui/skeleton'
 import { SkeletonTableRows } from '@/components/ui/skeleton-table-row'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { DataTableViewOptions } from '../categories/components/data-table-view-options'
-import { DataTablePagination } from '../categories/components/data-table-pagination'
+import { DataTableViewOptions } from '@/features/tasks/components/data-table-view-options'
+import { DataTablePagination } from '@/features/tasks/components/data-table-pagination'
 
 interface OptimizedDataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -206,7 +205,6 @@ export function OptimizedDataTable<TData, TValue>({
       {pagination && (
         <DataTablePagination
           table={table}
-          pagination={pagination}
         />
       )}
     </div>

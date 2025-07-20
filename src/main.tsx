@@ -11,7 +11,6 @@ import { toast } from 'sonner'
 import { useAuthStore } from '@/stores/authStore'
 import { handleServerError } from '@/utils/handle-server-error'
 import { FontProvider } from './context/font-context'
-import { TenantThemeProvider } from './context/tenant-theme-context'
 import { ThemeProvider } from './context/theme-context'
 import './index.css'
 // Generated Routes
@@ -20,9 +19,6 @@ import { TenantDetectionService } from './services/tenant-detection'
 
 // Apply stored theme immediately to prevent flickering
 TenantDetectionService.applyStoredTheme()
-
-// Detect tenant from URL
-const detectedTenant = TenantDetectionService.getTenantDomainFromUrl()
 
 const queryClient = new QueryClient({
   defaultOptions: {

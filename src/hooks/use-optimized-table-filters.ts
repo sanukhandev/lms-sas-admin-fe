@@ -58,7 +58,7 @@ interface UseOptimizedTableFiltersReturn<TFilters = Record<string, any>> {
  * })
  * ```
  */
-export function useOptimizedTableFilters<TFilters = Record<string, any>>({
+export function useOptimizedTableFilters<TFilters extends Record<string, any> = Record<string, any>>({
   searchDelay = 300,
   initialSearch = '',
   initialFilters = {} as TFilters,
@@ -66,7 +66,7 @@ export function useOptimizedTableFilters<TFilters = Record<string, any>>({
   const [page, setPage] = useState(1)
   const [perPage, setPerPage] = useState(15)
   const [search, setSearch] = useState(initialSearch)
-  const [filters, setFilters] = useState<TFilters>(initialFilters)
+  const [filters, setFilters] = useState<TFilters>(initialFilters as TFilters)
 
   // Debounce search to avoid excessive API calls
   const debouncedSearch = useDebouncedValue(search, searchDelay)
@@ -88,7 +88,7 @@ export function useOptimizedTableFilters<TFilters = Record<string, any>>({
 
   const resetFilters = () => {
     setSearch(initialSearch)
-    setFilters(initialFilters)
+    setFilters(initialFilters as TFilters)
     setPage(1)
   }
 
