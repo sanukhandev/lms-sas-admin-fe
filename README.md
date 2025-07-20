@@ -5,7 +5,19 @@ A comprehensive Learning Management System (LMS) admin dashboard built with mode
 ### Creating New Modules
 Follow the standardized module pattern for consistency:
 
-1. **Define Data Schema** - Zod schemas and TypeScript types
+1. **Define Data Schema** - Zod schemas- **Retry Logic** - Automatic retry for failed requests
+
+## 👨‍💻 Developer
+
+**Sanu Khan** - [@sanukhandev](https://github.com/sanukhandev)
+
+*Building innovative LMS SaaS solutions with modern web technologies*
+
+For questions, issues, or contributions, please reach out through GitHub issues or connect with me on GitHub.
+
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.es
 2. **Create API Service** - RESTful API integration
 3. **Build Components** - Table, dialogs, stats, and forms
 4. **Setup Context** - Module-specific state management
