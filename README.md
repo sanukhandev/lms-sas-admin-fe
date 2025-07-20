@@ -110,17 +110,25 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-## 🔗 Related Projects
+## 🔗 Related Projects & Backend Integration
 
-- **[LMS Backend API](../lms-be/)** - Laravel-based backend API
-- **Module Design Guide** - Frontend architecture documentation
-- **Tenant Theme System** - Multi-tenant theming implementation
+### Backend API Documentation
+- **[LMS Backend API](../lms-be/)** - Laravel-based backend API server
+- **[Backend API Documentation](../lms-be/DASHBOARD_API_DOCUMENTATION.md)** - Complete API endpoints reference
+- **[Multi-tenant Setup](../lms-be/MULTITENANT_SETUP.md)** - Backend multi-tenancy configuration
+- **[Analytics Implementation](../lms-be/ANALYTICS_IMPLEMENTATION_SUMMARY.md)** - Backend analytics system
+- **[Authentication & Tenant System](../lms-be/AUTH_TENANT_REFACTORING.md)** - Backend auth implementation
 
-For questions, issues, or contributions, please reach out through GitHub issues or contact the development team.managing courses, users, categories, analytics, and multi-tenant configurations.
+### Integration Points
+- **API Base URL:** `http://localhost:8000/api/v1/`
+- **Authentication:** Bearer token + Tenant headers
+- **Multi-tenancy:** X-Tenant-ID header support
+- **Real-time Features:** WebSocket integration
+- **File Storage:** Laravel file management integration
 
-![alt text](public/images/shadcn-admin.png)
+For questions, issues, or contributions, please reach out through GitHub issues or contact the development team.
 
-This admin dashboard is part of a larger LMS SaaS platform that includes multi-tenant support, theme customization, advanced analytics, and comprehensive course management capabilities. The application follows a feature-based architecture with consistent patterns across all modules.
+---
 
 ## 🚀 Key Features
 
@@ -268,10 +276,40 @@ pnpm knip             # Find unused code and dependencies
 
 ## 📚 Documentation
 
-- **[Module Design Guide](MODULE_DESIGN_GUIDE.md)** - Comprehensive guide for creating new modules
-- **[Tenant Theme Guide](TENANT_THEME_SUMMARY.md)** - Multi-tenant theming implementation
-- **[Development Fixes](DEVELOPMENT_FIXES.md)** - Known issues and solutions
-- **[Changelog](CHANGELOG.md)** - Version history and updates
+### 🏗️ Architecture & Development
+- **[Module Design Guide](MODULE_DESIGN_GUIDE.md)** - Comprehensive guide for creating consistent, maintainable modules
+- **[Optimized Tables Guide](docs/OPTIMIZED_TABLES.md)** - Implementation guide for debounced search tables and data filtering
+
+### 🎨 UI & Theming  
+- **[Tenant Theme System](TENANT_THEME_SUMMARY.md)** - Multi-tenant theming implementation and customization guide
+
+### 🔧 Development & Maintenance
+- **[Development Fixes](DEVELOPMENT_FIXES.md)** - Known issues, solutions, and development setup fixes
+- **[Changelog](CHANGELOG.md)** - Version history, updates, and feature releases
+
+### 📋 Project Structure Overview
+The project follows a feature-based architecture where each module is self-contained:
+
+```
+📁 Core Documentation
+├── 🏗️ MODULE_DESIGN_GUIDE.md     # Module creation patterns and standards
+├── 🎨 TENANT_THEME_SUMMARY.md    # Multi-tenant theming system
+├── 📊 docs/OPTIMIZED_TABLES.md   # Advanced table implementation
+├── 🔧 DEVELOPMENT_FIXES.md       # Development issues and solutions
+└── 📋 CHANGELOG.md              # Project version history
+
+📁 Feature Modules (src/features/)
+├── 👥 users/           # User management module
+├── 📚 categories/      # Course category management  
+├── 🎓 courses/         # Course creation and management
+├── 📈 analytics/       # Analytics and reporting
+├── 💬 chats/          # Real-time messaging
+├── 🏗️ course-builder/ # Visual course content creation
+├── 🏠 dashboard/       # Main dashboard overview
+├── 🔐 auth/           # Authentication flows
+├── ⚙️ settings/       # System configuration
+└── ✅ tasks/          # Task management
+```
 
 ## 🏗️ Architecture Patterns
 
