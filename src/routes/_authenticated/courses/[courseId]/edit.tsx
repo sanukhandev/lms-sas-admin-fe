@@ -1,7 +1,7 @@
 import { CourseBuilder } from '@/features/courses/builder/CourseBuilder';
-import { Route } from './edit';
+import { useParams } from 'react-router-dom';
 
 export default function EditCoursePage() {
-  const { courseId } = Route.useParams();
+  const { courseId } = useParams();
   return <CourseBuilder courseId={courseId} />;
 }

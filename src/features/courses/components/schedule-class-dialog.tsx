@@ -2,12 +2,13 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Calendar, Clock, User, MapPin } from 'lucide-react'
+import { type CourseStructure } from '@/services/courses'
 
 interface ScheduleClassDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   courseId: string
-  courseStructure: any
+  courseStructure: CourseStructure | null
   onSuccess: () => void
 }
 

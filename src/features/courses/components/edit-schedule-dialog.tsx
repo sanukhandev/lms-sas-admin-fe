@@ -2,22 +2,23 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Calendar, Clock, User, MapPin, Save, Trash2 } from 'lucide-react'
+import { type ClassSession, type CourseStructure } from '@/services/courses'
 
 interface EditScheduleDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  scheduleId: string
   courseId: string
-  sessionData?: any
+  classSession: ClassSession
+  courseStructure: CourseStructure | null
   onSuccess: () => void
 }
 
 export function EditScheduleDialog({ 
   open, 
   onOpenChange, 
-  scheduleId,
   courseId,
-  sessionData,
+  classSession,
+  courseStructure,
   onSuccess 
 }: EditScheduleDialogProps) {
   return (
