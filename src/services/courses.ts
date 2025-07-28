@@ -148,6 +148,150 @@ export interface ReorderItem {
   parent_id?: string
 }
 
+// Class Scheduling & Session Management Types
+export interface ClassSession {
+  id: string
+  courseId: string
+  contentId?: string
+  tutorId: string
+  tutorName?: string
+  contentTitle?: string
+  scheduledAt: string
+  durationMins: number
+  meetingUrl?: string
+  isRecorded: boolean
+  recordingUrl?: string
+  status: 'scheduled' | 'in_progress' | 'completed' | 'cancelled'
+  studentsCount: number
+  createdAt: string
+  updatedAt: string
+}
+
+export interface TeachingPlan {
+  id: string
+  courseId: string
+  contentId?: string
+  instructorId: string
+  instructorName?: string
+  contentTitle?: string
+  classType: string
+  plannedDate: string
+  durationMins: number
+  learningObjectives?: string
+  prerequisites?: string
+  materialsNeeded?: string
+  notes?: string
+  priority: number
+  isFlexible: boolean
+  status: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface SessionDetails {
+  id: string
+  courseId: string
+  contentId?: string
+  tutorId: string
+  tutorName?: string
+  contentTitle?: string
+  scheduledAt: string
+  startedAt?: string
+  endedAt?: string
+  durationMins: number
+  meetingUrl?: string
+  isRecorded: boolean
+  recordingUrl?: string
+  status: string
+  summary?: string
+  homeworkAssigned?: string
+  feedbackRating?: number
+  feedbackComments?: string
+  totalStudents: number
+  presentCount: number
+  absentCount: number
+  lateCount: number
+  attendances: AttendanceRecord[]
+  createdAt: string
+  updatedAt: string
+}
+
+export interface AttendanceRecord {
+  id: string
+  sessionId: string
+  studentId: string
+  studentName?: string
+  status: 'present' | 'absent' | 'late' | 'pending'
+  joinedAt?: string
+  leftAt?: string
+  notes?: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface ScheduleClassRequest {
+  courseId: string
+  contentId?: string
+  tutorId: string
+  scheduledAt: string
+  durationMins: number
+  meetingUrl?: string
+  isRecorded?: boolean
+  status?: string
+  recurring?: boolean
+  recurringType?: 'daily' | 'weekly' | 'monthly'
+  recurringEndDate?: string
+  sendNotifications?: boolean
+}
+
+export interface CreateTeachingPlanRequest {
+  courseId: string
+  contentId?: string
+  instructorId: string
+  classType: string
+  plannedDate: string
+  durationMins: number
+  learningObjectives?: string
+  prerequisites?: string
+  materialsNeeded?: string
+  notes?: string
+  priority?: number
+  isFlexible?: boolean
+}
+
+export interface StartSessionRequest {
+  // No additional fields needed, session ID is in URL
+}
+
+export interface EndSessionRequest {
+  summary?: string
+  recordingUrl?: string
+  homeworkAssigned?: string
+}
+
+export interface MarkAttendanceRequest {
+  studentId: string
+  status: 'present' | 'absent' | 'late'
+  joinedAt?: string
+  leftAt?: string
+  notes?: string
+}
+
+export interface BulkAttendanceRequest {
+  attendance: MarkAttendanceRequest[]
+}
+
+export interface BulkScheduleRequest {
+  courseId: string
+  tutorAssignments: {
+    planId: string
+    tutorId: string
+    scheduledAt: string
+    meetingUrl?: string
+  }[]
+  sendNotifications?: boolean
+}
+
 export const coursesService = {
   /**
    * Get courses with pagination and filtering
@@ -348,6 +492,157 @@ export const coursesService = {
    */
   async unpublishCourse(courseId: string): Promise<{ data: Course }> {
     const response = await api.post<{ data: Course }>(`/v1/course-builder/${courseId}/unpublish`)
+    return response.data
+  },
+
+  // ===============================
+  // CLASS SCHEDULING & SESSION MANAGEMENT
+  // ===============================
+
+  /**
+   * Get all classes for a course
+   */
+  async getCourseClasses(courseId: string): Promise<{ data: ClassSession[] }> {
+    const response = await api.get<{ data: ClassSession[] }>(`/v1/courses/${courseId}/classes`)
+    return response.data
+  },
+
+  /**
+   * Get classes for specific content
+   */
+  async getContentClasses(courseId: string, contentId: string): Promise<{ data: ClassSession[] }> {
+    const response = await api.get<{ data: ClassSession[] }>(`/v1/courses/${courseId}/content/${contentId}/classes`)
+    return response.data
+  },
+
+  /**
+   * Schedule a new class
+   */
+  async scheduleClass(courseId: string, data: ScheduleClassRequest, contentId?: string): Promise<{ data: ClassSession }> {
+    const url = contentId 
+      ? `/v1/courses/${courseId}/content/${contentId}/classes`
+      : `/v1/courses/${courseId}/classes`
+    const response = await api.post<{ data: ClassSession }>(url, data)
+    return response.data
+  },
+
+  /**
+   * Update scheduled class
+   */
+  async updateSchedule(courseId: string, sessionId: string, data: Partial<ScheduleClassRequest>, contentId?: string): Promise<{ data: ClassSession }> {
+    const url = contentId 
+      ? `/v1/courses/${courseId}/content/${contentId}/classes/${sessionId}`
+      : `/v1/courses/${courseId}/classes/${sessionId}`
+    const response = await api.put<{ data: ClassSession }>(url, data)
+    return response.data
+  },
+
+  /**
+   * Cancel a scheduled class
+   */
+  async cancelClass(courseId: string, sessionId: string, contentId?: string): Promise<void> {
+    const url = contentId 
+      ? `/v1/courses/${courseId}/content/${contentId}/classes/${sessionId}`
+      : `/v1/courses/${courseId}/classes/${sessionId}`
+    await api.delete(url)
+  },
+
+  /**
+   * Get class planner (teaching plans)
+   */
+  async getClassPlanner(courseId: string): Promise<{ data: TeachingPlan[] }> {
+    const response = await api.get<{ data: TeachingPlan[] }>(`/v1/courses/${courseId}/classes/planner`)
+    return response.data
+  },
+
+  /**
+   * Create teaching plan
+   */
+  async createTeachingPlan(courseId: string, data: CreateTeachingPlanRequest): Promise<{ data: TeachingPlan }> {
+    const response = await api.post<{ data: TeachingPlan }>(`/v1/courses/${courseId}/classes/planner`, data)
+    return response.data
+  },
+
+  /**
+   * Update teaching plan
+   */
+  async updateTeachingPlan(courseId: string, planId: string, data: Partial<CreateTeachingPlanRequest>): Promise<{ data: TeachingPlan }> {
+    const response = await api.put<{ data: TeachingPlan }>(`/v1/courses/${courseId}/classes/planner/${planId}`, data)
+    return response.data
+  },
+
+  /**
+   * Delete teaching plan
+   */
+  async deleteTeachingPlan(courseId: string, planId: string): Promise<void> {
+    await api.delete(`/v1/courses/${courseId}/classes/planner/${planId}`)
+  },
+
+  /**
+   * Bulk schedule classes from teaching plans
+   */
+  async bulkScheduleClasses(courseId: string, data: BulkScheduleRequest): Promise<{ data: ClassSession[] }> {
+    const response = await api.post<{ data: ClassSession[] }>(`/v1/courses/${courseId}/classes/bulk-schedule`, data)
+    return response.data
+  },
+
+  // ===============================
+  // SESSION MANAGEMENT
+  // ===============================
+
+  /**
+   * Get session details
+   */
+  async getSession(courseId: string, sessionId: string): Promise<{ data: SessionDetails }> {
+    const response = await api.get<{ data: SessionDetails }>(`/v1/courses/${courseId}/sessions/${sessionId}`)
+    return response.data
+  },
+
+  /**
+   * Start a session
+   */
+  async startSession(courseId: string, sessionId: string): Promise<{ data: SessionDetails }> {
+    const response = await api.post<{ data: SessionDetails }>(`/v1/courses/${courseId}/sessions/${sessionId}/start`)
+    return response.data
+  },
+
+  /**
+   * End a session
+   */
+  async endSession(courseId: string, sessionId: string, data: EndSessionRequest): Promise<{ data: SessionDetails }> {
+    const response = await api.post<{ data: SessionDetails }>(`/v1/courses/${courseId}/sessions/${sessionId}/end`, data)
+    return response.data
+  },
+
+  /**
+   * Update session
+   */
+  async updateSession(courseId: string, sessionId: string, data: Partial<SessionDetails>): Promise<{ data: SessionDetails }> {
+    const response = await api.put<{ data: SessionDetails }>(`/v1/courses/${courseId}/sessions/${sessionId}`, data)
+    return response.data
+  },
+
+  /**
+   * Mark attendance
+   */
+  async markAttendance(courseId: string, sessionId: string, data: MarkAttendanceRequest): Promise<{ data: AttendanceRecord }> {
+    const response = await api.post<{ data: AttendanceRecord }>(`/v1/courses/${courseId}/sessions/${sessionId}/attendance`, data)
+    return response.data
+  },
+
+  /**
+   * Bulk mark attendance
+   */
+  async bulkMarkAttendance(courseId: string, sessionId: string, data: BulkAttendanceRequest): Promise<{ data: AttendanceRecord[] }> {
+    const response = await api.post<{ data: AttendanceRecord[] }>(`/v1/courses/${courseId}/sessions/${sessionId}/bulk-attendance`, data)
+    return response.data
+  },
+
+  /**
+   * Get session attendance
+   */
+  async getSessionAttendance(courseId: string, sessionId: string): Promise<{ data: AttendanceRecord[] }> {
+    const response = await api.get<{ data: AttendanceRecord[] }>(`/v1/courses/${courseId}/sessions/${sessionId}/attendance`)
     return response.data
   },
 }

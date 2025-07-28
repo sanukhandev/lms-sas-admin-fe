@@ -49,6 +49,7 @@ import { Route as AuthenticatedSettingsDisplayRouteImport } from './routes/_auth
 import { Route as AuthenticatedSettingsBrandingRouteImport } from './routes/_authenticated/settings/branding'
 import { Route as AuthenticatedSettingsAppearanceRouteImport } from './routes/_authenticated/settings/appearance'
 import { Route as AuthenticatedSettingsAccountRouteImport } from './routes/_authenticated/settings/account'
+import { Route as AuthenticatedCoursesCourseIdEditRouteImport } from './routes/_authenticated/courses/$courseId.edit'
 
 const _root_fixedRoute = _root_fixedRouteImport.update({
   id: '/__root_fixed',
@@ -263,6 +264,12 @@ const AuthenticatedSettingsAccountRoute =
     path: '/account',
     getParentRoute: () => AuthenticatedSettingsRouteRoute,
   } as any)
+const AuthenticatedCoursesCourseIdEditRoute =
+  AuthenticatedCoursesCourseIdEditRouteImport.update({
+    id: '/courses/$courseId/edit',
+    path: '/courses/$courseId/edit',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/clerk': typeof ClerkAuthenticatedRouteRouteWithChildren
@@ -302,6 +309,7 @@ export interface FileRoutesByFullPath {
   '/settings/': typeof AuthenticatedSettingsIndexRoute
   '/tasks': typeof AuthenticatedTasksIndexRoute
   '/users': typeof AuthenticatedUsersIndexRoute
+  '/courses/$courseId/edit': typeof AuthenticatedCoursesCourseIdEditRoute
 }
 export interface FileRoutesByTo {
   '/theme-demo': typeof ThemeDemoRoute
@@ -339,6 +347,7 @@ export interface FileRoutesByTo {
   '/settings': typeof AuthenticatedSettingsIndexRoute
   '/tasks': typeof AuthenticatedTasksIndexRoute
   '/users': typeof AuthenticatedUsersIndexRoute
+  '/courses/$courseId/edit': typeof AuthenticatedCoursesCourseIdEditRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -382,6 +391,7 @@ export interface FileRoutesById {
   '/_authenticated/settings/': typeof AuthenticatedSettingsIndexRoute
   '/_authenticated/tasks/': typeof AuthenticatedTasksIndexRoute
   '/_authenticated/users/': typeof AuthenticatedUsersIndexRoute
+  '/_authenticated/courses/$courseId/edit': typeof AuthenticatedCoursesCourseIdEditRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -423,6 +433,7 @@ export interface FileRouteTypes {
     | '/settings/'
     | '/tasks'
     | '/users'
+    | '/courses/$courseId/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/theme-demo'
@@ -460,6 +471,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/tasks'
     | '/users'
+    | '/courses/$courseId/edit'
   id:
     | '__root__'
     | '/_authenticated'
@@ -502,6 +514,7 @@ export interface FileRouteTypes {
     | '/_authenticated/settings/'
     | '/_authenticated/tasks/'
     | '/_authenticated/users/'
+    | '/_authenticated/courses/$courseId/edit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -802,6 +815,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSettingsAccountRouteImport
       parentRoute: typeof AuthenticatedSettingsRouteRoute
     }
+    '/_authenticated/courses/$courseId/edit': {
+      id: '/_authenticated/courses/$courseId/edit'
+      path: '/courses/$courseId/edit'
+      fullPath: '/courses/$courseId/edit'
+      preLoaderRoute: typeof AuthenticatedCoursesCourseIdEditRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
@@ -851,6 +871,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedHelpCenterIndexRoute: typeof AuthenticatedHelpCenterIndexRoute
   AuthenticatedTasksIndexRoute: typeof AuthenticatedTasksIndexRoute
   AuthenticatedUsersIndexRoute: typeof AuthenticatedUsersIndexRoute
+  AuthenticatedCoursesCourseIdEditRoute: typeof AuthenticatedCoursesCourseIdEditRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -866,6 +887,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedHelpCenterIndexRoute: AuthenticatedHelpCenterIndexRoute,
   AuthenticatedTasksIndexRoute: AuthenticatedTasksIndexRoute,
   AuthenticatedUsersIndexRoute: AuthenticatedUsersIndexRoute,
+  AuthenticatedCoursesCourseIdEditRoute: AuthenticatedCoursesCourseIdEditRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
