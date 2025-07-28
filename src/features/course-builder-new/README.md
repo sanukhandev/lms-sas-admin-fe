@@ -44,14 +44,14 @@ A context provider that manages the state and API interactions for the course bu
 The component interacts with these API endpoints:
 
 - `GET/POST/PUT /api/v1/courses` - Course CRUD operations
-- `GET/PUT /api/v1/courses/{id}/structure` - Get/update course structure
-- `GET/PUT /api/v1/courses/{id}/pricing` - Get/update pricing
-- `POST /api/v1/courses/{id}/modules` - Create module
-- `PUT/DELETE /api/v1/modules/{id}` - Update/delete module
-- `POST /api/v1/courses/{id}/modules/{moduleId}/chapters` - Create chapter
-- `PUT/DELETE /api/v1/chapters/{id}` - Update/delete chapter
-- `POST /api/v1/courses/{id}/reorder` - Reorder content
-- `POST /api/v1/courses/{id}/publish` - Publish course
+- `GET /api/v1/course-builder/{courseId}/structure` - Get course structure
+- `GET/PUT /api/v1/course-builder/{courseId}/pricing` - Get/update pricing
+- `POST /api/v1/course-builder/{courseId}/modules` - Create module
+- `PUT/DELETE /api/v1/course-builder/modules/{moduleId}` - Update/delete module
+- `POST /api/v1/course-builder/{courseId}/modules/{moduleId}/chapters` - Create chapter
+- `PUT/DELETE /api/v1/course-builder/chapters/{chapterId}` - Update/delete chapter
+- `POST /api/v1/course-builder/{courseId}/reorder` - Reorder content
+- `POST /api/v1/course-builder/{courseId}/publish` - Publish course
 
 ## Usage
 

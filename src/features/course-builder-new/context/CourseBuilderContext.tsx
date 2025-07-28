@@ -113,7 +113,7 @@ export const CourseBuilderProvider: React.FC<{ children: ReactNode; initialCours
     
     setLoading(true);
     try {
-      const response = await axios.get(`/api/v1/courses/${courseId}/structure`);
+      const response = await axios.get(`/api/v1/course-builder/${courseId}/structure`);
       setStructure(response.data.data);
     } catch (error) {
       toast.error('Failed to load course structure');
@@ -127,7 +127,7 @@ export const CourseBuilderProvider: React.FC<{ children: ReactNode; initialCours
     
     setLoading(true);
     try {
-      const response = await axios.get(`/api/v1/courses/${courseId}/pricing`);
+      const response = await axios.get(`/api/v1/course-builder/${courseId}/pricing`);
       setPricing(response.data.data);
     } catch (error) {
       toast.error('Failed to load course pricing');
@@ -172,7 +172,7 @@ export const CourseBuilderProvider: React.FC<{ children: ReactNode; initialCours
     
     setLoading(true);
     try {
-      await axios.put(`/api/v1/courses/${courseId}/pricing`, data);
+      await axios.put(`/api/v1/course-builder/${courseId}/pricing`, data);
       toast.success('Pricing updated');
       await loadPricing();
       return true;
@@ -196,9 +196,9 @@ export const CourseBuilderProvider: React.FC<{ children: ReactNode; initialCours
       let endpoint = '';
       
       if (contentType === 'module') {
-        endpoint = `/api/v1/courses/${courseId}/modules`;
+        endpoint = `/api/v1/course-builder/${courseId}/modules`;
       } else if (contentType === 'chapter' && parentId) {
-        endpoint = `/api/v1/courses/${courseId}/modules/${parentId}/chapters`;
+        endpoint = `/api/v1/course-builder/${courseId}/modules/${parentId}/chapters`;
       } else {
         toast.error('Invalid content type or missing parent ID');
         return false;
@@ -228,9 +228,9 @@ export const CourseBuilderProvider: React.FC<{ children: ReactNode; initialCours
       let endpoint = '';
       
       if (contentType === 'module') {
-        endpoint = `/api/v1/modules/${id}`;
+        endpoint = `/api/v1/course-builder/modules/${id}`;
       } else if (contentType === 'chapter') {
-        endpoint = `/api/v1/chapters/${id}`;
+        endpoint = `/api/v1/course-builder/chapters/${id}`;
       } else {
         toast.error('Invalid content type');
         return false;
@@ -281,9 +281,9 @@ export const CourseBuilderProvider: React.FC<{ children: ReactNode; initialCours
       let endpoint = '';
       
       if (type === 'module') {
-        endpoint = `/api/v1/modules/${id}`;
+        endpoint = `/api/v1/course-builder/modules/${id}`;
       } else if (type === 'chapter') {
-        endpoint = `/api/v1/chapters/${id}`;
+        endpoint = `/api/v1/course-builder/chapters/${id}`;
       } else {
         toast.error('Invalid content type');
         return false;
@@ -309,7 +309,7 @@ export const CourseBuilderProvider: React.FC<{ children: ReactNode; initialCours
     
     setLoading(true);
     try {
-      await axios.post(`/api/v1/courses/${courseId}/reorder`, { items });
+      await axios.post(`/api/v1/course-builder/${courseId}/reorder`, { items });
       toast.success('Content reordered');
       await loadStructure();
       return true;
@@ -329,7 +329,7 @@ export const CourseBuilderProvider: React.FC<{ children: ReactNode; initialCours
     
     setLoading(true);
     try {
-      await axios.post(`/api/v1/courses/${courseId}/publish`);
+      await axios.post(`/api/v1/course-builder/${courseId}/publish`);
       toast.success('Course published');
       await loadCourseDetails();
       return true;
