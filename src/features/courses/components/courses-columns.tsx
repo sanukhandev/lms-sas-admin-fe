@@ -6,6 +6,7 @@ import { BookOpen, Users, Wrench, Settings } from 'lucide-react'
 import { DataTableColumnHeader } from './data-table-column-header'
 import { DataTableRowActions } from './data-table-row-actions'
 import { type Course } from '@/services/courses'
+import { useNavigate } from '@tanstack/react-router';
 
 export const columns: ColumnDef<Course>[] = [
   {
@@ -140,47 +141,13 @@ export const columns: ColumnDef<Course>[] = [
     id: 'actions',
     header: 'Actions',
     cell: ({ row }) => {
-      const course = row.original
-      const isDraft = course.status === 'draft'
-      
+      const navigate = useNavigate();
+      const course = row.original;
       return (
-        <div className='flex items-center space-x-2'>
-          {isDraft ? (
-            <Button
-              size="sm"
-              variant="outline"
-              className='h-8 px-3'
-              onClick={() => {
-                // This will be handled by the parent component
-                const event = new CustomEvent('buildCourse', { 
-                  detail: { courseId: course.id } 
-                })
-                window.dispatchEvent(event)
-              }}
-            >
-              <Wrench className='h-4 w-4 mr-1' />
-              Build
-            </Button>
-          ) : (
-            <Button
-              size="sm"
-              variant="outline"
-              className='h-8 px-3'
-              onClick={() => {
-                // This will be handled by the parent component
-                const event = new CustomEvent('modifyCourse', { 
-                  detail: { courseId: course.id } 
-                })
-                window.dispatchEvent(event)
-              }}
-            >
-              <Settings className='h-4 w-4 mr-1' />
-              Modify
-            </Button>
-          )}
-          <DataTableRowActions row={row} />
-        </div>
-      )
+        <Button size="sm" variant="outline" onClick={() => navigate({ to: `/courses/${course.id}/edit` })}>
+          Edit
+        </Button>
+      );
     },
     enableSorting: false,
     enableHiding: false,
