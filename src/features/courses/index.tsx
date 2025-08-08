@@ -60,15 +60,18 @@ export default function Courses() {
   return (
     <div className='flex min-h-screen flex-col'>
       <Header className='shrink-0 border-b'>
-        <div className='flex items-center gap-4 flex-1'>
+        <div className='flex flex-1 items-center gap-4'>
           <div className='flex items-center gap-2'>
             <BookOpen className='text-primary h-6 w-6' />
             <h1 className='text-xl font-semibold'>Course Management</h1>
           </div>
           <Badge variant='secondary' className='font-normal'>
-            {courses.length} {filters.content_type === 'course' ? 'root courses' : 
-              filters.content_type === 'all' ? 'items' : 
-              filters.content_type + 's'}
+            {courses.length}{' '}
+            {filters.content_type === 'course'
+              ? 'root courses'
+              : filters.content_type === 'all'
+                ? 'items'
+                : filters.content_type + 's'}
           </Badge>
         </div>
 
@@ -85,9 +88,13 @@ export default function Courses() {
           <div className='mb-6 flex items-center justify-between'>
             <div>
               <h2 className='text-2xl font-bold tracking-tight'>
-                {filters.content_type === 'course' ? 'Courses' :
-                 filters.content_type === 'all' ? 'Course Content' :
-                 filters.content_type.charAt(0).toUpperCase() + filters.content_type.slice(1) + 's'}
+                {filters.content_type === 'course'
+                  ? 'Courses'
+                  : filters.content_type === 'all'
+                    ? 'Course Content'
+                    : filters.content_type.charAt(0).toUpperCase() +
+                      filters.content_type.slice(1) +
+                      's'}
               </h2>
               <p className='text-muted-foreground'>
                 Manage your course hierarchy and content structure
@@ -117,12 +124,16 @@ export default function Courses() {
                 <CardHeader className='shrink-0'>
                   <CardTitle className='flex items-center gap-2'>
                     <BookOpen className='h-5 w-5' />
-                    {filters.content_type === 'course' ? 'Courses' :
-                     filters.content_type === 'all' ? 'Content' :
-                     filters.content_type.charAt(0).toUpperCase() + filters.content_type.slice(1) + 's'}
+                    {filters.content_type === 'course'
+                      ? 'Courses'
+                      : filters.content_type === 'all'
+                        ? 'Content'
+                        : filters.content_type.charAt(0).toUpperCase() +
+                          filters.content_type.slice(1) +
+                          's'}
                   </CardTitle>
                   <CardDescription>
-                    {filters.content_type === 'course' 
+                    {filters.content_type === 'course'
                       ? 'Select a course to view its hierarchy'
                       : `Browse ${filters.content_type === 'all' ? 'all content' : filters.content_type + 's'} in the system`}
                   </CardDescription>

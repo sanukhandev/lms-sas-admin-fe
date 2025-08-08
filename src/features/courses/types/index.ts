@@ -21,6 +21,7 @@ export interface HierarchyNode {
   id: string
   title: string
   description?: string
+  short_description?: string
   content_type: ContentType
   parent_id?: string
   position: number
@@ -40,6 +41,7 @@ export interface HierarchyNode {
   price?: number
   currency?: string
   thumbnail_url?: string
+  banner_url?: string
   preview_video_url?: string
   requirements?: string[]
   what_you_will_learn?: string[]
@@ -61,6 +63,7 @@ export interface HierarchyPathItem {
 export interface CreateHierarchyNodeRequest {
   title: string
   description?: string
+  short_description?: string
   content_type: ContentType
   parent_id?: string
   position?: number
@@ -79,6 +82,7 @@ export interface CreateHierarchyNodeRequest {
   price?: number
   currency?: string
   thumbnail_url?: string
+  banner_url?: string
   preview_video_url?: string
   requirements?: string[]
   what_you_will_learn?: string[]

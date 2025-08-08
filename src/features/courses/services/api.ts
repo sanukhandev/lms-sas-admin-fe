@@ -64,7 +64,7 @@ export const courseHierarchyApi = {
     // Default to only root courses if content_type is not specified
     const apiParams = {
       ...params,
-      content_type: params?.content_type || 'course'
+      content_type: params?.content_type || 'course',
     }
     const response = await api.get('/v1/courses', { params: apiParams })
     return response.data

@@ -58,11 +58,11 @@ export function CourseFilters({
   }
 
   const hasActiveFilters =
-    filters.search || 
-    filters.status !== 'all' || 
-    filters.category_id !== 'all' || 
+    filters.search ||
+    filters.status !== 'all' ||
+    filters.category_id !== 'all' ||
     filters.content_type !== 'course'
-    
+
   const activeFilterCount = [
     filters.search,
     filters.status !== 'all' ? filters.status : null,
@@ -217,11 +217,11 @@ function getCategoryName(categoryId: string): string {
 // Helper function to get content type name
 function getContentTypeName(contentType: string): string {
   const contentTypes: Record<string, string> = {
-    'course': 'Courses',
-    'module': 'Modules', 
-    'chapter': 'Chapters',
-    'class': 'Classes',
-    'all': 'All Types'
+    course: 'Courses',
+    module: 'Modules',
+    chapter: 'Chapters',
+    class: 'Classes',
+    all: 'All Types',
   }
   return contentTypes[contentType] || contentType
 }

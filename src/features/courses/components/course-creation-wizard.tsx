@@ -62,6 +62,9 @@ const courseFormSchema = z.object({
     .optional(),
   category_id: z.string().min(1, 'Category is required'),
   instructor_id: z.string().optional(),
+  duration_minutes: z.number().min(0, 'Duration must be positive').optional(),
+  thumbnail_url: z.string().url('Invalid URL').optional().or(z.literal('')),
+  banner_url: z.string().url('Invalid URL').optional().or(z.literal('')),
   schedule_level: z.enum(['course', 'module', 'chapter']),
   status: z.enum(['draft', 'published', 'archived']),
   access_model: z.enum(['free', 'paid', 'subscription']),
@@ -118,6 +121,9 @@ export function CourseCreationWizard({
       short_description: '',
       category_id: '',
       instructor_id: '',
+      duration_minutes: 0,
+      thumbnail_url: '',
+      banner_url: '',
       schedule_level: 'chapter',
       status: 'draft',
       access_model: 'free',
@@ -399,6 +405,101 @@ function BasicInformationStep({
             )}
           />
         </div>
+
+        <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
+          <FormField
+            control={form.control}
+            name='instructor_id'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Assigned Instructor</FormLabel>
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder='Select instructor' />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value='1'>John Doe</SelectItem>
+                    <SelectItem value='2'>Jane Smith</SelectItem>
+                    <SelectItem value='3'>Mike Johnson</SelectItem>
+                    <SelectItem value='4'>Sarah Wilson</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormDescription>
+                  The primary instructor for this course
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='duration_minutes'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Course Duration (minutes)</FormLabel>
+                <FormControl>
+                  <Input
+                    type='number'
+                    placeholder='120'
+                    {...field}
+                    onChange={(e) =>
+                      field.onChange(parseInt(e.target.value) || 0)
+                    }
+                  />
+                </FormControl>
+                <FormDescription>
+                  Total estimated duration in minutes
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+
+        <div className='space-y-4'>
+          <FormField
+            control={form.control}
+            name='thumbnail_url'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Thumbnail Image URL</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder='https://example.com/course-thumbnail.jpg'
+                    {...field}
+                  />
+                </FormControl>
+                <FormDescription>
+                  URL to the course thumbnail image (recommended: 300x200px)
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='banner_url'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Banner Image URL</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder='https://example.com/course-banner.jpg'
+                    {...field}
+                  />
+                </FormControl>
+                <FormDescription>
+                  URL to the course banner image (recommended: 1200x400px)
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
       </CardContent>
     </Card>
   )
@@ -584,7 +685,7 @@ function ContentSetupStep({ form }: { form: UseFormReturn<CourseFormValues> }) {
 function getStepFields(step: number): (keyof CourseFormValues)[] {
   switch (step) {
     case 0:
-      return ['title', 'category_id']
+      return ['title', 'category_id', 'thumbnail_url', 'banner_url']
     case 1:
       return ['status', 'access_model']
     case 2:
