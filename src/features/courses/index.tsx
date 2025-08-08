@@ -60,24 +60,22 @@ export default function Courses() {
   return (
     <div className='flex min-h-screen flex-col'>
       <Header className='shrink-0 border-b'>
-        <div className='flex h-16 items-center justify-between px-4'>
-          <div className='flex items-center gap-4'>
-            <div className='flex items-center gap-2'>
-              <BookOpen className='text-primary h-6 w-6' />
-              <h1 className='text-xl font-semibold'>Course Management</h1>
-            </div>
-            <Badge variant='secondary' className='font-normal'>
-              {courses.length} {filters.content_type === 'course' ? 'root courses' : 
-                filters.content_type === 'all' ? 'items' : 
-                filters.content_type + 's'}
-            </Badge>
+        <div className='flex items-center gap-4 flex-1'>
+          <div className='flex items-center gap-2'>
+            <BookOpen className='text-primary h-6 w-6' />
+            <h1 className='text-xl font-semibold'>Course Management</h1>
           </div>
+          <Badge variant='secondary' className='font-normal'>
+            {courses.length} {filters.content_type === 'course' ? 'root courses' : 
+              filters.content_type === 'all' ? 'items' : 
+              filters.content_type + 's'}
+          </Badge>
+        </div>
 
-          <div className='flex items-center gap-4'>
-            <Search placeholder='Search courses...' />
-            <ThemeSwitch />
-            <ProfileDropdown />
-          </div>
+        <div className='flex items-center gap-4'>
+          <Search placeholder='Search courses...' />
+          <ThemeSwitch />
+          <ProfileDropdown />
         </div>
       </Header>
 
