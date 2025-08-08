@@ -302,11 +302,13 @@ export const coursesService = {
     search?: string,
     status?: string,
     category?: string,
-    instructor?: string
+    instructor?: string,
+    contentType: string = 'course'
   ): Promise<CoursesResponse> {
     const params = new URLSearchParams({
       page: page.toString(),
       per_page: perPage.toString(),
+      content_type: contentType,
     })
 
     if (search) params.append('search', search)

@@ -10,15 +10,16 @@ class ApiService {
   private readonly maxRetries = 3
 
   constructor() {
-    this.baseURL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api'
-    
+    this.baseURL =
+      import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1'
+
     this.instance = axios.create({
       baseURL: this.baseURL,
       timeout: 30000, // 30 seconds
       withCredentials: true,
       headers: {
         'Content-Type': 'application/json',
-        'Accept': 'application/json',
+        Accept: 'application/json',
         'X-Requested-With': 'XMLHttpRequest',
       },
     })
@@ -52,7 +53,11 @@ class ApiService {
 
         // Log request in development
         if (import.meta.env.VITE_ENABLE_LOGGING === 'true') {
-          console.log('[API] Request:', config.method?.toUpperCase(), config.url)
+          console.log(
+            '[API] Request:',
+            config.method?.toUpperCase(),
+            config.url
+          )
         }
 
         return config
@@ -95,7 +100,11 @@ class ApiService {
           return this.handleNetworkError(error, originalRequest)
         }
 
-        console.error('[API] Response error:', error.response?.status, error.message)
+        console.error(
+          '[API] Response error:',
+          error.response?.status,
+          error.message
+        )
         return Promise.reject(error)
       }
     )
@@ -131,16 +140,21 @@ class ApiService {
     return Promise.reject(new Error('Authentication failed'))
   }
 
-  private async handleServerError(error: any, originalRequest: any): Promise<any> {
+  private async handleServerError(
+    error: any,
+    originalRequest: any
+  ): Promise<any> {
     if (this.retryCount < this.maxRetries && !originalRequest._retry) {
       this.retryCount++
       originalRequest._retry = true
 
       // Exponential backoff
       const delay = Math.pow(2, this.retryCount) * 1000
-      await new Promise(resolve => setTimeout(resolve, delay))
+      await new Promise((resolve) => setTimeout(resolve, delay))
 
-      console.log(`[API] Retrying request (${this.retryCount}/${this.maxRetries})`)
+      console.log(
+        `[API] Retrying request (${this.retryCount}/${this.maxRetries})`
+      )
       return this.instance(originalRequest)
     }
 
@@ -148,15 +162,20 @@ class ApiService {
     return Promise.reject(error)
   }
 
-  private async handleNetworkError(error: any, originalRequest: any): Promise<any> {
+  private async handleNetworkError(
+    error: any,
+    originalRequest: any
+  ): Promise<any> {
     if (this.retryCount < this.maxRetries && !originalRequest._retry) {
       this.retryCount++
       originalRequest._retry = true
 
       const delay = 2000 // Fixed delay for network errors
-      await new Promise(resolve => setTimeout(resolve, delay))
+      await new Promise((resolve) => setTimeout(resolve, delay))
 
-      console.log(`[API] Retrying network request (${this.retryCount}/${this.maxRetries})`)
+      console.log(
+        `[API] Retrying network request (${this.retryCount}/${this.maxRetries})`
+      )
       return this.instance(originalRequest)
     }
 
@@ -175,23 +194,41 @@ class ApiService {
   }
 
   // Public API methods
-  public get<T = any>(url: string, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
+  public get<T = any>(
+    url: string,
+    config?: AxiosRequestConfig
+  ): Promise<AxiosResponse<T>> {
     return this.instance.get<T>(url, config)
   }
 
-  public post<T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
+  public post<T = any>(
+    url: string,
+    data?: any,
+    config?: AxiosRequestConfig
+  ): Promise<AxiosResponse<T>> {
     return this.instance.post<T>(url, data, config)
   }
 
-  public put<T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
+  public put<T = any>(
+    url: string,
+    data?: any,
+    config?: AxiosRequestConfig
+  ): Promise<AxiosResponse<T>> {
     return this.instance.put<T>(url, data, config)
   }
 
-  public patch<T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
+  public patch<T = any>(
+    url: string,
+    data?: any,
+    config?: AxiosRequestConfig
+  ): Promise<AxiosResponse<T>> {
     return this.instance.patch<T>(url, data, config)
   }
 
-  public delete<T = any>(url: string, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
+  public delete<T = any>(
+    url: string,
+    config?: AxiosRequestConfig
+  ): Promise<AxiosResponse<T>> {
     return this.instance.delete<T>(url, config)
   }
 
