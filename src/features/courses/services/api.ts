@@ -66,7 +66,7 @@ export const courseHierarchyApi = {
 
     // If content_type is undefined, remove it from params to show all types
     if (apiParams.content_type === undefined) {
-      delete apiParams.content_type
+      apiParams.content_type = 'course'
     }
 
     const response = await api.get('/v1/courses', { params: apiParams })

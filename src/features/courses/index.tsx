@@ -29,18 +29,19 @@ export default function Courses() {
     content_type: 'course', // Default to courses on page load
   })
 
-  const {
-    data: coursesResponse,
-    isLoading,
-    error,
-  } = useCourses({
-    search: filters.search,
-    status: filters.status === 'all' ? undefined : filters.status,
-    category_id:
-      filters.category_id === 'all' ? undefined : filters.category_id,
-    content_type:
-      filters.content_type === 'all' ? undefined : filters.content_type,
-  })
+  // Build clean API parameters
+  const apiParams = Object.fromEntries(
+    Object.entries({
+      search: filters.search,
+      status: filters.status === 'all' ? undefined : filters.status,
+      category_id:
+        filters.category_id === 'all' ? undefined : filters.category_id,
+      content_type:
+        filters.content_type === 'all' ? 'course' : filters.content_type,
+    }).filter(([_, value]) => value !== undefined && value !== '')
+  )
+
+  const { data: coursesResponse, isLoading, error } = useCourses(apiParams)
 
   const courses = coursesResponse?.data || []
 
