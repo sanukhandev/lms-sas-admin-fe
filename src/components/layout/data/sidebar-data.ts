@@ -92,8 +92,13 @@ export const sidebarData: SidebarData = {
       items: [
         {
           title: 'Courses',
+          url: '/courses',
           icon: IconBook,
           items: [
+            {
+              title: 'All Courses',
+              url: '/courses',
+            },
             {
               title: 'Categories',
               url: '/categories',
