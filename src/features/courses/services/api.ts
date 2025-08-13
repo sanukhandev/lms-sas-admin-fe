@@ -43,7 +43,7 @@ export const courseHierarchyApi = {
     nodeId: string,
     data: Partial<CreateHierarchyNodeRequest>
   ): Promise<HierarchyNode> => {
-    const response = await api.put(`/v1/courses/${nodeId}`, data)
+    const response = await api.put(`/v1/courses/hierarchy/${nodeId}`, data)
     return response.data.data
   },
 
