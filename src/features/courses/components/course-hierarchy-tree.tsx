@@ -59,8 +59,8 @@ export function CourseHierarchyTree({ courseId }: CourseHierarchyTreeProps) {
     new Set([courseId])
   )
   const [selectedNode, setSelectedNode] = useState<HierarchyNode | null>(null)
-  const [_showNodeForm, setShowNodeForm] = useState(false)
-  const [_editingNode, setEditingNode] = useState<HierarchyNode | null>(null)
+  const [showNodeForm, setShowNodeForm] = useState(false)
+  const [editingNode, setEditingNode] = useState<HierarchyNode | null>(null)
   const [deleteConfirm, setDeleteConfirm] = useState<HierarchyNode | null>(null)
 
   const { data: hierarchyTree, isLoading, error } = useCourseHierarchy(courseId)
@@ -120,8 +120,24 @@ export function CourseHierarchyTree({ courseId }: CourseHierarchyTreeProps) {
 
   const handleAddChild = (
     parentNode: HierarchyNode,
-    childType: ContentType
+    childType: ContentType,
+    event?: React.MouseEvent
   ) => {
+    // Prevent any potential scroll or navigation
+    if (event) {
+      event.preventDefault()
+      event.stopPropagation()
+    }
+
+    // Store scroll position to restore if needed
+    const scrollContainer = document.querySelector('[data-scroll-container]')
+    if (scrollContainer) {
+      scrollContainer.setAttribute(
+        'data-scroll-top',
+        scrollContainer.scrollTop.toString()
+      )
+    }
+
     setSelectedNode(parentNode)
     // Create a new node structure for the form
     const newNode: HierarchyNode = {
@@ -140,7 +156,22 @@ export function CourseHierarchyTree({ courseId }: CourseHierarchyTreeProps) {
     setShowNodeForm(true)
   }
 
-  const handleEditNode = (node: HierarchyNode) => {
+  const handleEditNode = (node: HierarchyNode, event?: React.MouseEvent) => {
+    // Prevent any potential scroll or navigation
+    if (event) {
+      event.preventDefault()
+      event.stopPropagation()
+    }
+
+    // Store scroll position to restore if needed
+    const scrollContainer = document.querySelector('[data-scroll-container]')
+    if (scrollContainer) {
+      scrollContainer.setAttribute(
+        'data-scroll-top',
+        scrollContainer.scrollTop.toString()
+      )
+    }
+
     setEditingNode(node)
     setShowNodeForm(true)
   }
@@ -235,17 +266,17 @@ export function CourseHierarchyTree({ courseId }: CourseHierarchyTreeProps) {
           {/* Actions Menu */}
           <div className='flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100'>
             {allowedChildTypes.length > 0 && (
-              <DropdownMenu>
+              <DropdownMenu modal={false}>
                 <DropdownMenuTrigger asChild>
                   <Button variant='ghost' size='sm' className='h-8 w-8 p-0'>
                     <Plus className='h-4 w-4' />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align='end'>
+                <DropdownMenuContent align='end' side='bottom' sideOffset={5}>
                   {allowedChildTypes.map((childType) => (
                     <DropdownMenuItem
                       key={childType}
-                      onClick={() => handleAddChild(node, childType)}
+                      onClick={(e) => handleAddChild(node, childType, e)}
                     >
                       <Plus className='mr-2 h-4 w-4' />
                       Add {HIERARCHY_LEVELS[childType].name}
@@ -255,14 +286,14 @@ export function CourseHierarchyTree({ courseId }: CourseHierarchyTreeProps) {
               </DropdownMenu>
             )}
 
-            <DropdownMenu>
+            <DropdownMenu modal={false}>
               <DropdownMenuTrigger asChild>
                 <Button variant='ghost' size='sm' className='h-8 w-8 p-0'>
                   <MoreHorizontal className='h-4 w-4' />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align='end'>
-                <DropdownMenuItem onClick={() => handleEditNode(node)}>
+              <DropdownMenuContent align='end' side='bottom' sideOffset={5}>
+                <DropdownMenuItem onClick={(e) => handleEditNode(node, e)}>
                   <Edit className='mr-2 h-4 w-4' />
                   Edit
                 </DropdownMenuItem>
@@ -307,7 +338,7 @@ export function CourseHierarchyTree({ courseId }: CourseHierarchyTreeProps) {
           </CardDescription>
         </CardHeader>
         <CardContent className='flex-1 overflow-hidden p-0'>
-          <div className='h-full overflow-y-auto p-4'>
+          <div className='h-full overflow-y-auto p-4' data-scroll-container>
             <div className='space-y-1'>{renderNode(hierarchyTree)}</div>
           </div>
         </CardContent>
@@ -315,12 +346,26 @@ export function CourseHierarchyTree({ courseId }: CourseHierarchyTreeProps) {
 
       {/* Node Form Dialog */}
       <HierarchyNodeForm
-        open={_showNodeForm}
+        open={showNodeForm}
         onOpenChange={setShowNodeForm}
-        node={_editingNode}
+        node={editingNode}
         onSuccess={() => {
+          // Restore scroll position before closing
+          const scrollContainer = document.querySelector(
+            '[data-scroll-container]'
+          )
+          const scrollTop = scrollContainer?.getAttribute('data-scroll-top')
+
           setShowNodeForm(false)
           setEditingNode(null)
+
+          // Restore scroll position after state updates
+          setTimeout(() => {
+            if (scrollContainer && scrollTop) {
+              scrollContainer.scrollTop = parseInt(scrollTop, 10)
+              scrollContainer.removeAttribute('data-scroll-top')
+            }
+          }, 50)
         }}
       />
 

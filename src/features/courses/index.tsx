@@ -10,11 +10,6 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Header } from '@/components/layout/header'
-import { Main } from '@/components/layout/main'
-import { ProfileDropdown } from '@/components/profile-dropdown'
-import { Search } from '@/components/search'
-import { ThemeSwitch } from '@/components/theme-switch'
 import { CourseCreationWizard } from './components/course-creation-wizard'
 import { CourseFilters } from './components/course-filters'
 import { CourseHierarchyTree } from './components/course-hierarchy-tree'
@@ -58,155 +53,122 @@ export default function Courses() {
   }
 
   return (
-    <div className='flex min-h-screen flex-col'>
-      <Header className='shrink-0 border-b'>
-        <div className='flex h-16 items-center justify-between px-4'>
-          <div className='flex items-center gap-4'>
-            <div className='flex items-center gap-2'>
-              <BookOpen className='text-primary h-6 w-6' />
-              <h1 className='text-xl font-semibold'>Course Management</h1>
-            </div>
-            <Badge variant='secondary' className='font-normal'>
-              {courses.length}{' '}
-              {filters.content_type === 'course'
-                ? 'root courses'
-                : filters.content_type === 'all'
-                  ? 'items'
-                  : filters.content_type + 's'}
-            </Badge>
+    <div className='flex flex-col space-y-6 p-6'>
+      {/* Header */}
+      <div className='flex items-center justify-between'>
+        <div className='flex items-center gap-4'>
+          <div className='flex items-center gap-2'>
+            <BookOpen className='text-primary h-6 w-6' />
+            <h1 className='text-2xl font-bold tracking-tight'>
+              Course Management
+            </h1>
           </div>
-
-          <div className='flex items-center gap-4'>
-            <Search placeholder='Search courses...' />
-            <ThemeSwitch />
-            <ProfileDropdown />
-          </div>
+          <Badge variant='secondary' className='font-normal'>
+            {courses.length}{' '}
+            {filters.content_type === 'course'
+              ? 'root courses'
+              : filters.content_type === 'all'
+                ? 'items'
+                : filters.content_type + 's'}
+          </Badge>
         </div>
-      </Header>
+        <Button onClick={handleCreateCourse} size='lg'>
+          <Plus className='mr-2 h-4 w-4' />
+          Create Course
+        </Button>
+      </div>
 
-      <Main className='flex-1'>
-        <div className='container mx-auto p-6'>
-          {/* Header Actions */}
-          <div className='mb-6 flex items-center justify-between'>
-            <div>
-              <h2 className='text-2xl font-bold tracking-tight'>
+      {/* Stats Cards */}
+      <CourseStatsCards />
+
+      {/* Filters */}
+      <CourseFilters filters={filters} onFiltersChange={setFilters} />
+
+      {/* Main Content */}
+      <div className='grid min-h-[600px] grid-cols-1 gap-6 lg:grid-cols-3'>
+        {/* Course List */}
+        <div className='lg:col-span-1'>
+          <Card className='flex h-[600px] flex-col'>
+            <CardHeader className='shrink-0'>
+              <CardTitle className='flex items-center gap-2'>
+                <BookOpen className='h-5 w-5' />
                 {filters.content_type === 'course'
                   ? 'Courses'
                   : filters.content_type === 'all'
-                    ? 'Course Content'
+                    ? 'Content'
                     : filters.content_type.charAt(0).toUpperCase() +
                       filters.content_type.slice(1) +
                       's'}
-              </h2>
-              <p className='text-muted-foreground'>
-                Manage your course hierarchy and content structure
-              </p>
-            </div>
-            <Button onClick={handleCreateCourse} size='lg'>
-              <Plus className='mr-2 h-4 w-4' />
-              Create Course
-            </Button>
-          </div>
-
-          {/* Stats Cards */}
-          <CourseStatsCards className='mb-6' />
-
-          {/* Filters */}
-          <CourseFilters
-            filters={filters}
-            onFiltersChange={setFilters}
-            className='mb-6'
-          />
-
-          {/* Main Content */}
-          <div className='grid min-h-[600px] grid-cols-1 gap-6 lg:grid-cols-3'>
-            {/* Course List */}
-            <div className='lg:col-span-1'>
-              <Card className='flex h-[600px] flex-col'>
-                <CardHeader className='shrink-0'>
-                  <CardTitle className='flex items-center gap-2'>
-                    <BookOpen className='h-5 w-5' />
-                    {filters.content_type === 'course'
-                      ? 'Courses'
-                      : filters.content_type === 'all'
-                        ? 'Content'
-                        : filters.content_type.charAt(0).toUpperCase() +
-                          filters.content_type.slice(1) +
-                          's'}
-                  </CardTitle>
-                  <CardDescription>
-                    {filters.content_type === 'course'
-                      ? 'Select a course to view its hierarchy'
-                      : `Browse ${filters.content_type === 'all' ? 'all content' : filters.content_type + 's'} in the system`}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className='flex-1 overflow-hidden p-0'>
-                  <div className='h-full overflow-y-auto'>
-                    {isLoading ? (
-                      <CourseListSkeleton />
-                    ) : error ? (
-                      <div className='text-muted-foreground p-4 text-center'>
-                        Failed to load courses
-                      </div>
-                    ) : courses.length === 0 ? (
-                      <div className='p-8 text-center'>
-                        <BookOpen className='text-muted-foreground/50 mx-auto h-12 w-12' />
-                        <h3 className='mt-4 text-lg font-medium'>
-                          No courses yet
-                        </h3>
-                        <p className='text-muted-foreground mt-2 text-sm'>
-                          Create your first course to get started
-                        </p>
-                        <Button
-                          className='mt-4'
-                          onClick={handleCreateCourse}
-                          variant='outline'
-                        >
-                          <Plus className='mr-2 h-4 w-4' />
-                          Create Course
-                        </Button>
-                      </div>
-                    ) : (
-                      <div className='space-y-1 p-2'>
-                        {courses.map((course: HierarchyNode) => (
-                          <CourseListItem
-                            key={course.id}
-                            course={course}
-                            isSelected={selectedCourse?.id === course.id}
-                            onClick={() => handleCourseSelect(course)}
-                          />
-                        ))}
-                      </div>
-                    )}
+              </CardTitle>
+              <CardDescription>
+                {filters.content_type === 'course'
+                  ? 'Select a course to view its hierarchy'
+                  : `Browse ${filters.content_type === 'all' ? 'all content' : filters.content_type + 's'} in the system`}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className='flex-1 overflow-hidden p-0'>
+              <div className='h-full overflow-y-auto'>
+                {isLoading ? (
+                  <CourseListSkeleton />
+                ) : error ? (
+                  <div className='text-muted-foreground p-4 text-center'>
+                    Failed to load courses
                   </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Course Hierarchy */}
-            <div className='lg:col-span-2'>
-              {selectedCourse ? (
-                <CourseHierarchyTree courseId={selectedCourse.id} />
-              ) : (
-                <Card className='flex h-[600px] flex-col'>
-                  <CardContent className='flex h-full items-center justify-center'>
-                    <div className='text-center'>
-                      <BookOpen className='text-muted-foreground/30 mx-auto h-16 w-16' />
-                      <h3 className='text-muted-foreground mt-4 text-xl font-medium'>
-                        Select a course
-                      </h3>
-                      <p className='text-muted-foreground mt-2 text-sm'>
-                        Choose a course from the list to view and manage its
-                        hierarchy
-                      </p>
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
-            </div>
-          </div>
+                ) : courses.length === 0 ? (
+                  <div className='p-8 text-center'>
+                    <BookOpen className='text-muted-foreground/50 mx-auto h-12 w-12' />
+                    <h3 className='mt-4 text-lg font-medium'>No courses yet</h3>
+                    <p className='text-muted-foreground mt-2 text-sm'>
+                      Create your first course to get started
+                    </p>
+                    <Button
+                      className='mt-4'
+                      onClick={handleCreateCourse}
+                      variant='outline'
+                    >
+                      <Plus className='mr-2 h-4 w-4' />
+                      Create Course
+                    </Button>
+                  </div>
+                ) : (
+                  <div className='space-y-1 p-2'>
+                    {courses.map((course: HierarchyNode) => (
+                      <CourseListItem
+                        key={course.id}
+                        course={course}
+                        isSelected={selectedCourse?.id === course.id}
+                        onClick={() => handleCourseSelect(course)}
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
         </div>
-      </Main>
+
+        {/* Course Hierarchy */}
+        <div className='lg:col-span-2'>
+          {selectedCourse ? (
+            <CourseHierarchyTree courseId={selectedCourse.id} />
+          ) : (
+            <Card className='flex h-[600px] flex-col'>
+              <CardContent className='flex h-full items-center justify-center'>
+                <div className='text-center'>
+                  <BookOpen className='text-muted-foreground/30 mx-auto h-16 w-16' />
+                  <h3 className='text-muted-foreground mt-4 text-xl font-medium'>
+                    Select a course
+                  </h3>
+                  <p className='text-muted-foreground mt-2 text-sm'>
+                    Choose a course from the list to view and manage its
+                    hierarchy
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+        </div>
+      </div>
 
       {/* Course Creation Wizard */}
       <CourseCreationWizard

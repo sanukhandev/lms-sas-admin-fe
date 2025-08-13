@@ -115,6 +115,15 @@ export function HierarchyNodeForm({
   }
 
   const handleClose = () => {
+    // Restore any scroll position before closing
+    const scrollContainer = document.querySelector('[data-scroll-container]')
+    const scrollTop = scrollContainer?.getAttribute('data-scroll-top')
+
+    if (scrollContainer && scrollTop) {
+      scrollContainer.scrollTop = parseInt(scrollTop, 10)
+      scrollContainer.removeAttribute('data-scroll-top')
+    }
+
     onOpenChange(false)
     form.reset()
   }
@@ -146,7 +155,10 @@ export function HierarchyNodeForm({
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className='max-h-[90vh] max-w-2xl overflow-hidden'>
+      <DialogContent
+        className='max-h-[90vh] max-w-2xl overflow-hidden focus:outline-none'
+        onOpenAutoFocus={(e) => e.preventDefault()}
+      >
         <DialogHeader>
           <DialogTitle className='flex items-center gap-2'>
             {isEditing ? 'Edit' : 'Create'}{' '}
