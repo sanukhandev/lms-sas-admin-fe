@@ -48,50 +48,7 @@ import {
 } from '../hooks/use-course-hierarchy'
 import type { HierarchyNode, ContentType } from '../types'
 import { HIERARCHY_LEVELS } from '../types'
-
-// Temporary placeholder component
-function HierarchyNodeForm({
-  open,
-  onOpenChange,
-  node,
-  onSuccess,
-}: {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  node: HierarchyNode | null
-  onSuccess: () => void
-}) {
-  if (!open) return null
-  return (
-    <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/50'>
-      <div className='mx-4 w-full max-w-md rounded-lg bg-white p-6'>
-        <h2 className='mb-4 text-lg font-semibold'>
-          {node?.id ? 'Edit' : 'Create'} {node?.content_type}
-        </h2>
-        <p className='mb-4 text-sm text-gray-600'>
-          Node form functionality will be implemented here.
-        </p>
-        <div className='flex justify-end gap-2'>
-          <button
-            onClick={() => onOpenChange(false)}
-            className='rounded border px-4 py-2 hover:bg-gray-50'
-          >
-            Cancel
-          </button>
-          <button
-            onClick={() => {
-              onSuccess()
-              onOpenChange(false)
-            }}
-            className='rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700'
-          >
-            Save
-          </button>
-        </div>
-      </div>
-    </div>
-  )
-}
+import { HierarchyNodeForm } from './hierarchy-node-form'
 
 interface CourseHierarchyTreeProps {
   courseId: string
@@ -166,21 +123,26 @@ export function CourseHierarchyTree({ courseId }: CourseHierarchyTreeProps) {
     childType: ContentType
   ) => {
     setSelectedNode(parentNode)
-    setEditingNode({
-      id: '',
+    // Create a new node structure for the form
+    const newNode: HierarchyNode = {
+      id: '', // Empty ID indicates this is a new node
       title: '',
+      description: '',
       content_type: childType,
       parent_id: parentNode.id,
       position: 0,
-    } as HierarchyNode)
+      duration_minutes: undefined,
+      video_url: '',
+      learning_objectives: [],
+      content: '',
+    }
+    setEditingNode(newNode)
     setShowNodeForm(true)
-    // TODO: Implement form dialog
   }
 
   const handleEditNode = (node: HierarchyNode) => {
     setEditingNode(node)
     setShowNodeForm(true)
-    // TODO: Implement form dialog
   }
 
   const handleDeleteNode = async () => {

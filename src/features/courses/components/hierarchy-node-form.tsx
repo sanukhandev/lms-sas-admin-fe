@@ -57,7 +57,7 @@ export function HierarchyNodeForm({
   node,
   onSuccess,
 }: HierarchyNodeFormProps) {
-  const isEditing = node && node.id
+  const isEditing = node && node.id && node.id !== ''
   const createNodeMutation = useCreateHierarchyNode()
   const updateNodeMutation = useUpdateHierarchyNode()
 

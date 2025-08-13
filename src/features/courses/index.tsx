@@ -31,7 +31,7 @@ export default function Courses() {
     search: '',
     status: 'all',
     category_id: 'all',
-    content_type: 'course',
+    content_type: 'course', // Default to courses on page load
   })
 
   const {

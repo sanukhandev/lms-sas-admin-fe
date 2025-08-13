@@ -61,11 +61,14 @@ export const courseHierarchyApi = {
     category_id?: string
     content_type?: string
   }) => {
-    // Default to only root courses if content_type is not specified
-    const apiParams = {
-      ...params,
-      content_type: params?.content_type || 'course',
+    // Only include content_type in params if explicitly provided
+    const apiParams = { ...params }
+
+    // If content_type is undefined, remove it from params to show all types
+    if (apiParams.content_type === undefined) {
+      delete apiParams.content_type
     }
+
     const response = await api.get('/v1/courses', { params: apiParams })
     return response.data
   },
