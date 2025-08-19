@@ -15,6 +15,7 @@ import { Route as ClerkRouteRouteImport } from './routes/clerk/route'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
 import { Route as AuthenticatedHomeRouteImport } from './routes/_authenticated/home'
+import { Route as AuthenticatedContentEditorDemoRouteImport } from './routes/_authenticated/content-editor-demo'
 import { Route as AuthenticatedColorEditorRouteImport } from './routes/_authenticated/color-editor'
 import { Route as errors503RouteImport } from './routes/(errors)/503'
 import { Route as errors500RouteImport } from './routes/(errors)/500'
@@ -49,7 +50,8 @@ import { Route as AuthenticatedSettingsDisplayRouteImport } from './routes/_auth
 import { Route as AuthenticatedSettingsBrandingRouteImport } from './routes/_authenticated/settings/branding'
 import { Route as AuthenticatedSettingsAppearanceRouteImport } from './routes/_authenticated/settings/appearance'
 import { Route as AuthenticatedSettingsAccountRouteImport } from './routes/_authenticated/settings/account'
-import { Route as AuthenticatedCoursesCourseIdEditRouteImport } from './routes/_authenticated/courses/$courseId.edit'
+import { Route as AuthenticatedCoursesNewRouteImport } from './routes/_authenticated/courses/new'
+import { Route as AuthenticatedCoursesCourseIdEditRouteImport } from './routes/_authenticated/courses/$courseId/edit'
 
 const _root_fixedRoute = _root_fixedRouteImport.update({
   id: '/__root_fixed',
@@ -79,6 +81,12 @@ const AuthenticatedHomeRoute = AuthenticatedHomeRouteImport.update({
   path: '/home',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedContentEditorDemoRoute =
+  AuthenticatedContentEditorDemoRouteImport.update({
+    id: '/content-editor-demo',
+    path: '/content-editor-demo',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedColorEditorRoute =
   AuthenticatedColorEditorRouteImport.update({
     id: '/color-editor',
@@ -264,6 +272,11 @@ const AuthenticatedSettingsAccountRoute =
     path: '/account',
     getParentRoute: () => AuthenticatedSettingsRouteRoute,
   } as any)
+const AuthenticatedCoursesNewRoute = AuthenticatedCoursesNewRouteImport.update({
+  id: '/courses/new',
+  path: '/courses/new',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedCoursesCourseIdEditRoute =
   AuthenticatedCoursesCourseIdEditRouteImport.update({
     id: '/courses/$courseId/edit',
@@ -286,8 +299,10 @@ export interface FileRoutesByFullPath {
   '/500': typeof errors500Route
   '/503': typeof errors503Route
   '/color-editor': typeof AuthenticatedColorEditorRoute
+  '/content-editor-demo': typeof AuthenticatedContentEditorDemoRoute
   '/home': typeof AuthenticatedHomeRoute
   '/': typeof AuthenticatedIndexRoute
+  '/courses/new': typeof AuthenticatedCoursesNewRoute
   '/settings/account': typeof AuthenticatedSettingsAccountRoute
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/settings/branding': typeof AuthenticatedSettingsBrandingRoute
@@ -324,8 +339,10 @@ export interface FileRoutesByTo {
   '/500': typeof errors500Route
   '/503': typeof errors503Route
   '/color-editor': typeof AuthenticatedColorEditorRoute
+  '/content-editor-demo': typeof AuthenticatedContentEditorDemoRoute
   '/home': typeof AuthenticatedHomeRoute
   '/': typeof AuthenticatedIndexRoute
+  '/courses/new': typeof AuthenticatedCoursesNewRoute
   '/settings/account': typeof AuthenticatedSettingsAccountRoute
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/settings/branding': typeof AuthenticatedSettingsBrandingRoute
@@ -368,8 +385,10 @@ export interface FileRoutesById {
   '/(errors)/500': typeof errors500Route
   '/(errors)/503': typeof errors503Route
   '/_authenticated/color-editor': typeof AuthenticatedColorEditorRoute
+  '/_authenticated/content-editor-demo': typeof AuthenticatedContentEditorDemoRoute
   '/_authenticated/home': typeof AuthenticatedHomeRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
+  '/_authenticated/courses/new': typeof AuthenticatedCoursesNewRoute
   '/_authenticated/settings/account': typeof AuthenticatedSettingsAccountRoute
   '/_authenticated/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/_authenticated/settings/branding': typeof AuthenticatedSettingsBrandingRoute
@@ -410,8 +429,10 @@ export interface FileRouteTypes {
     | '/500'
     | '/503'
     | '/color-editor'
+    | '/content-editor-demo'
     | '/home'
     | '/'
+    | '/courses/new'
     | '/settings/account'
     | '/settings/appearance'
     | '/settings/branding'
@@ -448,8 +469,10 @@ export interface FileRouteTypes {
     | '/500'
     | '/503'
     | '/color-editor'
+    | '/content-editor-demo'
     | '/home'
     | '/'
+    | '/courses/new'
     | '/settings/account'
     | '/settings/appearance'
     | '/settings/branding'
@@ -491,8 +514,10 @@ export interface FileRouteTypes {
     | '/(errors)/500'
     | '/(errors)/503'
     | '/_authenticated/color-editor'
+    | '/_authenticated/content-editor-demo'
     | '/_authenticated/home'
     | '/_authenticated/'
+    | '/_authenticated/courses/new'
     | '/_authenticated/settings/account'
     | '/_authenticated/settings/appearance'
     | '/_authenticated/settings/branding'
@@ -575,6 +600,13 @@ declare module '@tanstack/react-router' {
       path: '/home'
       fullPath: '/home'
       preLoaderRoute: typeof AuthenticatedHomeRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/content-editor-demo': {
+      id: '/_authenticated/content-editor-demo'
+      path: '/content-editor-demo'
+      fullPath: '/content-editor-demo'
+      preLoaderRoute: typeof AuthenticatedContentEditorDemoRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/color-editor': {
@@ -815,6 +847,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSettingsAccountRouteImport
       parentRoute: typeof AuthenticatedSettingsRouteRoute
     }
+    '/_authenticated/courses/new': {
+      id: '/_authenticated/courses/new'
+      path: '/courses/new'
+      fullPath: '/courses/new'
+      preLoaderRoute: typeof AuthenticatedCoursesNewRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/courses/$courseId/edit': {
       id: '/_authenticated/courses/$courseId/edit'
       path: '/courses/$courseId/edit'
@@ -861,8 +900,10 @@ const AuthenticatedSettingsRouteRouteWithChildren =
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedSettingsRouteRoute: typeof AuthenticatedSettingsRouteRouteWithChildren
   AuthenticatedColorEditorRoute: typeof AuthenticatedColorEditorRoute
+  AuthenticatedContentEditorDemoRoute: typeof AuthenticatedContentEditorDemoRoute
   AuthenticatedHomeRoute: typeof AuthenticatedHomeRoute
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
+  AuthenticatedCoursesNewRoute: typeof AuthenticatedCoursesNewRoute
   AuthenticatedAnalyticsIndexRoute: typeof AuthenticatedAnalyticsIndexRoute
   AuthenticatedAppsIndexRoute: typeof AuthenticatedAppsIndexRoute
   AuthenticatedCategoriesIndexRoute: typeof AuthenticatedCategoriesIndexRoute
@@ -877,8 +918,10 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedSettingsRouteRoute: AuthenticatedSettingsRouteRouteWithChildren,
   AuthenticatedColorEditorRoute: AuthenticatedColorEditorRoute,
+  AuthenticatedContentEditorDemoRoute: AuthenticatedContentEditorDemoRoute,
   AuthenticatedHomeRoute: AuthenticatedHomeRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
+  AuthenticatedCoursesNewRoute: AuthenticatedCoursesNewRoute,
   AuthenticatedAnalyticsIndexRoute: AuthenticatedAnalyticsIndexRoute,
   AuthenticatedAppsIndexRoute: AuthenticatedAppsIndexRoute,
   AuthenticatedCategoriesIndexRoute: AuthenticatedCategoriesIndexRoute,
