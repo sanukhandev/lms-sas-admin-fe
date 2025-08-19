@@ -56,51 +56,21 @@ interface CourseModule {
 
 interface CourseContentManagerProps {
   courseId: string
+  initialData?: {
+    modules?: CourseModule[]
+  }
   onContentUpdate?: () => void
 }
 
 export function CourseContentManager({
   courseId: _courseId,
+  initialData,
   onContentUpdate,
 }: CourseContentManagerProps) {
-  const [modules, setModules] = useState<CourseModule[]>([
-    {
-      id: '1',
-      title: 'Introduction to the Course',
-      description: "Welcome and overview of what you'll learn",
-      order: 1,
-      isPublished: true,
-      chapters: [
-        {
-          id: '1',
-          title: 'Course Overview',
-          description: "What you'll learn in this course",
-          order: 1,
-          isPublished: true,
-          classes: [
-            {
-              id: '1',
-              title: 'Welcome Video',
-              description: 'Introduction and welcome to the course',
-              type: 'video',
-              duration: 5,
-              order: 1,
-              isPublished: true,
-            },
-            {
-              id: '2',
-              title: 'Course Outline',
-              description: 'Detailed breakdown of course content',
-              type: 'text',
-              duration: 10,
-              order: 2,
-              isPublished: true,
-            },
-          ],
-        },
-      ],
-    },
-  ])
+  // Use initial data if provided, otherwise fall back to default structure
+  const defaultModules: CourseModule[] = initialData?.modules || []
+  
+  const [modules, setModules] = useState<CourseModule[]>(defaultModules)
 
   const [expandedModules, setExpandedModules] = useState<Set<string>>(
     new Set(['1'])
