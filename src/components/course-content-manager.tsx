@@ -69,7 +69,7 @@ export function CourseContentManager({
 }: CourseContentManagerProps) {
   // Use initial data if provided, otherwise fall back to default structure
   const defaultModules: CourseModule[] = initialData?.modules || []
-  
+
   const [modules, setModules] = useState<CourseModule[]>(defaultModules)
 
   const [expandedModules, setExpandedModules] = useState<Set<string>>(
