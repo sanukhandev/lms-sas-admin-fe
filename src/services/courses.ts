@@ -263,6 +263,49 @@ export interface StartSessionRequest {
   // No additional fields needed, session ID is in URL
 }
 
+export interface CourseStudent {
+  id: string
+  name: string
+  email: string
+  avatar?: string
+  enrolledAt: string
+  lastActivity: string
+  progress: number
+  status: 'active' | 'completed' | 'inactive'
+  lessonsCompleted: number
+  totalLessons: number
+  timeSpent: string
+  certificateIssued: boolean
+}
+
+export interface CourseAnalytics {
+  overview: {
+    totalEnrollments: number
+    activeStudents: number
+    completionRate: number
+    averageRating: number
+    totalRevenue: number
+    averageTimeSpent: string
+  }
+  enrollment: {
+    thisWeek: number
+    lastWeek: number
+    thisMonth: number
+    lastMonth: number
+  }
+  engagement: {
+    dailyActiveUsers: Array<{ date: string; users: number }>
+    lessonCompletions: Array<{ lesson: string; completions: number }>
+    mostViewedContent: Array<{ title: string; views: number; type: string }>
+  }
+  revenue: {
+    total: number
+    thisMonth: number
+    lastMonth: number
+    averagePerStudent: number
+  }
+}
+
 export interface EndSessionRequest {
   summary?: string
   recordingUrl?: string
@@ -643,6 +686,23 @@ export const coursesService = {
    */
   async getSessionAttendance(courseId: string, sessionId: string): Promise<{ data: AttendanceRecord[] }> {
     const response = await api.get<{ data: AttendanceRecord[] }>(`/v1/courses/${courseId}/sessions/${sessionId}/attendance`)
+    return response.data
+  },
+
+  /**
+   * Get course students
+   */
+  async getCourseStudents(courseId: string): Promise<{ data: CourseStudent[] }> {
+    const response = await api.get<{ data: CourseStudent[] }>(`/v1/courses/${courseId}/students`)
+    return response.data
+  },
+
+  /**
+   * Get course analytics
+   */
+  async getCourseAnalytics(courseId: string, timeRange?: string): Promise<{ data: CourseAnalytics }> {
+    const params = timeRange ? `?timeRange=${timeRange}` : ''
+    const response = await api.get<{ data: CourseAnalytics }>(`/v1/courses/${courseId}/analytics${params}`)
     return response.data
   },
 }

@@ -8,7 +8,9 @@ import {
   Eye,
   Download,
   Calendar,
+  AlertCircle,
 } from 'lucide-react'
+import { useCourseAnalytics } from '@/hooks/use-courses'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
@@ -24,80 +26,33 @@ interface CourseAnalyticsProps {
   courseId: string
 }
 
-interface AnalyticsData {
-  overview: {
-    totalEnrollments: number
-    activeStudents: number
-    completionRate: number
-    averageRating: number
-    totalRevenue: number
-    averageTimeSpent: string
-  }
-  enrollment: {
-    thisWeek: number
-    lastWeek: number
-    thisMonth: number
-    lastMonth: number
-  }
-  engagement: {
-    dailyActiveUsers: Array<{ date: string; users: number }>
-    lessonCompletions: Array<{ lesson: string; completions: number }>
-    mostViewedContent: Array<{ title: string; views: number; type: string }>
-  }
-  revenue: {
-    total: number
-    thisMonth: number
-    lastMonth: number
-    averagePerStudent: number
-  }
-}
-
-export function CourseAnalytics({ courseId: _courseId }: CourseAnalyticsProps) {
+export function CourseAnalytics({ courseId }: CourseAnalyticsProps) {
   const [timeRange, setTimeRange] = useState('30d')
 
-  // Mock data - replace with actual API call
-  const analytics: AnalyticsData = {
-    overview: {
-      totalEnrollments: 1247,
-      activeStudents: 892,
-      completionRate: 67,
-      averageRating: 4.6,
-      totalRevenue: 24938,
-      averageTimeSpent: '4h 32m',
-    },
-    enrollment: {
-      thisWeek: 43,
-      lastWeek: 38,
-      thisMonth: 156,
-      lastMonth: 142,
-    },
-    engagement: {
-      dailyActiveUsers: [
-        { date: '2024-01-15', users: 45 },
-        { date: '2024-01-16', users: 52 },
-        { date: '2024-01-17', users: 38 },
-        { date: '2024-01-18', users: 67 },
-        { date: '2024-01-19', users: 58 },
-      ],
-      lessonCompletions: [
-        { lesson: 'Introduction to React', completions: 234 },
-        { lesson: 'State Management', completions: 198 },
-        { lesson: 'Component Lifecycle', completions: 187 },
-        { lesson: 'Advanced Hooks', completions: 156 },
-      ],
-      mostViewedContent: [
-        { title: 'Introduction Video', views: 1247, type: 'video' },
-        { title: 'Course Syllabus', views: 1156, type: 'document' },
-        { title: 'Getting Started Guide', views: 987, type: 'lesson' },
-        { title: 'Quiz 1: Basics', views: 876, type: 'quiz' },
-      ],
-    },
-    revenue: {
-      total: 24938,
-      thisMonth: 3120,
-      lastMonth: 2840,
-      averagePerStudent: 20,
-    },
+  // Fetch real analytics data
+  const { data: analyticsData, isLoading, error } = useCourseAnalytics(courseId, timeRange)
+  const analytics = analyticsData?.data
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-8">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading analytics...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (error || !analytics) {
+    return (
+      <div className="flex items-center justify-center py-8">
+        <div className="text-center">
+          <AlertCircle className="h-8 w-8 text-red-500 mx-auto mb-4" />
+          <p className="text-muted-foreground">Failed to load analytics data</p>
+        </div>
+      </div>
+    )
   }
 
   const StatCard = ({

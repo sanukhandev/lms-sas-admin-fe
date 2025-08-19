@@ -236,3 +236,27 @@ export function useCreateCourse() {
     },
   })
 }
+
+export function useCourseStudents(courseId: string) {
+  return useQuery({
+    queryKey: ['courseStudents', courseId],
+    queryFn: () => coursesService.getCourseStudents(courseId),
+    enabled: !!courseId,
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    retry: 1,
+    retryDelay: 1000,
+    refetchOnWindowFocus: false,
+  })
+}
+
+export function useCourseAnalytics(courseId: string, timeRange: string = '30d') {
+  return useQuery({
+    queryKey: ['courseAnalytics', courseId, timeRange],
+    queryFn: () => coursesService.getCourseAnalytics(courseId, timeRange),
+    enabled: !!courseId,
+    staleTime: 1000 * 60 * 10, // 10 minutes
+    retry: 1,
+    retryDelay: 1000,
+    refetchOnWindowFocus: false,
+  })
+}

@@ -10,6 +10,7 @@ import {
   CheckCircle,
   AlertCircle,
 } from 'lucide-react'
+import { useCourseStudents } from '@/hooks/use-courses'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -57,70 +58,36 @@ interface Student {
   certificateIssued: boolean
 }
 
-export function CourseStudents({ courseId: _courseId }: CourseStudentsProps) {
+export function CourseStudents({ courseId }: CourseStudentsProps) {
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
   const [sortBy, setSortBy] = useState('enrolledAt')
 
-  // Mock data - replace with actual API call
-  const students: Student[] = [
-    {
-      id: '1',
-      name: 'John Smith',
-      email: 'john@example.com',
-      avatar: '',
-      enrolledAt: '2024-01-15',
-      lastActivity: '2024-01-20',
-      progress: 85,
-      status: 'active',
-      lessonsCompleted: 17,
-      totalLessons: 20,
-      timeSpent: '12h 30m',
-      certificateIssued: false,
-    },
-    {
-      id: '2',
-      name: 'Sarah Johnson',
-      email: 'sarah@example.com',
-      avatar: '',
-      enrolledAt: '2024-01-10',
-      lastActivity: '2024-01-19',
-      progress: 100,
-      status: 'completed',
-      lessonsCompleted: 20,
-      totalLessons: 20,
-      timeSpent: '15h 45m',
-      certificateIssued: true,
-    },
-    {
-      id: '3',
-      name: 'Mike Wilson',
-      email: 'mike@example.com',
-      avatar: '',
-      enrolledAt: '2024-01-08',
-      lastActivity: '2024-01-12',
-      progress: 35,
-      status: 'inactive',
-      lessonsCompleted: 7,
-      totalLessons: 20,
-      timeSpent: '4h 20m',
-      certificateIssued: false,
-    },
-    {
-      id: '4',
-      name: 'Emily Davis',
-      email: 'emily@example.com',
-      avatar: '',
-      enrolledAt: '2024-01-18',
-      lastActivity: '2024-01-20',
-      progress: 60,
-      status: 'active',
-      lessonsCompleted: 12,
-      totalLessons: 20,
-      timeSpent: '8h 15m',
-      certificateIssued: false,
-    },
-  ]
+  // Fetch real course students data
+  const { data: studentsData, isLoading, error } = useCourseStudents(courseId)
+  const students = studentsData?.data || []
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-8">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading students...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center py-8">
+        <div className="text-center">
+          <AlertCircle className="h-8 w-8 text-red-500 mx-auto mb-4" />
+          <p className="text-muted-foreground">Failed to load students data</p>
+        </div>
+      </div>
+    )
+  }
 
   const filteredStudents = students.filter((student) => {
     const matchesSearch =
