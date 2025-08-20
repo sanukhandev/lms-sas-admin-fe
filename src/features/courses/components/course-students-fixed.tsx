@@ -1,15 +1,5 @@
-import { useState } from 'react'
-import { AlertCircle, Users, Search, Filter, Download } from 'lucide-react'
+import { AlertCircle, Users } from 'lucide-react'
 import { useCourseStudents } from '@/hooks/use-courses'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 
 interface CourseStudentsProps {
   courseId: string
@@ -17,41 +7,8 @@ interface CourseStudentsProps {
 
 // Mock Students Display Component (with all necessary imports)
 function MockStudentsDisplay({ courseId: _courseId }: { courseId: string }) {
-  const [searchTerm, setSearchTerm] = useState('')
-  const [statusFilter, setStatusFilter] = useState('all')
-
   return (
     <div className='space-y-6'>
-      {/* Controls */}
-      <div className='flex items-center justify-between'>
-        <div className='flex items-center gap-4'>
-          <div className='relative'>
-            <Search className='text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform' />
-            <Input
-              placeholder='Search students...'
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className='w-[300px] pl-10'
-            />
-          </div>
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className='w-[140px]'>
-              <Filter className='mr-2 h-4 w-4' />
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value='all'>All Status</SelectItem>
-              <SelectItem value='active'>Active</SelectItem>
-              <SelectItem value='completed'>Completed</SelectItem>
-              <SelectItem value='inactive'>Inactive</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <Button variant='outline' size='sm'>
-          <Download className='mr-2 h-4 w-4' />
-          Export
-        </Button>
-      </div>
       {/* Stats Overview */}
       <div className='grid grid-cols-1 gap-4 md:grid-cols-4'>
         <div className='rounded-lg border bg-white p-6 shadow-sm'>
@@ -198,9 +155,6 @@ function MockStudentsDisplay({ courseId: _courseId }: { courseId: string }) {
 }
 
 export function CourseStudents({ courseId }: CourseStudentsProps) {
-  const [searchTerm, setSearchTerm] = useState('')
-  const [statusFilter, setStatusFilter] = useState('all')
-
   // Fetch real course students data
   const { data: studentsData, isLoading, error } = useCourseStudents(courseId)
   const students = studentsData?.data || []
@@ -243,49 +197,13 @@ export function CourseStudents({ courseId }: CourseStudentsProps) {
 
   // If we have real data, render it (this would be the real implementation)
   return (
-    <div className='space-y-6'>
-      {/* Controls */}
-      <div className='flex items-center justify-between'>
-        <div className='flex items-center gap-4'>
-          <div className='relative'>
-            <Search className='text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform' />
-            <Input
-              placeholder='Search students...'
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className='w-[300px] pl-10'
-            />
-          </div>
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className='w-[140px]'>
-              <Filter className='mr-2 h-4 w-4' />
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value='all'>All Status</SelectItem>
-              <SelectItem value='active'>Active</SelectItem>
-              <SelectItem value='completed'>Completed</SelectItem>
-              <SelectItem value='inactive'>Inactive</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <Button variant='outline' size='sm'>
-          <Download className='mr-2 h-4 w-4' />
-          Export
-        </Button>
-      </div>
-
-      <div className='flex items-center justify-center py-8'>
-        <div className='text-center'>
-          <Users className='text-muted-foreground mx-auto mb-4 h-8 w-8' />
-          <h3 className='mb-2 text-lg font-semibold'>
-            Students Data Available
-          </h3>
-          <p className='text-muted-foreground'>
-            Found {students.length} students. Real data implementation goes
-            here.
-          </p>
-        </div>
+    <div className='flex items-center justify-center py-8'>
+      <div className='text-center'>
+        <Users className='text-muted-foreground mx-auto mb-4 h-8 w-8' />
+        <h3 className='mb-2 text-lg font-semibold'>Students Data Available</h3>
+        <p className='text-muted-foreground'>
+          Found {students.length} students. Real data implementation goes here.
+        </p>
       </div>
     </div>
   )

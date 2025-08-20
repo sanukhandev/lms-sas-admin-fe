@@ -1,5 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { coursesService, type CoursesResponse, type CourseStats, type CourseStructure, type CoursePricing } from '@/services/courses'
+import {
+  coursesService,
+  type CoursesResponse,
+  type CourseStats,
+  type CourseStructure,
+  type CoursePricing,
+} from '@/services/courses'
 import { toast } from 'sonner'
 
 interface UseCoursesParams {
@@ -11,17 +17,21 @@ interface UseCoursesParams {
   instructor?: string
 }
 
-export function useCourses(params: UseCoursesParams = {}, options?: { enabled?: boolean; staleTime?: number }) {
+export function useCourses(
+  params: UseCoursesParams = {},
+  options?: { enabled?: boolean; staleTime?: number }
+) {
   return useQuery<CoursesResponse>({
     queryKey: ['courses', params],
-    queryFn: () => coursesService.getCourses(
-      params.page || 1,
-      params.perPage || 15,
-      params.search,
-      params.status,
-      params.category,
-      params.instructor
-    ),
+    queryFn: () =>
+      coursesService.getCourses(
+        params.page || 1,
+        params.perPage || 15,
+        params.search,
+        params.status,
+        params.category,
+        params.instructor
+      ),
     staleTime: 1000 * 60 * 2, // 2 minutes
     gcTime: 1000 * 60 * 5, // 5 minutes garbage collection
     retry: 1,
@@ -86,7 +96,9 @@ export function useCreateModule() {
     mutationFn: ({ courseId, data }: { courseId: string; data: any }) =>
       coursesService.createModule(courseId, data),
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['courseStructure', variables.courseId] })
+      queryClient.invalidateQueries({
+        queryKey: ['courseStructure', variables.courseId],
+      })
       toast.success('Module created successfully')
     },
     onError: (error: any) => {
@@ -99,10 +111,19 @@ export function useUpdateModule() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: ({ courseId, moduleId, data }: { courseId: string; moduleId: string; data: any }) =>
-      coursesService.updateModule(courseId, moduleId, data),
+    mutationFn: ({
+      courseId,
+      moduleId,
+      data,
+    }: {
+      courseId: string
+      moduleId: string
+      data: any
+    }) => coursesService.updateModule(courseId, moduleId, data),
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['courseStructure', variables.courseId] })
+      queryClient.invalidateQueries({
+        queryKey: ['courseStructure', variables.courseId],
+      })
       toast.success('Module updated successfully')
     },
     onError: (error: any) => {
@@ -115,10 +136,17 @@ export function useDeleteModule() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: ({ courseId, moduleId }: { courseId: string; moduleId: string }) =>
-      coursesService.deleteModule(courseId, moduleId),
+    mutationFn: ({
+      courseId,
+      moduleId,
+    }: {
+      courseId: string
+      moduleId: string
+    }) => coursesService.deleteModule(courseId, moduleId),
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['courseStructure', variables.courseId] })
+      queryClient.invalidateQueries({
+        queryKey: ['courseStructure', variables.courseId],
+      })
       toast.success('Module deleted successfully')
     },
     onError: (error: any) => {
@@ -131,10 +159,19 @@ export function useCreateChapter() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: ({ courseId, moduleId, data }: { courseId: string; moduleId: string; data: any }) =>
-      coursesService.createChapter(courseId, moduleId, data),
+    mutationFn: ({
+      courseId,
+      moduleId,
+      data,
+    }: {
+      courseId: string
+      moduleId: string
+      data: any
+    }) => coursesService.createChapter(courseId, moduleId, data),
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['courseStructure', variables.courseId] })
+      queryClient.invalidateQueries({
+        queryKey: ['courseStructure', variables.courseId],
+      })
       toast.success('Chapter created successfully')
     },
     onError: (error: any) => {
@@ -147,10 +184,21 @@ export function useUpdateChapter() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: ({ courseId, moduleId, chapterId, data }: { courseId: string; moduleId: string; chapterId: string; data: any }) =>
-      coursesService.updateChapter(courseId, moduleId, chapterId, data),
+    mutationFn: ({
+      courseId,
+      moduleId,
+      chapterId,
+      data,
+    }: {
+      courseId: string
+      moduleId: string
+      chapterId: string
+      data: any
+    }) => coursesService.updateChapter(courseId, moduleId, chapterId, data),
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['courseStructure', variables.courseId] })
+      queryClient.invalidateQueries({
+        queryKey: ['courseStructure', variables.courseId],
+      })
       toast.success('Chapter updated successfully')
     },
     onError: (error: any) => {
@@ -163,10 +211,19 @@ export function useDeleteChapter() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: ({ courseId, moduleId, chapterId }: { courseId: string; moduleId: string; chapterId: string }) =>
-      coursesService.deleteChapter(courseId, moduleId, chapterId),
+    mutationFn: ({
+      courseId,
+      moduleId,
+      chapterId,
+    }: {
+      courseId: string
+      moduleId: string
+      chapterId: string
+    }) => coursesService.deleteChapter(courseId, moduleId, chapterId),
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['courseStructure', variables.courseId] })
+      queryClient.invalidateQueries({
+        queryKey: ['courseStructure', variables.courseId],
+      })
       toast.success('Chapter deleted successfully')
     },
     onError: (error: any) => {
@@ -182,7 +239,9 @@ export function useUpdateCoursePricing() {
     mutationFn: ({ courseId, data }: { courseId: string; data: any }) =>
       coursesService.updateCoursePricing(courseId, data),
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['coursePricing', variables.courseId] })
+      queryClient.invalidateQueries({
+        queryKey: ['coursePricing', variables.courseId],
+      })
       queryClient.invalidateQueries({ queryKey: ['courses'] })
       toast.success('Course pricing updated successfully')
     },
@@ -196,19 +255,27 @@ export function usePublishCourse() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: ({ courseId, action }: { courseId: string; action: 'publish' | 'unpublish' }) => {
-      return action === 'publish' 
+    mutationFn: ({
+      courseId,
+      action,
+    }: {
+      courseId: string
+      action: 'publish' | 'unpublish'
+    }) => {
+      return action === 'publish'
         ? coursesService.publishCourse(courseId)
         : coursesService.unpublishCourse(courseId)
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['courses'] })
       queryClient.invalidateQueries({ queryKey: ['courseStats'] })
-      queryClient.invalidateQueries({ queryKey: ['courseStructure', variables.courseId] })
-      
+      queryClient.invalidateQueries({
+        queryKey: ['courseStructure', variables.courseId],
+      })
+
       toast.success(
-        variables.action === 'publish' 
-          ? 'Course published successfully' 
+        variables.action === 'publish'
+          ? 'Course published successfully'
           : 'Course unpublished successfully'
       )
     },
@@ -228,7 +295,7 @@ export function useCreateCourse() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['courses'] })
       queryClient.invalidateQueries({ queryKey: ['courseStats'] })
-      
+
       toast.success('Course created successfully')
     },
     onError: (error: any) => {
@@ -249,7 +316,10 @@ export function useCourseStudents(courseId: string) {
   })
 }
 
-export function useCourseAnalytics(courseId: string, timeRange: string = '30d') {
+export function useCourseAnalytics(
+  courseId: string,
+  timeRange: string = '30d'
+) {
   return useQuery({
     queryKey: ['courseAnalytics', courseId, timeRange],
     queryFn: () => coursesService.getCourseAnalytics(courseId, timeRange),

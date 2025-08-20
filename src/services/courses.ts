@@ -382,7 +382,10 @@ export const coursesService = {
   /**
    * Update a course
    */
-  async updateCourse(id: number, data: Partial<Course>): Promise<{ data: Course }> {
+  async updateCourse(
+    id: number,
+    data: Partial<Course>
+  ): Promise<{ data: Course }> {
     const response = await api.put<{ data: Course }>(`/v1/courses/${id}`, data)
     return response.data
   },
@@ -391,23 +394,35 @@ export const coursesService = {
    * Get course statistics
    */
   async getCourseStats(): Promise<{ data: CourseStats }> {
-    const response = await api.get<{ data: CourseStats }>('/v1/courses/statistics')
+    const response = await api.get<{ data: CourseStats }>(
+      '/v1/courses/statistics'
+    )
     return response.data
   },
 
   /**
    * Get course structure for builder
    */
-  async getCourseStructure(courseId: string): Promise<{ data: CourseStructure }> {
-    const response = await api.get<{ data: CourseStructure }>(`/v1/course-builder/${courseId}/structure`)
+  async getCourseStructure(
+    courseId: string
+  ): Promise<{ data: CourseStructure }> {
+    const response = await api.get<{ data: CourseStructure }>(
+      `/v1/course-builder/${courseId}/structure`
+    )
     return response.data
   },
 
   /**
    * Create module
    */
-  async createModule(courseId: string, data: CreateModuleRequest): Promise<{ data: Module }> {
-    const response = await api.post<{ data: Module }>(`/v1/course-builder/${courseId}/modules`, data)
+  async createModule(
+    courseId: string,
+    data: CreateModuleRequest
+  ): Promise<{ data: Module }> {
+    const response = await api.post<{ data: Module }>(
+      `/v1/course-builder/${courseId}/modules`,
+      data
+    )
     return response.data
   },
 
@@ -415,11 +430,14 @@ export const coursesService = {
    * Update module
    */
   async updateModule(
-    courseId: string, 
-    moduleId: string, 
+    courseId: string,
+    moduleId: string,
     data: UpdateModuleRequest
   ): Promise<{ data: Module }> {
-    const response = await api.put<{ data: Module }>(`/v1/course-builder/${courseId}/modules/${moduleId}`, data)
+    const response = await api.put<{ data: Module }>(
+      `/v1/course-builder/${courseId}/modules/${moduleId}`,
+      data
+    )
     return response.data
   },
 
@@ -434,11 +452,14 @@ export const coursesService = {
    * Create chapter
    */
   async createChapter(
-    courseId: string, 
-    moduleId: string, 
+    courseId: string,
+    moduleId: string,
     data: CreateChapterRequest
   ): Promise<{ data: Chapter }> {
-    const response = await api.post<{ data: Chapter }>(`/v1/course-builder/${courseId}/modules/${moduleId}/chapters`, data)
+    const response = await api.post<{ data: Chapter }>(
+      `/v1/course-builder/${courseId}/modules/${moduleId}/chapters`,
+      data
+    )
     return response.data
   },
 
@@ -446,29 +467,38 @@ export const coursesService = {
    * Update chapter
    */
   async updateChapter(
-    courseId: string, 
-    moduleId: string, 
-    chapterId: string, 
+    courseId: string,
+    moduleId: string,
+    chapterId: string,
     data: UpdateChapterRequest
   ): Promise<{ data: Chapter }> {
-    const response = await api.put<{ data: Chapter }>(`/v1/course-builder/${courseId}/modules/${moduleId}/chapters/${chapterId}`, data)
+    const response = await api.put<{ data: Chapter }>(
+      `/v1/course-builder/${courseId}/modules/${moduleId}/chapters/${chapterId}`,
+      data
+    )
     return response.data
   },
 
   /**
    * Delete chapter
    */
-  async deleteChapter(courseId: string, moduleId: string, chapterId: string): Promise<void> {
-    await api.delete(`/v1/course-builder/${courseId}/modules/${moduleId}/chapters/${chapterId}`)
+  async deleteChapter(
+    courseId: string,
+    moduleId: string,
+    chapterId: string
+  ): Promise<void> {
+    await api.delete(
+      `/v1/course-builder/${courseId}/modules/${moduleId}/chapters/${chapterId}`
+    )
   },
 
   /**
    * Create class
    */
   async createClass(
-    courseId: string, 
-    moduleId: string, 
-    chapterId: string, 
+    courseId: string,
+    moduleId: string,
+    chapterId: string,
     data: {
       title: string
       description: string
@@ -479,15 +509,24 @@ export const coursesService = {
       content_url?: string
     }
   ): Promise<{ data: any }> {
-    const response = await api.post(`/v1/course-builder/${courseId}/modules/${moduleId}/chapters/${chapterId}/classes`, data)
+    const response = await api.post(
+      `/v1/course-builder/${courseId}/modules/${moduleId}/chapters/${chapterId}/classes`,
+      data
+    )
     return response.data
   },
 
   /**
    * Update course structure
    */
-  async updateCourseStructure(courseId: string, structure: any): Promise<{ data: any }> {
-    const response = await api.put(`/v1/course-builder/${courseId}/structure`, structure)
+  async updateCourseStructure(
+    courseId: string,
+    structure: any
+  ): Promise<{ data: any }> {
+    const response = await api.put(
+      `/v1/course-builder/${courseId}/structure`,
+      structure
+    )
     return response.data
   },
 
@@ -502,15 +541,23 @@ export const coursesService = {
    * Get course pricing
    */
   async getCoursePricing(courseId: string): Promise<{ data: CoursePricing }> {
-    const response = await api.get<{ data: CoursePricing }>(`/v1/course-builder/${courseId}/pricing`)
+    const response = await api.get<{ data: CoursePricing }>(
+      `/v1/course-builder/${courseId}/pricing`
+    )
     return response.data
   },
 
   /**
    * Update course pricing
    */
-  async updateCoursePricing(courseId: string, data: UpdatePricingRequest): Promise<{ data: CoursePricing }> {
-    const response = await api.put<{ data: CoursePricing }>(`/v1/course-builder/${courseId}/pricing`, data)
+  async updateCoursePricing(
+    courseId: string,
+    data: UpdatePricingRequest
+  ): Promise<{ data: CoursePricing }> {
+    const response = await api.put<{ data: CoursePricing }>(
+      `/v1/course-builder/${courseId}/pricing`,
+      data
+    )
     return response.data
   },
 
@@ -518,7 +565,9 @@ export const coursesService = {
    * Get supported access models
    */
   async getSupportedAccessModels(): Promise<{ data: string[] }> {
-    const response = await api.get<{ data: string[] }>('/v1/course-builder/access-models')
+    const response = await api.get<{ data: string[] }>(
+      '/v1/course-builder/access-models'
+    )
     return response.data
   },
 
@@ -526,7 +575,9 @@ export const coursesService = {
    * Publish course
    */
   async publishCourse(courseId: string): Promise<{ data: Course }> {
-    const response = await api.post<{ data: Course }>(`/v1/course-builder/${courseId}/publish`)
+    const response = await api.post<{ data: Course }>(
+      `/v1/course-builder/${courseId}/publish`
+    )
     return response.data
   },
 
@@ -534,7 +585,9 @@ export const coursesService = {
    * Unpublish course
    */
   async unpublishCourse(courseId: string): Promise<{ data: Course }> {
-    const response = await api.post<{ data: Course }>(`/v1/course-builder/${courseId}/unpublish`)
+    const response = await api.post<{ data: Course }>(
+      `/v1/course-builder/${courseId}/unpublish`
+    )
     return response.data
   },
 
@@ -546,23 +599,34 @@ export const coursesService = {
    * Get all classes for a course
    */
   async getCourseClasses(courseId: string): Promise<{ data: ClassSession[] }> {
-    const response = await api.get<{ data: ClassSession[] }>(`/v1/courses/${courseId}/classes`)
+    const response = await api.get<{ data: ClassSession[] }>(
+      `/v1/courses/${courseId}/classes`
+    )
     return response.data
   },
 
   /**
    * Get classes for specific content
    */
-  async getContentClasses(courseId: string, contentId: string): Promise<{ data: ClassSession[] }> {
-    const response = await api.get<{ data: ClassSession[] }>(`/v1/courses/${courseId}/content/${contentId}/classes`)
+  async getContentClasses(
+    courseId: string,
+    contentId: string
+  ): Promise<{ data: ClassSession[] }> {
+    const response = await api.get<{ data: ClassSession[] }>(
+      `/v1/courses/${courseId}/content/${contentId}/classes`
+    )
     return response.data
   },
 
   /**
    * Schedule a new class
    */
-  async scheduleClass(courseId: string, data: ScheduleClassRequest, contentId?: string): Promise<{ data: ClassSession }> {
-    const url = contentId 
+  async scheduleClass(
+    courseId: string,
+    data: ScheduleClassRequest,
+    contentId?: string
+  ): Promise<{ data: ClassSession }> {
+    const url = contentId
       ? `/v1/courses/${courseId}/content/${contentId}/classes`
       : `/v1/courses/${courseId}/classes`
     const response = await api.post<{ data: ClassSession }>(url, data)
@@ -572,8 +636,13 @@ export const coursesService = {
   /**
    * Update scheduled class
    */
-  async updateSchedule(courseId: string, sessionId: string, data: Partial<ScheduleClassRequest>, contentId?: string): Promise<{ data: ClassSession }> {
-    const url = contentId 
+  async updateSchedule(
+    courseId: string,
+    sessionId: string,
+    data: Partial<ScheduleClassRequest>,
+    contentId?: string
+  ): Promise<{ data: ClassSession }> {
+    const url = contentId
       ? `/v1/courses/${courseId}/content/${contentId}/classes/${sessionId}`
       : `/v1/courses/${courseId}/classes/${sessionId}`
     const response = await api.put<{ data: ClassSession }>(url, data)
@@ -583,8 +652,12 @@ export const coursesService = {
   /**
    * Cancel a scheduled class
    */
-  async cancelClass(courseId: string, sessionId: string, contentId?: string): Promise<void> {
-    const url = contentId 
+  async cancelClass(
+    courseId: string,
+    sessionId: string,
+    contentId?: string
+  ): Promise<void> {
+    const url = contentId
       ? `/v1/courses/${courseId}/content/${contentId}/classes/${sessionId}`
       : `/v1/courses/${courseId}/classes/${sessionId}`
     await api.delete(url)
@@ -594,23 +667,38 @@ export const coursesService = {
    * Get class planner (teaching plans)
    */
   async getClassPlanner(courseId: string): Promise<{ data: TeachingPlan[] }> {
-    const response = await api.get<{ data: TeachingPlan[] }>(`/v1/courses/${courseId}/classes/planner`)
+    const response = await api.get<{ data: TeachingPlan[] }>(
+      `/v1/courses/${courseId}/classes/planner`
+    )
     return response.data
   },
 
   /**
    * Create teaching plan
    */
-  async createTeachingPlan(courseId: string, data: CreateTeachingPlanRequest): Promise<{ data: TeachingPlan }> {
-    const response = await api.post<{ data: TeachingPlan }>(`/v1/courses/${courseId}/classes/planner`, data)
+  async createTeachingPlan(
+    courseId: string,
+    data: CreateTeachingPlanRequest
+  ): Promise<{ data: TeachingPlan }> {
+    const response = await api.post<{ data: TeachingPlan }>(
+      `/v1/courses/${courseId}/classes/planner`,
+      data
+    )
     return response.data
   },
 
   /**
    * Update teaching plan
    */
-  async updateTeachingPlan(courseId: string, planId: string, data: Partial<CreateTeachingPlanRequest>): Promise<{ data: TeachingPlan }> {
-    const response = await api.put<{ data: TeachingPlan }>(`/v1/courses/${courseId}/classes/planner/${planId}`, data)
+  async updateTeachingPlan(
+    courseId: string,
+    planId: string,
+    data: Partial<CreateTeachingPlanRequest>
+  ): Promise<{ data: TeachingPlan }> {
+    const response = await api.put<{ data: TeachingPlan }>(
+      `/v1/courses/${courseId}/classes/planner/${planId}`,
+      data
+    )
     return response.data
   },
 
@@ -624,8 +712,14 @@ export const coursesService = {
   /**
    * Bulk schedule classes from teaching plans
    */
-  async bulkScheduleClasses(courseId: string, data: BulkScheduleRequest): Promise<{ data: ClassSession[] }> {
-    const response = await api.post<{ data: ClassSession[] }>(`/v1/courses/${courseId}/classes/bulk-schedule`, data)
+  async bulkScheduleClasses(
+    courseId: string,
+    data: BulkScheduleRequest
+  ): Promise<{ data: ClassSession[] }> {
+    const response = await api.post<{ data: ClassSession[] }>(
+      `/v1/courses/${courseId}/classes/bulk-schedule`,
+      data
+    )
     return response.data
   },
 
@@ -636,73 +730,125 @@ export const coursesService = {
   /**
    * Get session details
    */
-  async getSession(courseId: string, sessionId: string): Promise<{ data: SessionDetails }> {
-    const response = await api.get<{ data: SessionDetails }>(`/v1/courses/${courseId}/sessions/${sessionId}`)
+  async getSession(
+    courseId: string,
+    sessionId: string
+  ): Promise<{ data: SessionDetails }> {
+    const response = await api.get<{ data: SessionDetails }>(
+      `/v1/courses/${courseId}/sessions/${sessionId}`
+    )
     return response.data
   },
 
   /**
    * Start a session
    */
-  async startSession(courseId: string, sessionId: string): Promise<{ data: SessionDetails }> {
-    const response = await api.post<{ data: SessionDetails }>(`/v1/courses/${courseId}/sessions/${sessionId}/start`)
+  async startSession(
+    courseId: string,
+    sessionId: string
+  ): Promise<{ data: SessionDetails }> {
+    const response = await api.post<{ data: SessionDetails }>(
+      `/v1/courses/${courseId}/sessions/${sessionId}/start`
+    )
     return response.data
   },
 
   /**
    * End a session
    */
-  async endSession(courseId: string, sessionId: string, data: EndSessionRequest): Promise<{ data: SessionDetails }> {
-    const response = await api.post<{ data: SessionDetails }>(`/v1/courses/${courseId}/sessions/${sessionId}/end`, data)
+  async endSession(
+    courseId: string,
+    sessionId: string,
+    data: EndSessionRequest
+  ): Promise<{ data: SessionDetails }> {
+    const response = await api.post<{ data: SessionDetails }>(
+      `/v1/courses/${courseId}/sessions/${sessionId}/end`,
+      data
+    )
     return response.data
   },
 
   /**
    * Update session
    */
-  async updateSession(courseId: string, sessionId: string, data: Partial<SessionDetails>): Promise<{ data: SessionDetails }> {
-    const response = await api.put<{ data: SessionDetails }>(`/v1/courses/${courseId}/sessions/${sessionId}`, data)
+  async updateSession(
+    courseId: string,
+    sessionId: string,
+    data: Partial<SessionDetails>
+  ): Promise<{ data: SessionDetails }> {
+    const response = await api.put<{ data: SessionDetails }>(
+      `/v1/courses/${courseId}/sessions/${sessionId}`,
+      data
+    )
     return response.data
   },
 
   /**
    * Mark attendance
    */
-  async markAttendance(courseId: string, sessionId: string, data: MarkAttendanceRequest): Promise<{ data: AttendanceRecord }> {
-    const response = await api.post<{ data: AttendanceRecord }>(`/v1/courses/${courseId}/sessions/${sessionId}/attendance`, data)
+  async markAttendance(
+    courseId: string,
+    sessionId: string,
+    data: MarkAttendanceRequest
+  ): Promise<{ data: AttendanceRecord }> {
+    const response = await api.post<{ data: AttendanceRecord }>(
+      `/v1/courses/${courseId}/sessions/${sessionId}/attendance`,
+      data
+    )
     return response.data
   },
 
   /**
    * Bulk mark attendance
    */
-  async bulkMarkAttendance(courseId: string, sessionId: string, data: BulkAttendanceRequest): Promise<{ data: AttendanceRecord[] }> {
-    const response = await api.post<{ data: AttendanceRecord[] }>(`/v1/courses/${courseId}/sessions/${sessionId}/bulk-attendance`, data)
+  async bulkMarkAttendance(
+    courseId: string,
+    sessionId: string,
+    data: BulkAttendanceRequest
+  ): Promise<{ data: AttendanceRecord[] }> {
+    const response = await api.post<{ data: AttendanceRecord[] }>(
+      `/v1/courses/${courseId}/sessions/${sessionId}/bulk-attendance`,
+      data
+    )
     return response.data
   },
 
   /**
    * Get session attendance
    */
-  async getSessionAttendance(courseId: string, sessionId: string): Promise<{ data: AttendanceRecord[] }> {
-    const response = await api.get<{ data: AttendanceRecord[] }>(`/v1/courses/${courseId}/sessions/${sessionId}/attendance`)
+  async getSessionAttendance(
+    courseId: string,
+    sessionId: string
+  ): Promise<{ data: AttendanceRecord[] }> {
+    const response = await api.get<{ data: AttendanceRecord[] }>(
+      `/v1/courses/${courseId}/sessions/${sessionId}/attendance`
+    )
     return response.data
   },
 
   /**
    * Get course students
    */
-  async getCourseStudents(courseId: string): Promise<{ data: CourseStudent[] }> {
-    const response = await api.get<{ data: CourseStudent[] }>(`/v1/courses/${courseId}/students`)
+  async getCourseStudents(
+    courseId: string
+  ): Promise<{ data: CourseStudent[] }> {
+    const response = await api.get<{ data: CourseStudent[] }>(
+      `/v1/courses/${courseId}/students`
+    )
     return response.data
   },
 
   /**
    * Get course analytics
    */
-  async getCourseAnalytics(courseId: string, timeRange?: string): Promise<{ data: CourseAnalytics }> {
+  async getCourseAnalytics(
+    courseId: string,
+    timeRange?: string
+  ): Promise<{ data: CourseAnalytics }> {
     const params = timeRange ? `?timeRange=${timeRange}` : ''
-    const response = await api.get<{ data: CourseAnalytics }>(`/v1/courses/${courseId}/analytics${params}`)
+    const response = await api.get<{ data: CourseAnalytics }>(
+      `/v1/courses/${courseId}/analytics${params}`
+    )
     return response.data
   },
 }

@@ -130,8 +130,9 @@ function MockAnalyticsDisplay({
 
   return (
     <div className='space-y-6'>
-      {/* Controls */}
-      <div className='flex items-center justify-end'>
+      {/* Time Range Selector */}
+      <div className='flex items-center justify-between'>
+        <h2 className='text-2xl font-bold'>Course Analytics</h2>
         <div className='flex items-center gap-4'>
           <Select value={timeRange} onValueChange={onTimeRangeChange}>
             <SelectTrigger className='w-[180px]'>
