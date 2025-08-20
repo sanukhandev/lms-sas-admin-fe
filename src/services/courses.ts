@@ -4,30 +4,30 @@ export interface Course {
   id: number
   title: string
   description?: string
-  short_description?: string
+  shortDescription?: string
   slug?: string
-  category_id?: number
+  categoryId?: number
   categoryName?: string
-  instructor_id?: number
+  instructorId?: number
   instructorName?: string
   price?: number
   currency?: string
   level?: string
-  duration_hours?: number
+  durationHours?: number
   status: 'draft' | 'published' | 'archived'
-  is_active: boolean
-  thumbnail_url?: string
-  preview_video_url?: string
+  isActive: boolean
+  thumbnailUrl?: string
+  previewVideoUrl?: string
   requirements?: string
-  what_you_will_learn?: string
-  meta_description?: string
+  whatYouWillLearn?: string
+  metaDescription?: string
   tags?: string
-  average_rating?: number
+  averageRating?: number
   enrollmentCount: number
   completionRate: number
-  content_count: number
-  created_at: string
-  updated_at: string
+  contentCount: number
+  createdAt: string
+  updatedAt: string
 }
 
 export interface Module {
