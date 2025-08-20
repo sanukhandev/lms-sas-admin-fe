@@ -103,25 +103,29 @@ export function CoursePerformanceTable() {
                   <div className='space-y-1'>
                     <p className='text-sm font-medium'>{course.title}</p>
                     <p className='text-muted-foreground text-xs'>
-                      {course.content_count}/{course.enrollment_count} completed
+                      {course.contentCount}/{course.enrollmentCount} completed
                     </p>
                   </div>
                 </TableCell>
                 <TableCell>
-                  <p className='text-sm'>{course.instructor_name || 'No instructor'}</p>
+                  <p className='text-sm'>
+                    {course.instructorName || 'No instructor'}
+                  </p>
                 </TableCell>
                 <TableCell>
-                  <p className='text-sm font-medium'>{course.enrollment_count}</p>
+                  <p className='text-sm font-medium'>
+                    {course.enrollmentCount}
+                  </p>
                 </TableCell>
                 <TableCell>
                   <div className='space-y-2'>
                     <div className='flex items-center gap-2'>
                       <Progress
-                        value={course.completion_rate}
+                        value={course.completionRate}
                         className='h-2 w-16'
                       />
                       <span className='text-muted-foreground text-xs'>
-                        {course.completion_rate.toFixed(1)}%
+                        {course.completionRate.toFixed(1)}%
                       </span>
                     </div>
                   </div>
@@ -129,11 +133,16 @@ export function CoursePerformanceTable() {
                 <TableCell>
                   <div className='flex items-center gap-2'>
                     <Progress
-                      value={course.average_rating ? course.average_rating * 20 : 0}
+                      value={
+                        course.averageRating ? course.averageRating * 20 : 0
+                      }
                       className='h-2 w-16'
                     />
                     <span className='text-muted-foreground text-xs'>
-                      {course.average_rating ? course.average_rating.toFixed(1) : '0.0'}/5
+                      {course.averageRating
+                        ? course.averageRating.toFixed(1)
+                        : '0.0'}
+                      /5
                     </span>
                   </div>
                 </TableCell>

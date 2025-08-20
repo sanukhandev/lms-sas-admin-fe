@@ -78,12 +78,12 @@ function ContentEditorDemo() {
               </li>
               <li>
                 <code className='rounded bg-gray-100 px-1'>
-                  PUT /api/courses/{demoCreatedCourseId}/contents/{{ id }}
+                  PUT /api/courses/{demoCreatedCourseId}/contents/{'{id}'}
                 </code>
               </li>
               <li>
                 <code className='rounded bg-gray-100 px-1'>
-                  DELETE /api/courses/{demoCreatedCourseId}/contents/{{ id }}
+                  DELETE /api/courses/{demoCreatedCourseId}/contents/{'{id}'}
                 </code>
               </li>
             </ul>

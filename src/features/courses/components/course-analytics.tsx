@@ -282,16 +282,16 @@ export function CourseAnalytics({ courseId }: CourseAnalyticsProps) {
   } = useCourseAnalytics(courseId, timeRange)
   const analytics = analyticsData?.data
 
-  // Debug logging
-  console.log('CourseAnalytics Debug:', {
-    courseId,
-    timeRange,
-    analyticsData,
-    analytics,
-    error,
-    isLoading,
-    showMockData: error && !analytics,
-  })
+  // Debug logging (commented out for production)
+  // console.log('CourseAnalytics Debug:', {
+  //   courseId,
+  //   timeRange,
+  //   analyticsData,
+  //   analytics,
+  //   error,
+  //   isLoading,
+  //   showMockData: error && !analytics,
+  // })
 
   // Show mock data only if there's an error AND no analytics data
   const showMockData = !analytics && error
@@ -394,8 +394,8 @@ export function CourseAnalytics({ courseId }: CourseAnalyticsProps) {
               {analytics?.overview.totalEnrollments || 0}
             </div>
             <p className='text-muted-foreground text-xs'>
-              {analytics?.overview.enrollmentChange > 0 ? '+' : ''}
-              {analytics?.overview.enrollmentChange || 0}% from last period
+              {(analytics?.overview.enrollmentChange ?? 0) > 0 ? '+' : ''}
+              {analytics?.overview.enrollmentChange ?? 0}% from last period
             </p>
           </CardContent>
         </Card>
@@ -412,8 +412,8 @@ export function CourseAnalytics({ courseId }: CourseAnalyticsProps) {
               {analytics?.overview.activeStudents || 0}
             </div>
             <p className='text-muted-foreground text-xs'>
-              {analytics?.overview.activeChange > 0 ? '+' : ''}
-              {analytics?.overview.activeChange || 0}% from last period
+              {(analytics?.overview.activeChange ?? 0) > 0 ? '+' : ''}
+              {analytics?.overview.activeChange ?? 0}% from last period
             </p>
           </CardContent>
         </Card>
@@ -430,8 +430,8 @@ export function CourseAnalytics({ courseId }: CourseAnalyticsProps) {
               {analytics?.overview.completionRate || 0}%
             </div>
             <p className='text-muted-foreground text-xs'>
-              {analytics?.overview.completionChange > 0 ? '+' : ''}
-              {analytics?.overview.completionChange || 0}% from last period
+              {(analytics?.overview.completionChange ?? 0) > 0 ? '+' : ''}
+              {analytics?.overview.completionChange ?? 0}% from last period
             </p>
           </CardContent>
         </Card>
@@ -448,8 +448,8 @@ export function CourseAnalytics({ courseId }: CourseAnalyticsProps) {
               {analytics?.overview.avgTimeToComplete || 0}h
             </div>
             <p className='text-muted-foreground text-xs'>
-              {analytics?.overview.timeChange > 0 ? '+' : ''}
-              {analytics?.overview.timeChange || 0}% from last period
+              {(analytics?.overview.timeChange ?? 0) > 0 ? '+' : ''}
+              {analytics?.overview.timeChange ?? 0}% from last period
             </p>
           </CardContent>
         </Card>
@@ -469,8 +469,8 @@ export function CourseAnalytics({ courseId }: CourseAnalyticsProps) {
               {analytics?.performance.averageRating || '0.00'}
             </div>
             <p className='text-muted-foreground text-xs'>
-              {analytics?.performance.ratingChange > 0 ? '+' : ''}
-              {analytics?.performance.ratingChange || 0}% from last period
+              {(analytics?.performance.ratingChange ?? 0) > 0 ? '+' : ''}
+              {analytics?.performance.ratingChange ?? 0}% from last period
             </p>
           </CardContent>
         </Card>
@@ -485,8 +485,8 @@ export function CourseAnalytics({ courseId }: CourseAnalyticsProps) {
               {analytics?.performance.totalViews || 0}
             </div>
             <p className='text-muted-foreground text-xs'>
-              {analytics?.performance.viewsChange > 0 ? '+' : ''}
-              {analytics?.performance.viewsChange || 0}% from last period
+              {(analytics?.performance.viewsChange ?? 0) > 0 ? '+' : ''}
+              {analytics?.performance.viewsChange ?? 0}% from last period
             </p>
           </CardContent>
         </Card>
@@ -503,8 +503,8 @@ export function CourseAnalytics({ courseId }: CourseAnalyticsProps) {
               {analytics?.performance.discussionPosts || 0}
             </div>
             <p className='text-muted-foreground text-xs'>
-              {analytics?.performance.discussionChange > 0 ? '+' : ''}
-              {analytics?.performance.discussionChange || 0}% from last period
+              {(analytics?.performance.discussionChange ?? 0) > 0 ? '+' : ''}
+              {analytics?.performance.discussionChange ?? 0}% from last period
             </p>
           </CardContent>
         </Card>

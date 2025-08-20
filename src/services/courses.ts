@@ -283,26 +283,23 @@ export interface CourseAnalytics {
     totalEnrollments: number
     activeStudents: number
     completionRate: number
-    averageRating: number
-    totalRevenue: number
-    averageTimeSpent: string
+    avgTimeToComplete: number
+    enrollmentChange: number
+    activeChange: number
+    completionChange: number
+    timeChange: number
   }
-  enrollment: {
-    thisWeek: number
-    lastWeek: number
-    thisMonth: number
-    lastMonth: number
+  performance: {
+    averageRating: string
+    totalViews: number
+    discussionPosts: number
+    ratingChange: number
+    viewsChange: number
+    discussionChange: number
   }
   engagement: {
-    dailyActiveUsers: Array<{ date: string; users: number }>
+    timeline: Array<{ date: string; activeUsers: number; completions: number }>
     lessonCompletions: Array<{ lesson: string; completions: number }>
-    mostViewedContent: Array<{ title: string; views: number; type: string }>
-  }
-  revenue: {
-    total: number
-    thisMonth: number
-    lastMonth: number
-    averagePerStudent: number
   }
 }
 

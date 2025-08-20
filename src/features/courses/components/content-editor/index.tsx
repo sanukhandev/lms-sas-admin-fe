@@ -1,4 +1,3 @@
-import React from 'react'
 import { ContentDetailPanel } from './content-detail-panel'
 import { ContentEditor } from './content-editor'
 import { ContentEditorProvider } from './content-editor-context'

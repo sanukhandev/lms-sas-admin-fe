@@ -61,10 +61,10 @@ function CoursesPage() {
   }, [searchTerm])
 
   // Fetch courses from API
-  const { 
-    data: coursesResponse, 
-    isLoading, 
-    error 
+  const {
+    data: coursesResponse,
+    isLoading,
+    error,
   } = useCourses({
     search: debouncedSearch || undefined,
   })
@@ -83,7 +83,7 @@ function CoursesPage() {
             <p className='text-muted-foreground'>Loading courses...</p>
           </div>
         </div>
-        <div className='flex items-center justify-center h-64'>
+        <div className='flex h-64 items-center justify-center'>
           <div className='text-muted-foreground'>Loading courses...</div>
         </div>
       </div>
@@ -99,8 +99,10 @@ function CoursesPage() {
             <p className='text-muted-foreground'>Error loading courses</p>
           </div>
         </div>
-        <div className='flex items-center justify-center h-64'>
-          <div className='text-red-500'>Failed to load courses. Please try again.</div>
+        <div className='flex h-64 items-center justify-center'>
+          <div className='text-red-500'>
+            Failed to load courses. Please try again.
+          </div>
         </div>
       </div>
     )
@@ -185,7 +187,10 @@ function CoursesPage() {
           </CardHeader>
           <CardContent>
             <div className='text-2xl font-bold'>
-              {courses.reduce((sum, course) => sum + (course.enrollmentCount || 0), 0)}
+              {courses.reduce(
+                (sum, course) => sum + (course.enrollmentCount || 0),
+                0
+              )}
             </div>
           </CardContent>
         </Card>
@@ -196,7 +201,10 @@ function CoursesPage() {
           </CardHeader>
           <CardContent>
             <div className='text-2xl font-bold'>
-              {courses.reduce((sum, course) => sum + (course.contentCount || 0), 0)}
+              {courses.reduce(
+                (sum, course) => sum + (course.contentCount || 0),
+                0
+              )}
             </div>
           </CardContent>
         </Card>
