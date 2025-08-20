@@ -51,8 +51,8 @@ import { Route as AuthenticatedSettingsBrandingRouteImport } from './routes/_aut
 import { Route as AuthenticatedSettingsAppearanceRouteImport } from './routes/_authenticated/settings/appearance'
 import { Route as AuthenticatedSettingsAccountRouteImport } from './routes/_authenticated/settings/account'
 import { Route as AuthenticatedCoursesNewRouteImport } from './routes/_authenticated/courses/new'
-import { Route as AuthenticatedCoursesChar91courseIdChar93EditRouteImport } from './routes/_authenticated/courses/[courseId]/edit'
 import { Route as AuthenticatedCoursesCourseIdEditRouteImport } from './routes/_authenticated/courses/$courseId/edit'
+import { Route as AuthenticatedCoursesCourseIdContentRouteImport } from './routes/_authenticated/courses/$courseId/content'
 
 const _root_fixedRoute = _root_fixedRouteImport.update({
   id: '/__root_fixed',
@@ -278,16 +278,16 @@ const AuthenticatedCoursesNewRoute = AuthenticatedCoursesNewRouteImport.update({
   path: '/courses/new',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedCoursesChar91courseIdChar93EditRoute =
-  AuthenticatedCoursesChar91courseIdChar93EditRouteImport.update({
-    id: '/courses/[courseId]/edit',
-    path: '/courses/[courseId]/edit',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
 const AuthenticatedCoursesCourseIdEditRoute =
   AuthenticatedCoursesCourseIdEditRouteImport.update({
     id: '/courses/$courseId/edit',
     path: '/courses/$courseId/edit',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedCoursesCourseIdContentRoute =
+  AuthenticatedCoursesCourseIdContentRouteImport.update({
+    id: '/courses/$courseId/content',
+    path: '/courses/$courseId/content',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 
@@ -331,8 +331,8 @@ export interface FileRoutesByFullPath {
   '/settings/': typeof AuthenticatedSettingsIndexRoute
   '/tasks': typeof AuthenticatedTasksIndexRoute
   '/users': typeof AuthenticatedUsersIndexRoute
+  '/courses/$courseId/content': typeof AuthenticatedCoursesCourseIdContentRoute
   '/courses/$courseId/edit': typeof AuthenticatedCoursesCourseIdEditRoute
-  '/courses/[courseId]/edit': typeof AuthenticatedCoursesChar91courseIdChar93EditRoute
 }
 export interface FileRoutesByTo {
   '/theme-demo': typeof ThemeDemoRoute
@@ -372,8 +372,8 @@ export interface FileRoutesByTo {
   '/settings': typeof AuthenticatedSettingsIndexRoute
   '/tasks': typeof AuthenticatedTasksIndexRoute
   '/users': typeof AuthenticatedUsersIndexRoute
+  '/courses/$courseId/content': typeof AuthenticatedCoursesCourseIdContentRoute
   '/courses/$courseId/edit': typeof AuthenticatedCoursesCourseIdEditRoute
-  '/courses/[courseId]/edit': typeof AuthenticatedCoursesChar91courseIdChar93EditRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -419,8 +419,8 @@ export interface FileRoutesById {
   '/_authenticated/settings/': typeof AuthenticatedSettingsIndexRoute
   '/_authenticated/tasks/': typeof AuthenticatedTasksIndexRoute
   '/_authenticated/users/': typeof AuthenticatedUsersIndexRoute
+  '/_authenticated/courses/$courseId/content': typeof AuthenticatedCoursesCourseIdContentRoute
   '/_authenticated/courses/$courseId/edit': typeof AuthenticatedCoursesCourseIdEditRoute
-  '/_authenticated/courses/[courseId]/edit': typeof AuthenticatedCoursesChar91courseIdChar93EditRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -464,8 +464,8 @@ export interface FileRouteTypes {
     | '/settings/'
     | '/tasks'
     | '/users'
+    | '/courses/$courseId/content'
     | '/courses/$courseId/edit'
-    | '/courses/[courseId]/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/theme-demo'
@@ -505,8 +505,8 @@ export interface FileRouteTypes {
     | '/settings'
     | '/tasks'
     | '/users'
+    | '/courses/$courseId/content'
     | '/courses/$courseId/edit'
-    | '/courses/[courseId]/edit'
   id:
     | '__root__'
     | '/_authenticated'
@@ -551,8 +551,8 @@ export interface FileRouteTypes {
     | '/_authenticated/settings/'
     | '/_authenticated/tasks/'
     | '/_authenticated/users/'
+    | '/_authenticated/courses/$courseId/content'
     | '/_authenticated/courses/$courseId/edit'
-    | '/_authenticated/courses/[courseId]/edit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -867,18 +867,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCoursesNewRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/courses/[courseId]/edit': {
-      id: '/_authenticated/courses/[courseId]/edit'
-      path: '/courses/[courseId]/edit'
-      fullPath: '/courses/[courseId]/edit'
-      preLoaderRoute: typeof AuthenticatedCoursesChar91courseIdChar93EditRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/courses/$courseId/edit': {
       id: '/_authenticated/courses/$courseId/edit'
       path: '/courses/$courseId/edit'
       fullPath: '/courses/$courseId/edit'
       preLoaderRoute: typeof AuthenticatedCoursesCourseIdEditRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/courses/$courseId/content': {
+      id: '/_authenticated/courses/$courseId/content'
+      path: '/courses/$courseId/content'
+      fullPath: '/courses/$courseId/content'
+      preLoaderRoute: typeof AuthenticatedCoursesCourseIdContentRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
   }
@@ -932,8 +932,8 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedHelpCenterIndexRoute: typeof AuthenticatedHelpCenterIndexRoute
   AuthenticatedTasksIndexRoute: typeof AuthenticatedTasksIndexRoute
   AuthenticatedUsersIndexRoute: typeof AuthenticatedUsersIndexRoute
+  AuthenticatedCoursesCourseIdContentRoute: typeof AuthenticatedCoursesCourseIdContentRoute
   AuthenticatedCoursesCourseIdEditRoute: typeof AuthenticatedCoursesCourseIdEditRoute
-  AuthenticatedCoursesChar91courseIdChar93EditRoute: typeof AuthenticatedCoursesChar91courseIdChar93EditRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -951,9 +951,9 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedHelpCenterIndexRoute: AuthenticatedHelpCenterIndexRoute,
   AuthenticatedTasksIndexRoute: AuthenticatedTasksIndexRoute,
   AuthenticatedUsersIndexRoute: AuthenticatedUsersIndexRoute,
+  AuthenticatedCoursesCourseIdContentRoute:
+    AuthenticatedCoursesCourseIdContentRoute,
   AuthenticatedCoursesCourseIdEditRoute: AuthenticatedCoursesCourseIdEditRoute,
-  AuthenticatedCoursesChar91courseIdChar93EditRoute:
-    AuthenticatedCoursesChar91courseIdChar93EditRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =

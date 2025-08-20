@@ -58,6 +58,24 @@ export interface Chapter {
   updated_at: string
 }
 
+export interface ContentClass {
+  id: string
+  chapter_id: string
+  title: string
+  description?: string
+  content_type: string
+  duration_minutes?: number
+  position: number
+  is_preview: boolean
+  is_required: boolean
+  content_url?: string
+  video_url?: string
+  content?: string
+  is_completed: boolean
+  created_at: string
+  updated_at: string
+}
+
 export interface CourseStructure {
   course_id: string
   title: string
@@ -259,6 +277,7 @@ export interface CreateTeachingPlanRequest {
   isFlexible?: boolean
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface StartSessionRequest {
   // No additional fields needed, session ID is in URL
 }
@@ -505,7 +524,7 @@ export const coursesService = {
       is_required: boolean
       content_url?: string
     }
-  ): Promise<{ data: any }> {
+  ): Promise<{ data: ContentClass }> {
     const response = await api.post(
       `/v1/course-builder/${courseId}/modules/${moduleId}/chapters/${chapterId}/classes`,
       data
@@ -518,8 +537,8 @@ export const coursesService = {
    */
   async updateCourseStructure(
     courseId: string,
-    structure: any
-  ): Promise<{ data: any }> {
+    structure: CourseStructure
+  ): Promise<{ data: CourseStructure }> {
     const response = await api.put(
       `/v1/course-builder/${courseId}/structure`,
       structure
