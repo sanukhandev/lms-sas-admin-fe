@@ -282,8 +282,19 @@ export function CourseAnalytics({ courseId }: CourseAnalyticsProps) {
   } = useCourseAnalytics(courseId, timeRange)
   const analytics = analyticsData?.data
 
-  // Show mock data with notice if API is not available
-  const showMockData = error && !analytics
+  // Debug logging
+  console.log('CourseAnalytics Debug:', {
+    courseId,
+    timeRange,
+    analyticsData,
+    analytics,
+    error,
+    isLoading,
+    showMockData: error && !analytics,
+  })
+
+  // Show mock data only if there's an error AND no analytics data
+  const showMockData = !analytics && error
 
   if (isLoading) {
     return (
@@ -322,17 +333,222 @@ export function CourseAnalytics({ courseId }: CourseAnalyticsProps) {
     )
   }
 
-  // If we have real data, render it (this would be the real implementation)
+  // If we have real data, render the analytics dashboard
   return (
-    <div className='flex items-center justify-center py-8'>
-      <div className='text-center'>
-        <TrendingUp className='text-muted-foreground mx-auto mb-4 h-8 w-8' />
-        <h3 className='mb-2 text-lg font-semibold'>Analytics Data Available</h3>
-        <p className='text-muted-foreground'>
-          Analytics data loaded successfully. Real data implementation goes
-          here.
-        </p>
+    <div className='space-y-6'>
+      {/* Time Range Selector */}
+      <div className='flex items-center justify-between'>
+        <h2 className='text-2xl font-bold'>Course Analytics</h2>
+        <div className='flex items-center space-x-4'>
+          <Select value={timeRange} onValueChange={setTimeRange}>
+            <SelectTrigger className='w-[180px]'>
+              <SelectValue placeholder='Select time range' />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value='7d'>Last 7 days</SelectItem>
+              <SelectItem value='30d'>Last 30 days</SelectItem>
+              <SelectItem value='90d'>Last 90 days</SelectItem>
+              <SelectItem value='1y'>Last year</SelectItem>
+            </SelectContent>
+          </Select>
+          <Button variant='outline' size='sm'>
+            <Download className='mr-2 h-4 w-4' />
+            Export
+          </Button>
+        </div>
       </div>
+
+      {/* Success indicator */}
+      <div className='rounded-lg border border-green-200 bg-green-50 p-4'>
+        <div className='flex items-center space-x-2'>
+          <TrendingUp className='h-5 w-5 text-green-600' />
+          <div>
+            <h4 className='text-sm font-semibold text-green-800'>Live Data</h4>
+            <p className='text-sm text-green-700'>
+              Displaying real-time analytics data from the server.
+            </p>
+            {/* Debug info */}
+            <details className='mt-2'>
+              <summary className='cursor-pointer text-xs text-green-600'>
+                Debug Info
+              </summary>
+              <pre className='mt-1 overflow-auto text-xs text-green-600'>
+                {JSON.stringify({ analytics, error }, null, 2)}
+              </pre>
+            </details>
+          </div>
+        </div>
+      </div>
+
+      {/* Overview Cards */}
+      <div className='grid gap-6 md:grid-cols-2 lg:grid-cols-4'>
+        <Card>
+          <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+            <CardTitle className='text-sm font-medium'>
+              Total Enrollments
+            </CardTitle>
+            <Users className='text-muted-foreground h-4 w-4' />
+          </CardHeader>
+          <CardContent>
+            <div className='text-2xl font-bold'>
+              {analytics?.overview.totalEnrollments || 0}
+            </div>
+            <p className='text-muted-foreground text-xs'>
+              {analytics?.overview.enrollmentChange > 0 ? '+' : ''}
+              {analytics?.overview.enrollmentChange || 0}% from last period
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+            <CardTitle className='text-sm font-medium'>
+              Active Students
+            </CardTitle>
+            <Award className='text-muted-foreground h-4 w-4' />
+          </CardHeader>
+          <CardContent>
+            <div className='text-2xl font-bold'>
+              {analytics?.overview.activeStudents || 0}
+            </div>
+            <p className='text-muted-foreground text-xs'>
+              {analytics?.overview.activeChange > 0 ? '+' : ''}
+              {analytics?.overview.activeChange || 0}% from last period
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+            <CardTitle className='text-sm font-medium'>
+              Completion Rate
+            </CardTitle>
+            <TrendingUp className='text-muted-foreground h-4 w-4' />
+          </CardHeader>
+          <CardContent>
+            <div className='text-2xl font-bold'>
+              {analytics?.overview.completionRate || 0}%
+            </div>
+            <p className='text-muted-foreground text-xs'>
+              {analytics?.overview.completionChange > 0 ? '+' : ''}
+              {analytics?.overview.completionChange || 0}% from last period
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+            <CardTitle className='text-sm font-medium'>
+              Avg. Completion Time
+            </CardTitle>
+            <Clock className='text-muted-foreground h-4 w-4' />
+          </CardHeader>
+          <CardContent>
+            <div className='text-2xl font-bold'>
+              {analytics?.overview.avgTimeToComplete || 0}h
+            </div>
+            <p className='text-muted-foreground text-xs'>
+              {analytics?.overview.timeChange > 0 ? '+' : ''}
+              {analytics?.overview.timeChange || 0}% from last period
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Performance Metrics */}
+      <div className='grid gap-6 md:grid-cols-2 lg:grid-cols-3'>
+        <Card>
+          <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+            <CardTitle className='text-sm font-medium'>
+              Average Rating
+            </CardTitle>
+            <Star className='text-muted-foreground h-4 w-4' />
+          </CardHeader>
+          <CardContent>
+            <div className='text-2xl font-bold'>
+              {analytics?.performance.averageRating || '0.00'}
+            </div>
+            <p className='text-muted-foreground text-xs'>
+              {analytics?.performance.ratingChange > 0 ? '+' : ''}
+              {analytics?.performance.ratingChange || 0}% from last period
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+            <CardTitle className='text-sm font-medium'>Total Views</CardTitle>
+            <Eye className='text-muted-foreground h-4 w-4' />
+          </CardHeader>
+          <CardContent>
+            <div className='text-2xl font-bold'>
+              {analytics?.performance.totalViews || 0}
+            </div>
+            <p className='text-muted-foreground text-xs'>
+              {analytics?.performance.viewsChange > 0 ? '+' : ''}
+              {analytics?.performance.viewsChange || 0}% from last period
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+            <CardTitle className='text-sm font-medium'>
+              Discussion Posts
+            </CardTitle>
+            <Calendar className='text-muted-foreground h-4 w-4' />
+          </CardHeader>
+          <CardContent>
+            <div className='text-2xl font-bold'>
+              {analytics?.performance.discussionPosts || 0}
+            </div>
+            <p className='text-muted-foreground text-xs'>
+              {analytics?.performance.discussionChange > 0 ? '+' : ''}
+              {analytics?.performance.discussionChange || 0}% from last period
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Lesson Completions */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Lesson Completion Status</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className='space-y-4'>
+            {analytics?.engagement.lessonCompletions?.map((lesson, index) => (
+              <div key={index} className='flex items-center justify-between'>
+                <div className='flex-1'>
+                  <div className='mb-1 flex items-center justify-between'>
+                    <span className='text-sm font-medium'>{lesson.lesson}</span>
+                    <span className='text-muted-foreground text-sm'>
+                      {lesson.completions} completions
+                    </span>
+                  </div>
+                  <Progress
+                    value={
+                      lesson.completions > 0
+                        ? Math.min(
+                            (lesson.completions /
+                              (analytics?.overview.totalEnrollments || 1)) *
+                              100,
+                            100
+                          )
+                        : 0
+                    }
+                    className='h-2'
+                  />
+                </div>
+              </div>
+            )) || (
+              <p className='text-muted-foreground text-sm'>
+                No lesson completion data available
+              </p>
+            )}
+          </div>
+        </CardContent>
+      </Card>
     </div>
   )
 }
