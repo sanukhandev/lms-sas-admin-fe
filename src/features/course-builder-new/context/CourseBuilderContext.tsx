@@ -1,4 +1,18 @@
-import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import React, { createContext, useContext,   updated_at: string;
+}
+
+interface CourseDetails {
+  title: string;
+  description: string;
+  category_id: string;
+  status: string;
+}
+
+interface CourseBuilderContextType {
+  courseId: string | null;
+  setCourseId: (id: string | null) => void;
+  courseDetails: CourseDetails;
+  updateCourseDetails: (details: Partial<CourseDetails>) => void;ctNode, useEffect } from 'react';
 import axios from 'axios';
 import { toast } from 'sonner';
 
@@ -53,7 +67,12 @@ interface CourseBuilderContextType {
     category_id: string;
     status: string;
   };
-  updateCourseDetails: (details: Partial<typeof courseDetails>) => void;
+  updateCourseDetails: (details: Partial<{
+    title: string;
+    description: string;
+    category_id: string;
+    status: string;
+  }>) => void;
   structure: CourseStructure | null;
   loadStructure: () => Promise<void>;
   pricing: PricingInfo | null;

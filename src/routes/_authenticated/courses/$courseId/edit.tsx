@@ -53,23 +53,17 @@ function RouteComponent() {
           id: parseInt(courseId),
           title: structure.title || 'Untitled Course',
           description: structure.description || '',
-          status: (structure.status || 'draft') as
-            | 'draft'
-            | 'published'
-            | 'archived',
+          status: structure.status || 'draft',
           enrollmentCount: 0,
-          contentCount: structure.total_chapters || 0,
+          content_count: structure.total_chapters || 0,
           completionRate: 0,
           price: 0,
           currency: '$',
           level: '',
-          durationHours: Math.round((structure.total_duration || 0) / 60),
-          thumbnailUrl: '',
+          duration_hours: Math.round((structure.total_duration || 0) / 60),
+          thumbnail_url: '',
           categoryName: '',
           requirements: '',
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-          isActive: true,
         }
       : null)
 
@@ -194,7 +188,7 @@ function RouteComponent() {
             </div>
             <div className='text-center'>
               <div className='text-2xl font-bold text-green-600'>
-                {effectiveCourse.contentCount || 0}
+                {effectiveCourse.content_count || 0}
               </div>
               <div className='text-muted-foreground text-sm'>Lessons</div>
             </div>
@@ -271,10 +265,10 @@ function RouteComponent() {
               category: effectiveCourse.categoryName || '',
               difficulty: effectiveCourse.level || '',
               price: effectiveCourse.price || 0,
-              estimatedDuration: effectiveCourse.durationHours
-                ? `${effectiveCourse.durationHours} hours`
+              estimatedDuration: effectiveCourse.duration_hours
+                ? `${effectiveCourse.duration_hours} hours`
                 : '',
-              thumbnail: effectiveCourse.thumbnailUrl || null,
+              thumbnail: effectiveCourse.thumbnail_url || null,
             }}
           />
         </TabsContent>

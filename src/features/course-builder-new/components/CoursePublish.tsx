@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
@@ -265,7 +265,7 @@ export function CoursePublish() {
               </Button>
             )}
             
-            {!isReadyToPublish && !courseDetails.status === 'published' && (
+            {!isReadyToPublish && courseDetails.status !== 'published' && (
               <p className="text-xs text-amber-600 text-center">
                 Complete all requirements before publishing
               </p>

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import {
   MoreHorizontal,
@@ -10,7 +10,6 @@ import {
   Calendar,
   Search,
 } from 'lucide-react'
-import { useCourses } from '@/hooks/use-courses'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -44,69 +43,67 @@ export const Route = createFileRoute('/_authenticated/courses/')({
   component: CoursesPage,
 })
 
+// Mock data - replace with actual API call
+const mockCourses = [
+  {
+    id: 1,
+    title: 'Introduction to React',
+    description: 'Learn the fundamentals of React development',
+    status: 'published',
+    studentsCount: 245,
+    lessonsCount: 12,
+    createdAt: '2024-01-15',
+    updatedAt: '2024-03-10',
+    thumbnail: null,
+  },
+  {
+    id: 2,
+    title: 'Advanced JavaScript',
+    description: 'Master advanced JavaScript concepts and patterns',
+    status: 'draft',
+    studentsCount: 0,
+    lessonsCount: 8,
+    createdAt: '2024-02-20',
+    updatedAt: '2024-03-15',
+    thumbnail: null,
+  },
+  {
+    id: 3,
+    title: 'Node.js Backend Development',
+    description: 'Build scalable backend applications with Node.js',
+    status: 'published',
+    studentsCount: 189,
+    lessonsCount: 15,
+    createdAt: '2024-01-10',
+    updatedAt: '2024-03-08',
+    thumbnail: null,
+  },
+  {
+    id: 8,
+    title: 'Full Stack Development',
+    description:
+      'Complete full stack development course with modern technologies',
+    status: 'draft',
+    studentsCount: 45,
+    lessonsCount: 20,
+    createdAt: '2024-03-01',
+    updatedAt: '2024-03-18',
+    thumbnail: null,
+  },
+]
+
 function CoursesPage() {
   const navigate = useNavigate()
+  const [courses] = useState(mockCourses)
   const [searchTerm, setSearchTerm] = useState('')
-  const [debouncedSearch, setDebouncedSearch] = useState('')
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [courseToDelete, setCourseToDelete] = useState<number | null>(null)
 
-  // Debounce search input
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearch(searchTerm)
-    }, 300)
-
-    return () => clearTimeout(timer)
-  }, [searchTerm])
-
-  // Fetch courses from API
-  const {
-    data: coursesResponse,
-    isLoading,
-    error,
-  } = useCourses({
-    search: debouncedSearch || undefined,
-  })
-
-  const courses = coursesResponse?.data || []
-
-  // Since we're using server-side search, we don't need client-side filtering
-  const filteredCourses = courses
-
-  if (isLoading) {
-    return (
-      <div className='container mx-auto space-y-6 p-6'>
-        <div className='flex items-center justify-between'>
-          <div>
-            <h1 className='text-3xl font-bold'>Course Management</h1>
-            <p className='text-muted-foreground'>Loading courses...</p>
-          </div>
-        </div>
-        <div className='flex h-64 items-center justify-center'>
-          <div className='text-muted-foreground'>Loading courses...</div>
-        </div>
-      </div>
-    )
-  }
-
-  if (error) {
-    return (
-      <div className='container mx-auto space-y-6 p-6'>
-        <div className='flex items-center justify-between'>
-          <div>
-            <h1 className='text-3xl font-bold'>Course Management</h1>
-            <p className='text-muted-foreground'>Error loading courses</p>
-          </div>
-        </div>
-        <div className='flex h-64 items-center justify-center'>
-          <div className='text-red-500'>
-            Failed to load courses. Please try again.
-          </div>
-        </div>
-      </div>
-    )
-  }
+  const filteredCourses = courses.filter(
+    (course) =>
+      course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      course.description.toLowerCase().includes(searchTerm.toLowerCase())
+  )
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -187,10 +184,7 @@ function CoursesPage() {
           </CardHeader>
           <CardContent>
             <div className='text-2xl font-bold'>
-              {courses.reduce(
-                (sum, course) => sum + (course.enrollmentCount || 0),
-                0
-              )}
+              {courses.reduce((sum, course) => sum + course.studentsCount, 0)}
             </div>
           </CardContent>
         </Card>
@@ -201,10 +195,7 @@ function CoursesPage() {
           </CardHeader>
           <CardContent>
             <div className='text-2xl font-bold'>
-              {courses.reduce(
-                (sum, course) => sum + (course.contentCount || 0),
-                0
-              )}
+              {courses.reduce((sum, course) => sum + course.lessonsCount, 0)}
             </div>
           </CardContent>
         </Card>
@@ -255,8 +246,8 @@ function CoursesPage() {
                       {course.status}
                     </Badge>
                   </TableCell>
-                  <TableCell>{course.enrollmentCount || 0}</TableCell>
-                  <TableCell>{course.contentCount || 0}</TableCell>
+                  <TableCell>{course.studentsCount}</TableCell>
+                  <TableCell>{course.lessonsCount}</TableCell>
                   <TableCell>
                     {new Date(course.createdAt).toLocaleDateString()}
                   </TableCell>

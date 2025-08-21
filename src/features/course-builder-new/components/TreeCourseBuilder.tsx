@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { CourseBuilderProvider } from '../context/CourseBuilderContext';
 import { CourseDetails } from './CourseDetails';
@@ -14,7 +14,7 @@ export function TreeCourseBuilder({ courseId }: CourseBuilderProps) {
   const [activeTab, setActiveTab] = useState('details');
 
   return (
-    <CourseBuilderProvider initialCourseId={courseId || null}>
+    <CourseBuilderProvider initialCourseId={courseId || undefined}>
       <div className="max-w-4xl mx-auto p-6">
         <h1 className="text-2xl font-bold mb-6">
           {courseId ? 'Edit Course' : 'Create New Course'}
